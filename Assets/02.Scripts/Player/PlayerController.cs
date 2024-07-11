@@ -1,15 +1,16 @@
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
     [Header("MoveSpeed")] 
     [SerializeField] private float walkSpeed;
-    [Header("ChangeSpeedValue")] 
-    [SerializeField] private float changeSpeedValue;
 
     #region PlayerComponent
     private Rigidbody _rigidBody;
+    private NavMeshAgent _playerAgent;
+    private NavMeshPath _path;
     #endregion
 
     #region PlayerValue
@@ -42,6 +43,8 @@ public class PlayerController : MonoBehaviour
     private void Initialize()
     {
         _rigidBody = GetComponent<Rigidbody>();
+        _playerAgent = GetComponent<NavMeshAgent>();
+        _path = new NavMeshPath();
         _mainCamera = Camera.main;
         _fixedYPosition = transform.position.y; // 현재 y 위치를 고정된 y 위치로 설정
     }
@@ -49,7 +52,8 @@ public class PlayerController : MonoBehaviour
     // 마우스 클릭 처리 메서드
     private void HandleMouseClick()
     {
-        if (!Input.GetMouseButtonDown(0) && !Input.GetMouseButton(0)) return;
+        if (!Input.GetMouseButtonDown(1) && !Input.GetMouseButton(1
+            )) return;
 
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
@@ -95,7 +99,9 @@ public class PlayerController : MonoBehaviour
         if (_rigidBody.velocity == Vector3.zero) return;
 
         float targetRotation = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+
         float smoothRotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref _rotationVelocity, 0.12f);
+
         transform.rotation = Quaternion.Euler(0, smoothRotation, 0);
     }
 
