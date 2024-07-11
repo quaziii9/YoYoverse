@@ -66,6 +66,7 @@ atlassian-ide-plugin.xml
 .idea/replstate.xml
 
 # SonarLint plugin
+.idea/.idea.Yoyoverse/.idea/sonarlint
 .idea/sonarlint/
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
