@@ -13,6 +13,8 @@ public class YoYoController : MonoBehaviour
     public float pullDuration = 1f;
     // 로프 액션 지속 시간
     public float ropeActionDuration = 1f;
+    // 요요가 충돌하지 않을 때 돌아오는 시간
+    public float returnDuration = 0.5f; // 돌아오는 속도 빠르게 설정
 
     // 손의 위치
     public Transform handPosition;
@@ -24,6 +26,7 @@ public class YoYoController : MonoBehaviour
     private GameObject _currentYoYo;
     private GameObject _targetEnemy;
     private bool _isYoYoAttached;
+    private Coroutine _returnYoYoCoroutine;
 
     private void OnEnable()
     {
@@ -37,14 +40,22 @@ public class YoYoController : MonoBehaviour
 
     private void Update()
     {
-        // 요요 던지기 (키: F)
-        if (Input.GetKeyDown(KeyCode.F))
+        // 요요 던지기 (마우스 좌클릭)
+        if (Input.GetMouseButtonDown(0))
         {
-            ThrowYoYo();
+            if (_currentYoYo == null)
+            {
+                ThrowYoYo();
+            }
+            else
+            {
+                // 요요가 날아가는 중에 마우스 좌클릭으로 요요 복귀
+                ReturnYoYoManually();
+            }
         }
 
-        // 요요로 적 끌어당기기 (키: G)
-        if (Input.GetKeyDown(KeyCode.G))
+        // 요요로 적 끌어당기기 (키: Q)
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             if (_isYoYoAttached && _targetEnemy != null)
             {
@@ -60,8 +71,8 @@ public class YoYoController : MonoBehaviour
             }
         }
 
-        // 요요로 로프 액션 (키: H, 타겟 필요)
-        if (Input.GetKeyDown(KeyCode.H))
+        // 요요로 로프 액션 (키: W, 타겟 필요)
+        if (Input.GetKeyDown(KeyCode.W))
         {
             GameObject target = FindRopeTarget();
             if (target != null)
@@ -70,8 +81,8 @@ public class YoYoController : MonoBehaviour
             }
         }
 
-        // 요요로 암살 (키: J, 가까운 적 필요)
-        if (Input.GetKeyDown(KeyCode.J))
+        // 요요로 암살 (키: E, 가까운 적 필요)
+        if (Input.GetKeyDown(KeyCode.E))
         {
             GameObject enemy = FindClosestEnemy();
             if (enemy != null)
@@ -80,8 +91,8 @@ public class YoYoController : MonoBehaviour
             }
         }
 
-        // 요요 방어 (키: K)
-        if (Input.GetKeyDown(KeyCode.K))
+        // 요요 방어 (키: R)
+        if (Input.GetKeyDown(KeyCode.R))
         {
             DefendWithYoYo();
         }
@@ -90,14 +101,70 @@ public class YoYoController : MonoBehaviour
     // 요요를 던지는 메소드
     public void ThrowYoYo()
     {
-        if (_currentYoYo == null)
-        {
-            _currentYoYo = Instantiate(yoYoPrefab, handPosition.position, Quaternion.identity);
-            Rigidbody rb = _currentYoYo.GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * throwForce, ForceMode.Impulse);
+        _currentYoYo = Instantiate(yoYoPrefab, handPosition.position, Quaternion.identity);
+        Rigidbody rb = _currentYoYo.GetComponent<Rigidbody>();
 
-            Debug.Log("요요를 던졌습니다.");
+        // 마우스 위치로부터 방향 계산
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        Vector3 targetPoint;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            targetPoint = hit.point;
         }
+        else
+        {
+            targetPoint = ray.GetPoint(1000); // 멀리까지 쏘기
+        }
+
+        Vector3 direction = (targetPoint - handPosition.position).normalized;
+        rb.AddForce(direction * throwForce, ForceMode.Impulse);
+
+        Debug.Log("요요를 마우스 방향으로 던졌습니다.");
+
+        // 요요가 적에게 닿지 않으면 돌아오게 설정
+        _returnYoYoCoroutine = StartCoroutine(CheckYoYoReturn());
+    }
+
+    private IEnumerator CheckYoYoReturn()
+    {
+        yield return new WaitForSeconds(returnDuration);
+        if (!_isYoYoAttached && _currentYoYo != null)
+        {
+            StartCoroutine(ReturnYoYo());
+        }
+    }
+
+    private void ReturnYoYoManually()
+    {
+        if (_currentYoYo != null && !_isYoYoAttached)
+        {
+            if (_returnYoYoCoroutine != null)
+            {
+                StopCoroutine(_returnYoYoCoroutine);
+            }
+            StartCoroutine(ReturnYoYo());
+        }
+    }
+
+    private IEnumerator ReturnYoYo()
+    {
+        Vector3 startPosition = _currentYoYo.transform.position;
+        Vector3 endPosition = handPosition.position;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < returnDuration)
+        {
+            _currentYoYo.transform.position = Vector3.Lerp(startPosition, endPosition, (elapsedTime / returnDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        Destroy(_currentYoYo);
+        _currentYoYo = null;
+
+        Debug.Log("요요가 돌아왔습니다.");
     }
 
     // 요요를 적에게 던지는 메소드
@@ -261,5 +328,23 @@ public class YoYoController : MonoBehaviour
     {
         _isYoYoAttached = true;
         _targetEnemy = enemy;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (_currentYoYo != null && collision.gameObject.CompareTag("Enemy"))
+        {
+            Rigidbody enemyRb = collision.gameObject.GetComponent<Rigidbody>();
+            if (enemyRb != null)
+            {
+                Vector3 forceDirection = (collision.transform.position - _currentYoYo.transform.position).normalized;
+                enemyRb.AddForce(forceDirection * throwForce, ForceMode.Impulse);
+            }
+
+            Debug.Log("요요가 적을 밀어냈습니다.");
+
+            // 요요가 적을 밀어낸 후 돌아오게 설정
+            ReturnYoYoManually();
+        }
     }
 }
