@@ -2,6 +2,7 @@ Shader "GPUMan/ConeOfSightURP" {
     Properties {
         _NonVisibleColor("Non Visible Color", Color) = (0, 0, 0, 1)
         _ViewAngle("Sight Angle", Range(0.01, 90)) = 45
+        _Scale("Scale", Vector) = (1, 1, 1, 1)
     }
 
     Subshader {
@@ -43,11 +44,16 @@ Shader "GPUMan/ConeOfSightURP" {
             float3 _Test;
             half4 _NonVisibleColor;
             half _ViewAngle;
+            float4 _Scale;
 
             v2f vert(appdata_base v) {
                 v2f o;
 
-                VertexPositionInputs vertInputs = GetVertexPositionInputs(v.vertex.xyz);
+                // Apply scaling
+                float4 scaledVertex = v.vertex;
+                scaledVertex.xyz *= _Scale.xyz;
+
+                VertexPositionInputs vertInputs = GetVertexPositionInputs(scaledVertex.xyz);
                 o.pos = vertInputs.positionCS;
                 o.ray = vertInputs.positionVS * float3(1, 1, -1);
                 o.screenUV = vertInputs.positionNDC;
