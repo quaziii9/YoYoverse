@@ -18,12 +18,12 @@ public class YoYoController : MonoBehaviour
     public Transform handPosition;
 
     // 방어 여부를 나타내는 플래그
-    private bool isDefending = false;
+    private bool _isDefending;
 
     // 요요 상태 추적
-    private GameObject currentYoYo;
-    private GameObject targetEnemy;
-    private bool isYoYoAttached = false;
+    private GameObject _currentYoYo;
+    private GameObject _targetEnemy;
+    private bool _isYoYoAttached;
 
     private void OnEnable()
     {
@@ -46,9 +46,9 @@ public class YoYoController : MonoBehaviour
         // 요요로 적 끌어당기기 (키: G)
         if (Input.GetKeyDown(KeyCode.G))
         {
-            if (isYoYoAttached && targetEnemy != null)
+            if (_isYoYoAttached && _targetEnemy != null)
             {
-                PullEnemy(targetEnemy);
+                PullEnemy(_targetEnemy);
             }
             else
             {
@@ -90,10 +90,10 @@ public class YoYoController : MonoBehaviour
     // 요요를 던지는 메소드
     public void ThrowYoYo()
     {
-        if (currentYoYo == null)
+        if (_currentYoYo == null)
         {
-            currentYoYo = Instantiate(yoYoPrefab, handPosition.position, Quaternion.identity);
-            Rigidbody rb = currentYoYo.GetComponent<Rigidbody>();
+            _currentYoYo = Instantiate(yoYoPrefab, handPosition.position, Quaternion.identity);
+            Rigidbody rb = _currentYoYo.GetComponent<Rigidbody>();
             rb.AddForce(transform.forward * throwForce, ForceMode.Impulse);
 
             Debug.Log("요요를 던졌습니다.");
@@ -103,14 +103,14 @@ public class YoYoController : MonoBehaviour
     // 요요를 적에게 던지는 메소드
     public void ThrowYoYoAtEnemy(GameObject enemy)
     {
-        if (currentYoYo == null)
+        if (_currentYoYo == null)
         {
-            currentYoYo = Instantiate(yoYoPrefab, handPosition.position, Quaternion.identity);
-            YoYo yoYoScript = currentYoYo.GetComponent<YoYo>();
-            Rigidbody rb = currentYoYo.GetComponent<Rigidbody>();
+            _currentYoYo = Instantiate(yoYoPrefab, handPosition.position, Quaternion.identity);
+            YoYo yoYoScript = _currentYoYo.GetComponent<YoYo>();
+            Rigidbody rb = _currentYoYo.GetComponent<Rigidbody>();
             Vector3 direction = (enemy.transform.position - handPosition.position).normalized;
             rb.AddForce(direction * throwForce, ForceMode.Impulse);
-            targetEnemy = enemy;
+            _targetEnemy = enemy;
 
             Debug.Log("요요를 적에게 던졌습니다.");
         }
@@ -135,10 +135,10 @@ public class YoYoController : MonoBehaviour
             yield return null;
         }
 
-        isYoYoAttached = false;
-        Destroy(currentYoYo);
-        currentYoYo = null;
-        targetEnemy = null;
+        _isYoYoAttached = false;
+        Destroy(_currentYoYo);
+        _currentYoYo = null;
+        _targetEnemy = null;
 
         Debug.Log("적을 끌어당겼습니다.");
     }
@@ -146,7 +146,7 @@ public class YoYoController : MonoBehaviour
     // 요요를 사용하여 특정 지형지물에 상호작용하는 메소드
     public void InteractWithEnvironment(GameObject target)
     {
-        if (currentYoYo == null)
+        if (_currentYoYo == null)
         {
             LineRenderer lineRenderer = yoYoPrefab.GetComponent<LineRenderer>();
             lineRenderer.SetPosition(0, handPosition.position);
@@ -188,7 +188,7 @@ public class YoYoController : MonoBehaviour
     // 요요를 방어용으로 사용하는 메소드
     public void DefendWithYoYo()
     {
-        isDefending = true;
+        _isDefending = true;
         // animator.SetTrigger("Defend");
 
         Debug.Log("방어 모드를 활성화했습니다.");
@@ -197,7 +197,7 @@ public class YoYoController : MonoBehaviour
     // 공격을 막는 로직 (피격 이벤트에서 호출)
     public void OnHitByEnemy()
     {
-        if (isDefending)
+        if (_isDefending)
         {
             Debug.Log("공격을 방어했습니다.");
         }
@@ -259,7 +259,7 @@ public class YoYoController : MonoBehaviour
     // 요요가 적에게 붙었을 때 호출되는 메소드
     public void AttachYoYoToEnemy(GameObject enemy)
     {
-        isYoYoAttached = true;
-        targetEnemy = enemy;
+        _isYoYoAttached = true;
+        _targetEnemy = enemy;
     }
 }

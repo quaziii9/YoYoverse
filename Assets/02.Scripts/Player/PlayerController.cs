@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour
     // 마우스 클릭 처리 메서드
     private void HandleMouseClick()
     {
-        if (!Input.GetMouseButtonDown(0) && !Input.GetMouseButton(0)) return;
+        if (!Input.GetMouseButtonDown(1) && !Input.GetMouseButton(1)) return;
 
         Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
