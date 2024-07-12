@@ -6,7 +6,7 @@ Shader "GPUMan/ConeOfSightURP" {
 
     Subshader {
         Tags {
-            "Queue" = "Transparent"
+            "Queue" = "Overlay"
             "RenderType" = "Transparent"
             "RenderPipeline" = "UniversalRenderPipeline"
         }
@@ -14,6 +14,8 @@ Shader "GPUMan/ConeOfSightURP" {
             Name "Unlit"
             Blend SrcAlpha OneMinusSrcAlpha
             ZWrite Off
+            Cull Off
+            ZTest Always
 
             HLSLPROGRAM
             #pragma vertex vert
