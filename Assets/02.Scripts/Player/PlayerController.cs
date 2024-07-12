@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,8 +10,8 @@ public class PlayerController : MonoBehaviour
 
     #region PlayerComponent
     private Rigidbody _rigidBody;
-    private NavMeshAgent _playerAgent;
-    private NavMeshPath _path;
+    private PathFind _pathFinding;
+
     #endregion
 
     #region PlayerValue
@@ -22,6 +23,8 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     private Camera _mainCamera;
+    private int _pathIndex;
+    private List<PathNode> _path;
 
     private void Awake()
     {
@@ -43,8 +46,7 @@ public class PlayerController : MonoBehaviour
     private void Initialize()
     {
         _rigidBody = GetComponent<Rigidbody>();
-        _playerAgent = GetComponent<NavMeshAgent>();
-        _path = new NavMeshPath();
+        _pathFinding = GetComponent<PathFind>();    
         _mainCamera = Camera.main;
         _fixedYPosition = transform.position.y; // 현재 y 위치를 고정된 y 위치로 설정
     }
@@ -67,7 +69,37 @@ public class PlayerController : MonoBehaviour
     {
         if (!_isMoving) return;
 
-        Vector3 direction = (_clickRayPosition - transform.position).normalized;
+        if(_path == null || _path.Count == 0)
+        {
+            _path = _pathFinding.PathFinding(_clickRayPosition);
+            
+            _pathIndex = 0;
+        }
+
+        if (_path == null || _path.Count == 0)
+        {
+            return;
+        }
+            
+        PathNode targetNode = _path[_pathIndex];
+
+        Vector3 targetPosition = new Vector3(targetNode.PosX, transform.position.y, targetNode.PosZ);
+
+        if(Vector3.Distance(transform.position, targetPosition) < 0.1f)
+        {
+            _pathIndex++;
+
+            if(_pathIndex >= _path.Count)
+            {
+                StopMovement();
+                return;
+            }
+
+            targetNode = _path[_pathIndex];
+            targetPosition = new Vector3(targetNode.PosX, transform.position.y, targetNode.PosZ);
+        }
+
+        Vector3 direction = (targetPosition - transform.position).normalized;
 
         if (HasReachedTarget())
         {
@@ -82,7 +114,11 @@ public class PlayerController : MonoBehaviour
     // 목표 지점에 도착했는지 확인하는 메서드
     private bool HasReachedTarget()
     {
-        return Vector3.Distance(transform.position, _clickRayPosition) < _speedOffSet;
+        //return Vector3.Distance(transform.position, _clickRayPosition) < _speedOffSet;
+        if (_path == null || _path.Count == 0)
+            return false;
+
+        return _pathIndex >= _path.Count;
     }
 
     // 이동을 멈추는 메서드
@@ -90,6 +126,7 @@ public class PlayerController : MonoBehaviour
     {
         _rigidBody.velocity = Vector3.zero;
         _isMoving = false;
+        _path = null;
     }
 
     // 회전을 처리하는 메서드
