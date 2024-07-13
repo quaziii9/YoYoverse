@@ -1,5 +1,5 @@
 {
-  "YoYo": [
+  "data": [
     {
       "id": 100,
       "name": "Normal Disk",
@@ -20,15 +20,6 @@
     },
     {
       "id": 102,
-      "name": "Lightweight Disk",
-      "type": "disk",
-      "attack": 0.7,
-      "attackSpeed": 0.35,
-      "attackRange": 0.8,
-      "imagePath": "YoYo/Disk/Lightweight_Disk"
-    },
-    {
-      "id": 103,
       "name": "Blade Disk",
       "type": "disk",
       "attack": 1.5,
@@ -38,12 +29,12 @@
     },
     {
       "id": 150,
-      "name": "Basic Wire",
+      "name": "Normal Wire",
       "type": "wire",
       "attack": 0.7,
       "attackSpeed": 1,
       "attackRange": 1,
-      "imagePath": "YoYo/Wire/Basic_Wire"
+      "imagePath": "YoYo/Wire/Normal_Wire"
     },
     {
       "id": 151,
