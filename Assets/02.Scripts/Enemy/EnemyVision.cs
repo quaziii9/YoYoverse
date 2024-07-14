@@ -5,7 +5,6 @@ public class EnemyVision : MonoBehaviour
     public float viewAngle = 60f;
     public float viewDistance = 5f;
     public float viewHeight = 15f;
-    public float forwardOffset = 1f; // 기즈모 시작 위치의 Z 오프셋
     public LayerMask playerLayer;
     public int detectionResolution = 10;
 
@@ -16,14 +15,12 @@ public class EnemyVision : MonoBehaviour
 
     private void DetectPlayer()
     {
-        Vector3 detectionStart = transform.position + transform.forward * forwardOffset;
-
         for (float y = -viewHeight; y <= viewHeight; y += viewHeight / detectionResolution)
         {
             for (float angle = -viewAngle / 2; angle <= viewAngle / 2; angle += viewAngle / detectionResolution)
             {
                 Vector3 dir = DirFromAngle(angle, false);
-                Vector3 rayStart = detectionStart + Vector3.up * y;
+                Vector3 rayStart = transform.position + Vector3.up * y;
 
                 if (Physics.Raycast(rayStart, dir, out RaycastHit hit, viewDistance, playerLayer))
                 {
@@ -37,7 +34,6 @@ public class EnemyVision : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Vector3 detectionStart = transform.position + transform.forward * forwardOffset;
         Gizmos.color = Color.yellow;
 
         // 원뿔의 윤곽선 그리기
@@ -45,24 +41,24 @@ public class EnemyVision : MonoBehaviour
         Vector3 viewAngleB = DirFromAngle(viewAngle / 2, false);
 
         // 아래쪽 윤곽선
-        Gizmos.DrawLine(detectionStart - Vector3.up * viewHeight,
-                        detectionStart - Vector3.up * viewHeight + viewAngleA * viewDistance);
-        Gizmos.DrawLine(detectionStart - Vector3.up * viewHeight,
-                        detectionStart - Vector3.up * viewHeight + viewAngleB * viewDistance);
+        Gizmos.DrawLine(transform.position - Vector3.up * viewHeight,
+                        transform.position - Vector3.up * viewHeight + viewAngleA * viewDistance);
+        Gizmos.DrawLine(transform.position - Vector3.up * viewHeight,
+                        transform.position - Vector3.up * viewHeight + viewAngleB * viewDistance);
 
         // 위쪽 윤곽선
-        Gizmos.DrawLine(detectionStart + Vector3.up * viewHeight,
-                        detectionStart + Vector3.up * viewHeight + viewAngleA * viewDistance);
-        Gizmos.DrawLine(detectionStart + Vector3.up * viewHeight,
-                        detectionStart + Vector3.up * viewHeight + viewAngleB * viewDistance);
+        Gizmos.DrawLine(transform.position + Vector3.up * viewHeight,
+                        transform.position + Vector3.up * viewHeight + viewAngleA * viewDistance);
+        Gizmos.DrawLine(transform.position + Vector3.up * viewHeight,
+                        transform.position + Vector3.up * viewHeight + viewAngleB * viewDistance);
 
         // 수직 선
-        Gizmos.DrawLine(detectionStart - Vector3.up * viewHeight,
-                        detectionStart + Vector3.up * viewHeight);
-        Gizmos.DrawLine(detectionStart - Vector3.up * viewHeight + viewAngleA * viewDistance,
-                        detectionStart + Vector3.up * viewHeight + viewAngleA * viewDistance);
-        Gizmos.DrawLine(detectionStart - Vector3.up * viewHeight + viewAngleB * viewDistance,
-                        detectionStart + Vector3.up * viewHeight + viewAngleB * viewDistance);
+        Gizmos.DrawLine(transform.position - Vector3.up * viewHeight,
+                        transform.position + Vector3.up * viewHeight);
+        Gizmos.DrawLine(transform.position - Vector3.up * viewHeight + viewAngleA * viewDistance,
+                        transform.position + Vector3.up * viewHeight + viewAngleA * viewDistance);
+        Gizmos.DrawLine(transform.position - Vector3.up * viewHeight + viewAngleB * viewDistance,
+                        transform.position + Vector3.up * viewHeight + viewAngleB * viewDistance);
 
         // 원뿔의 내부 영역 그리기
         for (float y = -viewHeight; y <= viewHeight; y += viewHeight / detectionResolution)
@@ -70,7 +66,7 @@ public class EnemyVision : MonoBehaviour
             for (float angle = -viewAngle / 2; angle <= viewAngle / 2; angle += viewAngle / detectionResolution)
             {
                 Vector3 dir = DirFromAngle(angle, false);
-                Vector3 pos = detectionStart + Vector3.up * y;
+                Vector3 pos = transform.position + Vector3.up * y;
                 Gizmos.DrawLine(pos, pos + dir * viewDistance);
             }
         }
