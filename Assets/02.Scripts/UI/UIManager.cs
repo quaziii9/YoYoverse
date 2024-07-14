@@ -168,5 +168,6 @@ public class UIManager : Singleton<UIManager>
     {
         equipUI.SetActive(false);
         // 기술 세팅 UI 활성화
+        // 장비, 공격력, 공격 사거리, 공격 범위 적용
     }
 }
