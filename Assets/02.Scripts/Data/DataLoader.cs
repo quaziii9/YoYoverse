@@ -8,7 +8,7 @@ public static class DataLoader<T> where T : class
     public static List<T> LoadDataFromJson(string fileName)
     {
         // Resources 폴더에서 JSON 파일을 로드
-        TextAsset jsonFile = Resources.Load<TextAsset>(fileName);
+        TextAsset jsonFile = Resources.Load<TextAsset>($"Json/{fileName}");
 
         // 파일이 존재하면 데이터를 읽고, 존재하지 않으면 빈 리스트를 반환
         if (jsonFile != null)

@@ -25,11 +25,7 @@ public class WireListItem : InfiniteScrollItem
     public override void UpdateData(InfiniteScrollData scrollData)
     {
         _yoYoData = scrollData as YoYoData;
-        if (_yoYoData == null)
-        {
-            Debug.LogError("YoYoData is null in UpdateData");
-            return;
-        }
+        if (_yoYoData == null) return;
 
         // 텍스트와 이미지 업데이트
         image.sprite = Resources.Load<Sprite>(_yoYoData.imagePath);
@@ -44,7 +40,6 @@ public class WireListItem : InfiniteScrollItem
             return;
         }
 
-        Debug.Log($"Triggering OnClickWireListItem event with YoYoData: {_yoYoData.name}, {_yoYoData.imagePath}");
         EventManager<UIEvents>.TriggerEvent(UIEvents.OnClickWireListItem, _yoYoData);
     }
 }

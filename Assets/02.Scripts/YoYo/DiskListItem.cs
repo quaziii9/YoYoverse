@@ -1,4 +1,3 @@
-using System;
 using EnumTypes;
 using EventLibrary;
 using Gpm.Ui;
@@ -37,7 +36,12 @@ public class DiskListItem : InfiniteScrollItem
 
     private void OnClickEquipListItem()
     {
-        DebugLogger.Log(_yoYoData.imagePath);
+        if (_yoYoData == null)
+        {
+            Debug.LogError("YoYoData is null in OnClickEquipListItem");
+            return;
+        }
+        
         EventManager<UIEvents>.TriggerEvent(UIEvents.OnClickDiskListItem, _yoYoData);
     }
 }
