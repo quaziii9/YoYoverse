@@ -43,5 +43,6 @@ public class DiskListItem : InfiniteScrollItem
         }
         
         EventManager<UIEvents>.TriggerEvent(UIEvents.OnClickDiskListItem, _yoYoData);
+        EventManager<GameEvents>.TriggerEvent(GameEvents.SelectedDisk);
     }
 }

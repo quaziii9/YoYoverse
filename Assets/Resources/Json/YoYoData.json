@@ -41,8 +41,8 @@
       "name": "Thorn Wire",
       "type": "wire",
       "attack": 1.2,
-      "attackSpeed": 1,
-      "attackRange": 2,
+      "attackSpeed": 1.2,
+      "attackRange": 1,
       "imagePath": "YoYo/Wire/Thorn_Wire"
     },
     {
@@ -50,7 +50,7 @@
       "name": "Electric Wire",
       "type": "wire",
       "attack": 1.5,
-      "attackSpeed": 0.5,
+      "attackSpeed": 0.8,
       "attackRange": 0.5,
       "imagePath": "YoYo/Wire/Electric_Wire"
     }

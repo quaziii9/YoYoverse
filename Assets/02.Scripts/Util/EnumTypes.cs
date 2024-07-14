@@ -35,6 +35,13 @@ namespace EnumTypes
         OnClickWireListItem,
     }
 
+    public enum GameEvents
+    {
+        SelectedDisk,
+        SelectedWire,
+        IsReady,
+    }
+
     public enum DataEvents
     {
        

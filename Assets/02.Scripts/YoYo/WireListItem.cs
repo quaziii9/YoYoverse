@@ -41,5 +41,6 @@ public class WireListItem : InfiniteScrollItem
         }
 
         EventManager<UIEvents>.TriggerEvent(UIEvents.OnClickWireListItem, _yoYoData);
+        EventManager<GameEvents>.TriggerEvent(GameEvents.SelectedWire);
     }
 }
