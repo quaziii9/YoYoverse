@@ -1347,6 +1347,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 800e02b7542eade419c62700db3be452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedDisk: {fileID: 2874548}
+  selectedWire: {fileID: 119029167}
+  selectedDiskImage: {fileID: 2011077067}
+  selectedWireImage: {fileID: 1834666752}
+  selectedDiskName: {fileID: 2102988626}
+  selectedWireName: {fileID: 8249866}
 --- !u!1 &167724826
 GameObject:
   m_ObjectHideFlags: 0

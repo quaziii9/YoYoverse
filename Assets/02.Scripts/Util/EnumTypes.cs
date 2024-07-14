@@ -31,6 +31,8 @@ namespace EnumTypes
 
     public enum UIEvents
     {
+        OnClickDiskListItem,
+        OnClickWireListItem,
     }
 
     public enum DataEvents

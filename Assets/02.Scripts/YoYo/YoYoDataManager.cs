@@ -34,7 +34,6 @@ public class YoYoDataManager : Singleton<YoYoDataManager>
     // JSON 데이터를 로드하는 메서드
     private void LoadData()
     {
-        DebugLogger.Log(fileName);
         _yoyo = DataLoader<YoYoData>.LoadDataFromJson(fileName);
 
         // 타입별로 데이터를 필터링하여 각각의 스크롤 뷰에 설정
