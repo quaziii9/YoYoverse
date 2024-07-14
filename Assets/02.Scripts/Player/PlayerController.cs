@@ -8,23 +8,22 @@ public class PlayerController : MonoBehaviour
     [Header("MoveSpeed")] 
     [SerializeField] private float walkSpeed;
 
+    [Header("ClickPosition")]
+    [SerializeField] private Transform clickTransform;
+
     #region PlayerComponent
     private Rigidbody _rigidBody;
-    private PathFind _pathFinding;
-
+    private NavMeshAgent _agent;
     #endregion
 
     #region PlayerValue
-    private float _speedOffSet = 0.1f; // speed OffSet
-    private float _rotationVelocity; // rotationVelocity
-    private Vector3 _clickRayPosition; // click RayPosition
-    private bool _isMoving;
-    private float _fixedYPosition; // 고정된 y 위치
+    private float _rotationVelocity;
     #endregion
 
+    private Ray _mouseRay;
     private Camera _mainCamera;
-    private int _pathIndex;
-    private List<PathNode> _path;
+    
+    
 
     private void Awake()
     {
@@ -33,103 +32,47 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        HandleMouseClick();
-    }
-
-    private void FixedUpdate()
-    {
-        MovePlayer();
-        FixYPosition(); // y 위치 고정
+        PlayerMovement();
     }
 
     // 초기화 메서드
     private void Initialize()
     {
         _rigidBody = GetComponent<Rigidbody>();
-        _pathFinding = GetComponent<PathFind>();    
+        _agent = GetComponent<NavMeshAgent>();
         _mainCamera = Camera.main;
-        _fixedYPosition = transform.position.y; // 현재 y 위치를 고정된 y 위치로 설정
+        _agent.speed = walkSpeed;
     }
 
-    // 마우스 클릭 처리 메서드
-    private void HandleMouseClick()
+    //플레이어 이동
+    private void PlayerMovement()
     {
-        if (!Input.GetMouseButtonDown(1) && !Input.GetMouseButton(1)) return;
-
-        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-
-        if (!Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity)) return;
-
-        _clickRayPosition = new Vector3(hit.point.x, _fixedYPosition, hit.point.z); // y 값을 고정된 위치로 설정
-        _isMoving = true;
-    }
-
-    // 플레이어 이동 처리 메서드
-    private void MovePlayer()
-    {
-        if (!_isMoving) return;
-
-        if(_path == null || _path.Count == 0)
+        if (Input.GetMouseButtonDown(1))
         {
-            _path = _pathFinding.PathFinding(_clickRayPosition);
-            
-            _pathIndex = 0;
-        }
+            _mouseRay = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
-        if (_path == null || _path.Count == 0)
-        {
-            return;
-        }
-            
-        PathNode targetNode = _path[_pathIndex];
-
-        Vector3 targetPosition = new Vector3(targetNode.PosX, transform.position.y, targetNode.PosZ);
-
-        if(Vector3.Distance(transform.position, targetPosition) < 0.1f)
-        {
-            _pathIndex++;
-
-            if(_pathIndex >= _path.Count)
+            if(Physics.Raycast(_mouseRay, out RaycastHit hit, Mathf.Infinity))
             {
-                StopMovement();
-                return;
+                _agent.SetDestination(hit.point);
+
+                clickTransform.position = new Vector3(hit.point.x, 0.01f, hit.point.z);
+
+                ActiveTargetObject(true);
             }
-
-            targetNode = _path[_pathIndex];
-            targetPosition = new Vector3(targetNode.PosX, transform.position.y, targetNode.PosZ);
         }
-
-        Vector3 direction = (targetPosition - transform.position).normalized;
-
-        if (HasReachedTarget())
+        else if(_agent.remainingDistance < 0.1f)
         {
-            StopMovement();
-            return;
+            ActiveTargetObject(false);
         }
-
-        RotateTowardsDirection(direction);
-        _rigidBody.velocity = new Vector3(direction.x * walkSpeed, _rigidBody.velocity.y, direction.z * walkSpeed); // y 속도는 유지
     }
 
-    // 목표 지점에 도착했는지 확인하는 메서드
-    private bool HasReachedTarget()
+    //타겟 오브젝트 활성화 여부
+    private void ActiveTargetObject(bool isActive)
     {
-        //return Vector3.Distance(transform.position, _clickRayPosition) < _speedOffSet;
-        if (_path == null || _path.Count == 0)
-            return false;
-
-        return _pathIndex >= _path.Count;
+        clickTransform.gameObject.SetActive(isActive);
     }
 
-    // 이동을 멈추는 메서드
-    private void StopMovement()
-    {
-        _rigidBody.velocity = Vector3.zero;
-        _isMoving = false;
-        _path = null;
-    }
-
-    // 회전을 처리하는 메서드
+    // 회전을 처리하는 메서드 (현재 사용X, 삭제 X)
     private void RotateTowardsDirection(Vector3 direction)
     {
         if (_rigidBody.velocity == Vector3.zero) return;
@@ -139,11 +82,5 @@ public class PlayerController : MonoBehaviour
         float smoothRotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref _rotationVelocity, 0.12f);
 
         transform.rotation = Quaternion.Euler(0, smoothRotation, 0);
-    }
-
-    // y 위치를 고정하는 메서드
-    private void FixYPosition()
-    {
-        transform.position = new Vector3(transform.position.x, _fixedYPosition, transform.position.z);
     }
 }
