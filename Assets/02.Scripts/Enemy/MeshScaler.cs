@@ -1,12 +1,10 @@
 using UnityEngine;
 
-[ExecuteAlways]
 public class MeshScaler : MonoBehaviour
 {
     public Vector3 scale = new Vector3(1, 1, 1);
     [Range(0.01f, 90f)]
     public float viewAngle = 45f;
-
     private MeshRenderer meshRenderer;
 
     void Start()
@@ -17,19 +15,21 @@ public class MeshScaler : MonoBehaviour
 
     void Update()
     {
-        // Update the properties in the shader and mesh renderer if the scale or angle values change
         UpdateProperties();
     }
 
     void UpdateProperties()
     {
-        // Update the material's _Scale and _ViewAngle properties
-        if (meshRenderer != null && meshRenderer.material != null)
+        if (meshRenderer != null && meshRenderer.sharedMaterial != null)
         {
-            meshRenderer.material.SetVector("_Scale", new Vector4(scale.x, scale.y, scale.z, 1));
-            meshRenderer.material.SetFloat("_ViewAngle", viewAngle);
+            // 편집 모드에서는 Material을 직접 수정하지 않습니다.
+            if (Application.isPlaying)
+            {
+                meshRenderer.sharedMaterial.SetVector("_Scale", new Vector4(scale.x, scale.y, scale.z, 1));
+                meshRenderer.sharedMaterial.SetFloat("_ViewAngle", viewAngle);
+            }
 
-            // Update the transform scale of the mesh renderer
+            // Transform 스케일 업데이트는 편집 모드에서도 안전합니다.
             meshRenderer.transform.localScale = scale;
         }
     }
