@@ -76,6 +76,23 @@ public abstract class PlayerState : BaseState
     {
         _player = player;
     }
+
+    protected void AttackRotation()
+    {
+        _player.MouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(_player.MouseRay, out RaycastHit hit, 100))
+        {
+            Vector3 lookPosition = new Vector3(hit.point.x, _player.transform.position.y, hit.point.z);
+
+            float distance = Vector3.Distance(_player.transform.position, hit.point);
+
+            if (distance > 0.1f)
+            {
+                _player.transform.LookAt(lookPosition);
+            }
+        }
+    }
 }
 
 public class IdleState : PlayerState
@@ -114,6 +131,7 @@ public class IdleState : PlayerState
     {
         if (Input.GetMouseButtonDown(0))
         {
+            AttackRotation();
             _player.State.ChangeState(_State.ComboAttack1);
         }
     }
@@ -196,29 +214,12 @@ public class FirstAttackState : PlayerState
 
     public override void StateEnter()
     {
-        _player.Agent.enabled = false;
-
-        _player.Anim.applyRootMotion = true;
-
-        _player.IsNext = false;
-
-        _player.Anim.SetBool(_player.IsComboAttack1, true);
+        InitializeFirstAttack();
     }
 
     public override void StateUpdate()
     {
-        var animatorStateInfo = _player.Anim.GetCurrentAnimatorStateInfo(0);
-
-        if(animatorStateInfo.IsName("attack01") && animatorStateInfo.normalizedTime >= 1.0f)
-        {
-            _player.Anim.SetTrigger("ComboFail");
-            _player.State.ChangeState(_State.Idle);
-        }
-
-        if(Input.GetMouseButtonDown(0) && _player.IsNext)
-        {
-            _player.State.ChangeState(_State.ComboAttack2);
-        }
+        OnFirstAttackUpdate();
     }
 
     public override void StateExit()
@@ -226,23 +227,32 @@ public class FirstAttackState : PlayerState
         _player.Anim.SetBool(_player.IsComboAttack1, false);
     }
 
-    //레이 방향으로 회전하는 메소드
-    private void AttackRotation()
+    //네브메쉬 비활성화, 루트모션 활성화
+    private void InitializeFirstAttack()
     {
-        _player.MouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(_player.MouseRay, out RaycastHit hit, 100))
-        {
-            Vector3 lookPosition = new Vector3(hit.point.x, _player.transform.position.y, hit.point.z);
-
-            float distance = Vector3.Distance(_player.transform.position, hit.point);
-
-            if(distance > 0.1f)
-            {
-                _player.transform.LookAt(lookPosition);
-            }
-        }
+        _player.Agent.enabled = false;
+        _player.Anim.applyRootMotion = true;
+        _player.Anim.SetBool(_player.IsComboAttack1, true);
+        _player.IsNext = false;
     }
+
+    //첫번째 공격 업데이트
+    private void OnFirstAttackUpdate()
+    {
+        var animatorStateInfo = _player.Anim.GetCurrentAnimatorStateInfo(0);
+
+        if (animatorStateInfo.IsName("attack01") && animatorStateInfo.normalizedTime >= 1.0f)
+        {
+            _player.Anim.SetTrigger("ComboFail");
+            _player.State.ChangeState(_State.Idle);
+        }
+
+        if (Input.GetMouseButtonDown(0) && _player.IsNext)
+        {
+            AttackRotation();
+            _player.State.ChangeState(_State.ComboAttack2);
+        }
+    } 
 }
 
 public class SecondAttackState : PlayerState
@@ -251,30 +261,40 @@ public class SecondAttackState : PlayerState
 
     public override void StateEnter()
     {
-        _player.Anim.SetBool(_player.IsComboAttack2, true);
-
-        _player.IsNext = false;
+        InitializeSecondAttack();
     }
 
     public override void StateUpdate()
     {
-        var animatorStateInfo = _player.Anim.GetCurrentAnimatorStateInfo(0);
-
-        if(animatorStateInfo.IsName("attack02") && animatorStateInfo.normalizedTime >= 1.0f)
-        {
-            _player.Anim.SetTrigger("ComboFail");
-            _player.State.ChangeState(_State.Idle);
-        }
-
-        if(Input.GetMouseButtonDown(0) && _player.IsNext)
-        {
-            _player.State.ChangeState(_State.ComboAttack3);
-        }
+        OnSecondAttackUpdate();
     }
 
     public override void StateExit()
     {
         _player.Anim.SetBool(_player.IsComboAttack2, false);
+    }
+
+    private void InitializeSecondAttack()
+    {
+        _player.Anim.SetBool(_player.IsComboAttack2, true);
+        _player.IsNext = false;
+    }
+
+    private void OnSecondAttackUpdate()
+    {
+        var animatorStateInfo = _player.Anim.GetCurrentAnimatorStateInfo(0);
+
+        if (animatorStateInfo.IsName("attack02") && animatorStateInfo.normalizedTime >= 1.0f)
+        {
+            _player.Anim.SetTrigger("ComboFail");
+            _player.State.ChangeState(_State.Idle);
+        }
+
+        if (Input.GetMouseButtonDown(0) && _player.IsNext)
+        {
+            AttackRotation();
+            _player.State.ChangeState(_State.ComboAttack3);
+        }
     }
 
 }
@@ -285,19 +305,12 @@ public class ThirdAttackState : PlayerState
 
     public override void StateEnter()
     {
-        _player.Anim.SetBool(_player.IsComboAttack3, true);
-
-        _player.IsNext = false;
+        InitializeThirdAttack();
     }
 
     public override void StateUpdate()
     {
-        var animatorStateInfo = _player.Anim.GetCurrentAnimatorStateInfo(0);
-
-        if(animatorStateInfo.IsName("attack03") && animatorStateInfo.normalizedTime >= 1.0f)
-        {
-            _player.State.ChangeState(_State.Idle);
-        }
+        OnThirdAttackUpDate();
     }
 
     public override void StateExit()
@@ -305,4 +318,19 @@ public class ThirdAttackState : PlayerState
         _player.Anim.SetBool(_player.IsComboAttack3, false);
     }
 
+    private void InitializeThirdAttack()
+    {
+        _player.Anim.SetBool(_player.IsComboAttack3, true);
+        _player.IsNext = false;
+    }
+
+    private void OnThirdAttackUpDate()
+    {
+        var animatorStateInfo = _player.Anim.GetCurrentAnimatorStateInfo(0);
+
+        if (animatorStateInfo.IsName("attack03") && animatorStateInfo.normalizedTime >= 1.0f)
+        {
+            _player.State.ChangeState(_State.Idle);
+        }
+    }
 }
