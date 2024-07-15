@@ -19,11 +19,16 @@ public class PlayerController : MonoBehaviour
 
     #region PlayerValue
     private float _rotationVelocity;
+    private bool isMove;
     #endregion
 
     private Ray _mouseRay;
     private Camera _mainCamera;
-    
+    public bool IsMove
+    {
+        get { return isMove; }
+        set { isMove = value; }
+    }
     
 
     private void Awake()
@@ -44,16 +49,26 @@ public class PlayerController : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
         _mainCamera = Camera.main;
         _agent.speed = walkSpeed;
+        clickTransform.gameObject.SetActive(false);
+        isMove = true;
     }
 
     //플레이어 이동
     private void PlayerMovement()
     {
+        if (isMove)
+        {
+            ClickMove();
+        }
+    }
+
+    private void ClickMove()
+    {
         if (Input.GetMouseButtonDown(1))
         {
             _mouseRay = _mainCamera.ScreenPointToRay(Input.mousePosition);
 
-            if(Physics.Raycast(_mouseRay, out RaycastHit hit, Mathf.Infinity))
+            if (Physics.Raycast(_mouseRay, out RaycastHit hit, Mathf.Infinity))
             {
                 _agent.SetDestination(hit.point);
 
@@ -62,7 +77,7 @@ public class PlayerController : MonoBehaviour
                 ActiveTargetObject(true);
             }
         }
-        else if(_agent.remainingDistance < 0.1f)
+        else if (_agent.remainingDistance < 0.1f)
         {
             ActiveTargetObject(false);
         }
