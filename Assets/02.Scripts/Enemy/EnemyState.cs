@@ -1,119 +1,179 @@
-using Unity.IO.LowLevel.Unsafe;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class PatrolState : IEnemyState
+public interface IState
 {
-    public void Enter(EnemyAI enemy)
-    {
-        enemy.enemyFire.isFire = false;
-        enemy.moveAgent.patrolling = true;
+    void Enter();
+    void ExecuteOnUpdate();
+    void Exit();
+}
 
-        enemy.animator.SetBool(enemy.hashMove, true);
+public class IdleState : IState
+{
+    private EnemyAI enemyAI;
+
+    public IdleState(EnemyAI enemyAI)
+    {
+        this.enemyAI = enemyAI;
     }
 
-    public void Execute(EnemyAI enemy)
+    public void Enter()
     {
-        float dist = Vector3.Distance(enemy.playerTr.position, enemy.enemyTr.position);
+        enemyAI.animator.SetBool(enemyAI.Idle, true);
+        enemyAI.StartCoroutine(RotateCoroutine());
+    }
 
-        if (enemy.playerHp <= 0)
+    public void ExecuteOnUpdate()
+    {
+        // Add any other update logic if needed
+    }
+
+    public void Exit()
+    {
+        enemyAI.animator.SetBool(enemyAI.Idle, false);
+        enemyAI.StopCoroutine(RotateCoroutine());
+    }
+
+    private IEnumerator RotateCoroutine()
+    {
+        while (true)
         {
-            enemy.SetState(new DieState());
-        }
-        else if (dist <= enemy.attackDist)
-        {
-            enemy.SetState(new AttackState());
-        }
-        else if (dist <= enemy.traceDis)
-        {
-            enemy.SetState(new TraceState());
+            float targetAngle = enemyAI.transform.eulerAngles.y + enemyAI.RotationAngle;
+            yield return RotateToAngle(targetAngle);
+
+            yield return new WaitForSeconds(1f); // Wait for 1 second before rotating back
+
+            targetAngle = enemyAI.transform.eulerAngles.y - enemyAI.RotationAngle;
+            yield return RotateToAngle(targetAngle);
+
+            yield return new WaitForSeconds(1f); // Wait for 1 second before rotating again
         }
     }
 
-    public void Exit(EnemyAI enemy)
+    private IEnumerator RotateToAngle(float targetAngle)
     {
-        enemy.moveAgent.patrolling = false;
+        float currentAngle = enemyAI.transform.eulerAngles.y;
+        float startAngle = currentAngle;
+        float t = 0f;
+        float duration = 1f; // 1 second duration for rotation
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float angle = Mathf.Lerp(startAngle, targetAngle, t / duration);
+            enemyAI.transform.eulerAngles = new Vector3(enemyAI.transform.eulerAngles.x, angle, enemyAI.transform.eulerAngles.z);
+            yield return null;
+        }
+
+        enemyAI.transform.eulerAngles = new Vector3(enemyAI.transform.eulerAngles.x, targetAngle, enemyAI.transform.eulerAngles.z);
     }
 }
 
-public class TraceState : IEnemyState
+public class PatrolState : IState
 {
-    public void Enter(EnemyAI enemy)
+    private EnemyAI enemyAI;
+
+    public PatrolState(EnemyAI enemyAI)
     {
-        enemy.enemyFire.isFire = false;
-        enemy.animator.SetBool(enemy.hashMove, true);
+        this.enemyAI = enemyAI;
     }
 
-    public void Execute(EnemyAI enemy)
+    public void Enter()
     {
-        float dist = Vector3.Distance(enemy.playerTr.position, enemy.enemyTr.position);
-
-        if (enemy.playerHp <= 0)
-        {
-            enemy.SetState(new DieState());
-        }
-        else if (dist <= enemy.attackDist)
-        {
-            enemy.SetState(new AttackState());
-        }
-        else if (dist > enemy.traceDis)
-        {
-            enemy.SetState(new PatrolState());
-        }
-
-        enemy.moveAgent.traceTarget = enemy.playerTr.position;
+        enemyAI.moveAgent.patrolling = true;
+        enemyAI.animator.SetBool(enemyAI.hashMove, true);
     }
 
-    public void Exit(EnemyAI enemy)
+    public void ExecuteOnUpdate()
     {
-        enemy.moveAgent.Stop();
+        // 상태 업데이트 코드
+    }
+
+    public void Exit()
+    {
+        enemyAI.moveAgent.patrolling = false;
+        enemyAI.animator.SetBool(enemyAI.hashMove, false);
     }
 }
 
-public class AttackState : IEnemyState
+public class TraceState : IState
 {
-    public void Enter(EnemyAI enemy)
+    private EnemyAI enemyAI;
+
+    public TraceState(EnemyAI enemyAI)
     {
-        enemy.enemyFire.isFire = true;
-        enemy.moveAgent.Stop();
-        enemy.animator.SetBool(enemy.hashMove, false);
+        this.enemyAI = enemyAI;
     }
 
-    public void Execute(EnemyAI enemy)
+    public void Enter()
     {
-        float dist = Vector3.Distance(enemy.playerTr.position, enemy.enemyTr.position);
-
-        if (enemy.playerHp <= 0)
-        {
-            enemy.SetState(new DieState());
-        }
-        else if (dist > enemy.attackDist)
-        {
-            enemy.SetState(new TraceState());
-        }
+        enemyAI.animator.SetBool(enemyAI.hashMove, true);
     }
 
-    public void Exit(EnemyAI enemy)
+    public void ExecuteOnUpdate()
     {
-        enemy.enemyFire.isFire = false;
+        enemyAI.moveAgent.traceTarget = enemyAI.playerTr.position;
+    }
+
+    public void Exit()
+    {
+        enemyAI.animator.SetBool(enemyAI.hashMove, false);
     }
 }
 
-public class DieState : IEnemyState
+public class AttackState : IState
 {
-    public void Enter(EnemyAI enemy)
-    {
-        enemy.isDie = true;
-        enemy.enemyFire.isFire = false;
-        enemy.moveAgent.Stop();
-        enemy.animator.SetBool(enemy.hashDie, true);
+    private EnemyAI enemyAI;
 
-        foreach (Collider collider in enemy.childColliders)
-        {
-            collider.enabled = false;
-        }
+    public AttackState(EnemyAI enemyAI)
+    {
+        this.enemyAI = enemyAI;
     }
 
-    public void Execute(EnemyAI enemy) { }
+    public void Enter()
+    {
+        enemyAI.moveAgent.Stop();
+        enemyAI.animator.SetBool(enemyAI.hashMove, false);
+        enemyAI.enemyFire.isFire = true;
+    }
 
-    public void Exit(EnemyAI enemy) { }
+    public void ExecuteOnUpdate()
+    {
+        // 공격 상태 업데이트 코드
+    }
+
+    public void Exit()
+    {
+        enemyAI.enemyFire.isFire = false;
+    }
+}
+
+public class DieState : IState
+{
+    private EnemyAI enemyAI;
+
+    public DieState(EnemyAI enemyAI)
+    {
+        this.enemyAI = enemyAI;
+    }
+
+    public void Enter()
+    {
+        enemyAI.isDie = true;
+        enemyAI.enemyFire.isFire = false;
+        enemyAI.moveAgent.Stop();
+
+        enemyAI.animator.SetBool(enemyAI.hashDie, true);
+    }
+
+    public void ExecuteOnUpdate()
+    {
+        // 사망 상태 업데이트 코드
+    }
+
+    public void Exit()
+    {
+        // 사망 상태 종료 코드
+    }
 }
