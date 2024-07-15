@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     #region PlayerComponent
     private Rigidbody _rigidBody;
     private NavMeshAgent _agent;
+    private Animator _animator;
     #endregion
 
     #region PlayerValue
@@ -39,6 +40,7 @@ public class PlayerController : MonoBehaviour
     private void Initialize()
     {
         _rigidBody = GetComponent<Rigidbody>();
+        _animator = GetComponent<Animator>();
         _agent = GetComponent<NavMeshAgent>();
         _mainCamera = Camera.main;
         _agent.speed = walkSpeed;
@@ -64,6 +66,18 @@ public class PlayerController : MonoBehaviour
         {
             ActiveTargetObject(false);
         }
+
+        AnimationMoveMent();
+    }
+
+    //이동 애니메이션
+    private void AnimationMoveMent()
+    {
+        Vector3 currentVelocity = _agent.velocity;
+
+        float speed = currentVelocity.magnitude;
+
+        _animator.SetFloat("Move", speed);
     }
 
     //타겟 오브젝트 활성화 여부
