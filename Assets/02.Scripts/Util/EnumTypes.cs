@@ -33,6 +33,8 @@ namespace EnumTypes
     {
         OnClickDiskListItem,
         OnClickWireListItem,
+        StartDraggingSkillIcon,
+        StopDraggingSkillIcon,
     }
 
     public enum GameEvents
