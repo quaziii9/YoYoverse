@@ -6,7 +6,9 @@ public enum _State
 {
     Idle,
     Move,
-    Attack,
+    ComboAttack1,
+    ComboAttack2,
+    ComboAttack3
 }
 
 public class PlayerStateMachine : MonoBehaviour

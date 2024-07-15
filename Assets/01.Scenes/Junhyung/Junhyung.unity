@@ -4107,8 +4107,8 @@ Animator:
   m_Avatar: {fileID: 9000000, guid: d545c23146c9d5e499da75ed6167c0b0, type: 3}
   m_Controller: {fileID: 9100000, guid: 27e8c6627e5320745adccb797a8b4845, type: 2}
   m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_UpdateMode: 1
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -6709,8 +6709,8 @@ GameObject:
   - component: {fileID: 7970834197154508615}
   - component: {fileID: 4070756723404830013}
   - component: {fileID: 7970834197154508618}
+  - component: {fileID: 7970834197154508619}
   - component: {fileID: 7970834197154508617}
-  - component: {fileID: 7970834197154508616}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -7218,20 +7218,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7970834197154508616
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7337990881458157053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7eaee3726a5ed4409011dd078c5e5a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  walkSpeed: 10
-  clickTransform: {fileID: 574078307}
 --- !u!114 &7970834197154508617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7274,6 +7260,20 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &7970834197154508619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7337990881458157053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8d97437088cc6044b2658804ca83f67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkSpeed: 10
+  clickTransform: {fileID: 574078307}
 --- !u!4 &7975042172097768900
 Transform:
   m_ObjectHideFlags: 0

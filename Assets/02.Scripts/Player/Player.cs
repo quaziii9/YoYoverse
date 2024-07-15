@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
     #region PlayerValue
     private Ray _mouseRay;
     private Camera _mainCamera;
-    private bool isMove;
+    private bool isNext;
     #endregion
 
     #region Property
@@ -29,10 +29,14 @@ public class Player : MonoBehaviour
     public Transform ClickObject { get { return clickTransform; } }
     public Camera MainCamera { get {  return _mainCamera; } }
     public Ray MouseRay { get { return _mouseRay; } set { _mouseRay = value; } }
-    public bool IsMove { get { return isMove; } }
+    public bool IsNext { get { return isNext; } set { isNext = value; } }
     #endregion
 
-    
+    #region Animation 
+    public readonly int IsComboAttack1 = Animator.StringToHash("IsComboAttack1");
+    public readonly int IsComboAttack2 = Animator.StringToHash("IsComboAttack2");
+    public readonly int IsComboAttack3 = Animator.StringToHash("IsComboAttack3");
+    #endregion
 
     private void Awake()
     {
@@ -54,6 +58,14 @@ public class Player : MonoBehaviour
         _state = gameObject.AddComponent<PlayerStateMachine>();
         _state.AddState(_State.Idle, new IdleState(this));
         _state.AddState(_State.Move , new MoveState(this));  
+        _state.AddState(_State.ComboAttack1, new FirstAttackState(this));
+        _state.AddState(_State.ComboAttack2, new SecondAttackState(this));
+        _state.AddState(_State.ComboAttack3, new ThirdAttackState(this));  
+    }
+
+    public void ChangeNextAttack()
+    {
+        isNext = true;
     }
 }
 
@@ -79,6 +91,7 @@ public class IdleState : PlayerState
     public override void StateUpdate()
     {
         ChangeMove();
+        ChangeAttack();
     }
 
     public override void StateExit()
@@ -96,25 +109,36 @@ public class IdleState : PlayerState
             _player.State.ChangeState(_State.Move);
         }
     }
+
+    private void ChangeAttack()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            _player.State.ChangeState(_State.ComboAttack1);
+        }
+    }
 }
 
 public class MoveState : PlayerState
 {
     public MoveState(Player player) : base(player) { }
 
+    //상태 진입.
     public override void StateEnter()
     {
         RayCast();
     }
 
+    //현재 상태 업데이트.
     public override void StateUpdate()
     {
         ClickMove();
     }
 
+    //상태 종료.
     public override void StateExit()
     {
-     
+        _player.Agent.SetDestination(_player.transform.position);
     }
 
     //이동처리 메소드
@@ -166,4 +190,119 @@ public class MoveState : PlayerState
     }
 }
 
+public class FirstAttackState : PlayerState
+{
+    public FirstAttackState(Player player) : base(player) { }
 
+    public override void StateEnter()
+    {
+        _player.Agent.enabled = false;
+
+        _player.Anim.applyRootMotion = true;
+
+        _player.IsNext = false;
+
+        _player.Anim.SetBool(_player.IsComboAttack1, true);
+    }
+
+    public override void StateUpdate()
+    {
+        var animatorStateInfo = _player.Anim.GetCurrentAnimatorStateInfo(0);
+
+        if(animatorStateInfo.IsName("attack01") && animatorStateInfo.normalizedTime >= 1.0f)
+        {
+            _player.Anim.SetTrigger("ComboFail");
+            _player.State.ChangeState(_State.Idle);
+        }
+
+        if(Input.GetMouseButtonDown(0) && _player.IsNext)
+        {
+            _player.State.ChangeState(_State.ComboAttack2);
+        }
+    }
+
+    public override void StateExit()
+    {
+        _player.Anim.SetBool(_player.IsComboAttack1, false);
+    }
+
+    //레이 방향으로 회전하는 메소드
+    private void AttackRotation()
+    {
+        _player.MouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(_player.MouseRay, out RaycastHit hit, 100))
+        {
+            Vector3 lookPosition = new Vector3(hit.point.x, _player.transform.position.y, hit.point.z);
+
+            float distance = Vector3.Distance(_player.transform.position, hit.point);
+
+            if(distance > 0.1f)
+            {
+                _player.transform.LookAt(lookPosition);
+            }
+        }
+    }
+}
+
+public class SecondAttackState : PlayerState
+{
+    public SecondAttackState(Player player) : base(player) { }
+
+    public override void StateEnter()
+    {
+        _player.Anim.SetBool(_player.IsComboAttack2, true);
+
+        _player.IsNext = false;
+    }
+
+    public override void StateUpdate()
+    {
+        var animatorStateInfo = _player.Anim.GetCurrentAnimatorStateInfo(0);
+
+        if(animatorStateInfo.IsName("attack02") && animatorStateInfo.normalizedTime >= 1.0f)
+        {
+            _player.Anim.SetTrigger("ComboFail");
+            _player.State.ChangeState(_State.Idle);
+        }
+
+        if(Input.GetMouseButtonDown(0) && _player.IsNext)
+        {
+            _player.State.ChangeState(_State.ComboAttack3);
+        }
+    }
+
+    public override void StateExit()
+    {
+        _player.Anim.SetBool(_player.IsComboAttack2, false);
+    }
+
+}
+
+public class ThirdAttackState : PlayerState
+{
+    public ThirdAttackState(Player player) : base(player) { }
+
+    public override void StateEnter()
+    {
+        _player.Anim.SetBool(_player.IsComboAttack3, true);
+
+        _player.IsNext = false;
+    }
+
+    public override void StateUpdate()
+    {
+        var animatorStateInfo = _player.Anim.GetCurrentAnimatorStateInfo(0);
+
+        if(animatorStateInfo.IsName("attack03") && animatorStateInfo.normalizedTime >= 1.0f)
+        {
+            _player.State.ChangeState(_State.Idle);
+        }
+    }
+
+    public override void StateExit()
+    {
+        _player.Anim.SetBool(_player.IsComboAttack3, false);
+    }
+
+}
