@@ -56,7 +56,7 @@ public class IdleState : IState
         float currentAngle = enemyAI.transform.eulerAngles.y;
         float startAngle = currentAngle;
         float t = 0f;
-        float duration = 1f; // 1 second duration for rotation
+        float duration = 2f; // 1 second duration for rotation
 
         while (t < duration)
         {
@@ -133,19 +133,30 @@ public class AttackState : IState
 
     public void Enter()
     {
-        enemyAI.moveAgent.Stop();
-        enemyAI.animator.SetBool(enemyAI.hashMove, false);
-        enemyAI.enemyFire.isFire = true;
+        Debug.Log("ENTER");
+        //enemyAI.moveAgent.Stop();
+        //enemyAI.animator.SetBool(enemyAI.hashMove, false);
+        //enemyAI.enemyFire.isFire = true;
+        //enemyAI.enemyFire.StartFiring();
     }
 
     public void ExecuteOnUpdate()
     {
-        // 공격 상태 업데이트 코드
+        //if (Vector3.Distance(enemyAI.playerTr.position, enemyAI.enemyTr.position) <= enemyAI.attackDist)
+        //{
+        //    enemyAI.enemyFire.AdjustAim(enemyAI.playerTr.position); // 목표 조준 조정
+        //}
+        //else
+        //{
+        //    // 플레이어가 공격 범위 밖으로 벗어나면 공격 상태를 종료
+        //    enemyAI.ChangeState(EnemyState.Idle);
+        //}
     }
 
     public void Exit()
     {
-        enemyAI.enemyFire.isFire = false;
+        //enemyAI.enemyFire.isFire = false; // 적이 발사 중지
+        //enemyAI.enemyFire.StopFiring();
     }
 }
 

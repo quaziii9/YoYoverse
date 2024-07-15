@@ -1,9 +1,7 @@
-using DG.Tweening.Core.Easing;
-using System.Collections;
 using UnityEngine;
-using static UnityEditor.Rendering.InspectorCurveEditor;
-using UnityEngine.Playables;
 using System;
+using EventLibrary;
+using EnumTypes;
 
 
 public enum EnemyState
@@ -29,7 +27,6 @@ public class EnemyAI : MonoBehaviour
     public EnemyType EnemyType;
     public int RotationAngle;
 
-    [Header("Transform")]
     public Transform playerTr;
     public Transform enemyTr;
 
@@ -65,8 +62,12 @@ public class EnemyAI : MonoBehaviour
 
     private void OnEnable()
     {
-        // StartCoroutine(CheckState());
-        //StartCoroutine(Action());
+        EventManager<EnemyEvents>.StartListening(EnemyEvents.ChangeEnemyStateAttack, ChangeAttackState);
+    }
+
+    private void OnDisable()
+    {
+        EventManager<EnemyEvents>.StopListening(EnemyEvents.ChangeEnemyStateAttack, ChangeAttackState);
     }
 
     public void Start()
@@ -82,6 +83,7 @@ public class EnemyAI : MonoBehaviour
 
     public void ChangeState(EnemyState newState)
     {
+        Debug.Log("!");
         CurrentStateInstance?.Exit(); // 현재 상태 종료
 
         EnemyCurstate = newState;
@@ -110,6 +112,11 @@ public class EnemyAI : MonoBehaviour
     }
 
 
+    // 적감지 eventmanager로 불러올 함수 
+    private void ChangeAttackState()
+    {
+        ChangeState(EnemyState.ATTACK);
+    }
 
     //IEnumerator CheckState()
     //{

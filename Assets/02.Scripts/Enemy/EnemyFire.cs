@@ -5,8 +5,8 @@ using UnityEngine.Pool;
 
 public class EnemyFire : MonoBehaviour
 {
-    public AudioSource gunShot;
-    public AudioSource reload;
+    //public AudioSource gunShot;
+    //public AudioSource reload;
 
     private Animator animator;
     private Transform playerTr;
@@ -19,7 +19,7 @@ public class EnemyFire : MonoBehaviour
     private readonly float fireRate = 0.1f;
     private readonly float damping = 10.0f;
 
-    [SerializeField] private readonly float realoadTime = 3.0f;
+    [SerializeField] private readonly float reloadTime = 3.0f;
     [SerializeField] private readonly int maxBullet = 10;
     public float MinFireTime { get; set; }
     public float MaxFireTime { get; set; }
@@ -36,7 +36,6 @@ public class EnemyFire : MonoBehaviour
     public GameObject bullet_Shell;
 
     [SerializeField] private Transform firePos;
-    [SerializeField] private Transform shellPos;
 
     private Vector3 randomFirePos;
     private float randomX;
@@ -46,7 +45,7 @@ public class EnemyFire : MonoBehaviour
     {
         enemyTr = GetComponent<Transform>();
         animator = GetComponent<Animator>();
-        wsReload = new WaitForSeconds(realoadTime);
+        wsReload = new WaitForSeconds(reloadTime);
 
         MinFireTime = 0f;
         MaxFireTime = 2f;
@@ -54,9 +53,6 @@ public class EnemyFire : MonoBehaviour
 
     void Update()
     {
-        var player = GameObject.FindGameObjectWithTag("Player");
-        playerTr = player.GetComponent<Transform>();
-        // Debug.Log(playerTr.position);
         if (!isReload && isFire)
         {
             if (Time.time >= nextFire)
@@ -64,28 +60,24 @@ public class EnemyFire : MonoBehaviour
                 Fire();
                 nextFire = Time.time + fireRate + Random.Range(MinFireTime, MaxFireTime);
             }
-
-            // 플레이어 바라보게 
-            Quaternion rot = Quaternion.LookRotation(playerTr.position - enemyTr.position);
-            enemyTr.rotation = Quaternion.Slerp(enemyTr.rotation, rot, Time.deltaTime * damping);
         }
     }
 
     private void Fire()
     {
-        randomX = (Random.Range(0, 0.8f));
-        randomY = (Random.Range(0, 1.2f));
+        randomX = Random.Range(0, 0.8f);
+        randomY = Random.Range(0, 1.2f);
         randomFirePos = new Vector3(randomX, randomY, 0);
         animator.SetTrigger(hashFire);
 
-        GameObject bulletIst = ObjectPool.Instance.DequeueObject(bullet);
-        bulletIst.transform.position = firePos.position + randomFirePos;
-        bulletIst.transform.rotation = firePos.rotation;
+        GameObject bulletInstance = ObjectPool.Instance.DequeueObject(bullet);
+        bulletInstance.transform.position = firePos.position + randomFirePos;
+        bulletInstance.transform.rotation = firePos.rotation;
 
-        bulletIst.GetComponent<Rigidbody>().velocity = bulletIst.transform.forward * 500;
+        bulletInstance.GetComponent<Rigidbody>().velocity = bulletInstance.transform.forward * 500;
 
-        EffectManager.Instance.FireEffectGenenate(firePos.position, firePos.rotation);
-        gunShot.PlayOneShot(gunShot.clip);
+        //EffectManager.Instance.FireEffectGenerate(firePos.position, firePos.rotation);
+        //gunShot.PlayOneShot(gunShot.clip);
         isReload = (--currBullet % maxBullet == 0);
 
         if (isReload)
@@ -97,11 +89,28 @@ public class EnemyFire : MonoBehaviour
     IEnumerator Reloading()
     {
         animator.SetTrigger(hashReload);
-        reload.PlayOneShot(reload.clip);
+       // reload.PlayOneShot(reload.clip);
 
         yield return wsReload;
 
         currBullet = maxBullet;
         isReload = false;
     }
+
+    // 추가할 메서드
+    public void AdjustAim(Vector3 targetPosition)
+    {
+        // Aim adjustment logic here
+    }
+
+    public void StartFiring()
+    {
+        isFire = true;
+    }
+
+    public void StopFiring()
+    {
+        isFire = false;
+    }
 }
+

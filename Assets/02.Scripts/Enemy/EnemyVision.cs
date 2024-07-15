@@ -1,4 +1,6 @@
 using UnityEngine;
+using EventLibrary;
+using EnumTypes;
 
 public class EnemyVision : MonoBehaviour
 {
@@ -25,7 +27,8 @@ public class EnemyVision : MonoBehaviour
                 if (Physics.Raycast(rayStart, dir, out RaycastHit hit, viewDistance, playerLayer))
                 {
                     Debug.Log("플레이어가 감지되었습니다!");
-                    // 여기에 플레이어 감지 시 수행할 동작을 추가하세요.
+
+                    EventManager<EnemyEvents>.TriggerEvent(EnemyEvents.ChangeEnemyStateAttack);
                     return;
                 }
             }
