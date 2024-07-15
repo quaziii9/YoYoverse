@@ -41,7 +41,7 @@ namespace EnumTypes
     {
         SelectedDisk,
         SelectedWire,
-        IsReady,
+        IsEquipReady,
     }
 
     public enum DataEvents

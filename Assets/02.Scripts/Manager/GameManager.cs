@@ -1,4 +1,3 @@
-using System;
 using EnumTypes;
 using EventLibrary;
 using UnityEngine;
@@ -8,7 +7,8 @@ public class GameManager : MonoBehaviour
     private bool _selectedDisk;
     private bool _selectedWire;
 
-    public bool IsReady { get; private set; }
+    public bool IsEquipReady { get; private set; }
+    public bool IsSkillReady { get; private set; }
 
     private void Awake()
     {
@@ -21,8 +21,8 @@ public class GameManager : MonoBehaviour
 
         if (_selectedWire)
         {
-            IsReady = true;
-            EventManager<GameEvents>.TriggerEvent(GameEvents.IsReady);
+            IsEquipReady = true;
+            EventManager<GameEvents>.TriggerEvent(GameEvents.IsEquipReady);
         }
     }
 
@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     {
         _selectedWire = true;
         
-        if (_selectedDisk) IsReady = true;
-        EventManager<GameEvents>.TriggerEvent(GameEvents.IsReady);
+        if (_selectedDisk) IsEquipReady = true;
+        EventManager<GameEvents>.TriggerEvent(GameEvents.IsEquipReady);
     }
 }

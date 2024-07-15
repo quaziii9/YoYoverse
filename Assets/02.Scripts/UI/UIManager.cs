@@ -73,7 +73,7 @@ public class UIManager : Singleton<UIManager>
     {
         EventManager<UIEvents>.StartListening<YoYoData>(UIEvents.OnClickDiskListItem, UpdateSelectedDisk);
         EventManager<UIEvents>.StartListening<YoYoData>(UIEvents.OnClickWireListItem, UpdateSelectedWire);
-        EventManager<GameEvents>.StartListening(GameEvents.IsReady, EnableDecisionButton);
+        EventManager<GameEvents>.StartListening(GameEvents.IsEquipReady, EnableDecisionButton);
     }
 
     // 이벤트 리스너를 제거하는 메서드
@@ -81,7 +81,7 @@ public class UIManager : Singleton<UIManager>
     {
         EventManager<UIEvents>.StopListening<YoYoData>(UIEvents.OnClickDiskListItem, UpdateSelectedDisk);
         EventManager<UIEvents>.StopListening<YoYoData>(UIEvents.OnClickWireListItem, UpdateSelectedWire);
-        EventManager<GameEvents>.StopListening(GameEvents.IsReady, EnableDecisionButton);
+        EventManager<GameEvents>.StopListening(GameEvents.IsEquipReady, EnableDecisionButton);
     }
 
     private void AddButtonEvents()

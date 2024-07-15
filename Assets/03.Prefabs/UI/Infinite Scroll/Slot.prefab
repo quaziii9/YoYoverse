@@ -145,8 +145,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6813922371819012822}
   - component: {fileID: 6813922371819012816}
-  - component: {fileID: 2799075097404266087}
   - component: {fileID: 7528929340876986220}
+  - component: {fileID: 2799075097404266087}
   m_Layer: 5
   m_Name: Slot
   m_TagString: Untagged
@@ -183,19 +183,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6813922371819012821}
   m_CullTransparentMesh: 1
---- !u!114 &2799075097404266087
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6813922371819012821}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2075a99a2130bad4d929e3b7a24bbde3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  skillList: {fileID: 0}
 --- !u!114 &7528929340876986220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,3 +213,22 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2799075097404266087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6813922371819012821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2075a99a2130bad4d929e3b7a24bbde3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillDescritptionUI: {fileID: 0}
+  skillNameText: {fileID: 0}
+  skillIconImage: {fileID: 0}
+  skillDescriptionText: {fileID: 0}
+  skillCooldownText: {fileID: 0}
+  skillDamageText: {fileID: 0}
+  skillRangeText: {fileID: 0}
