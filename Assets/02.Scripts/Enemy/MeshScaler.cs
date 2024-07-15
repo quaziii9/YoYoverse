@@ -10,12 +10,12 @@ public class MeshScaler : MonoBehaviour
     void Start()
     {
         meshRenderer = GetComponent<MeshRenderer>();
-        UpdateProperties();
+        //UpdateProperties();
     }
 
     void Update()
     {
-        UpdateProperties();
+       // UpdateProperties();
     }
 
     void UpdateProperties()
