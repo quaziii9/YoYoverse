@@ -144,11 +144,9 @@ public class AttackState : IState
     private Transform _enemyTr;
     private Transform _playerTr;
     private EnemyFire _enemyFire;
-    private float rotationSpeed = 30f; // 회전 속도
-    private float shootCooldown = 1f; // 발사 간 대기 시간
-    private float lastShootTime;
-    private NavMeshAgent _navMeshAgent;
+    private float rotationSpeed = 60f; // 회전 속도
     private Coroutine smoothRotationCoroutine;
+    private bool hasFiredInitialShot = false; // 초기 발사 여부를 추적하는 변수
 
     public AttackState(EnemyAI enemyAI)
     {
@@ -156,30 +154,20 @@ public class AttackState : IState
         _enemyTr = enemyAI.transform;
         _playerTr = enemyAI.playerTr;
         _enemyFire = enemyAI.enemyFire;
-        _navMeshAgent = enemyAI.enemyMoveAgent.agent;
     }
 
     public void Enter()
     {
-        // 부드러운 초기 회전 시작
+        // 부드러운 초기 회전 시작 및 지속적인 회전 코루틴 실행
         smoothRotationCoroutine = enemyAI.StartCoroutine(SmoothRotation());
     }
 
     public void ExecuteOnUpdate()
     {
-        // 부드러운 회전이 완료된 후에만 발사 시도
+        // 부드러운 회전을 지속적으로 수행
         if (smoothRotationCoroutine == null)
         {
-            Vector3 direction = (_playerTr.position - _enemyTr.position).normalized;
-            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-            _enemyTr.rotation = Quaternion.Slerp(_enemyTr.rotation, lookRotation, rotationSpeed * Time.deltaTime);
-
-            // 쿨다운이 지나고 발사 애니메이션이 끝났다면 발사
-            if (Time.time >= lastShootTime + shootCooldown && _enemyFire.isFireAnimIng == false)
-            {
-                _enemyFire.StartCoroutine(_enemyFire.FireAfterRotation());
-                lastShootTime = Time.time;
-            }
+            smoothRotationCoroutine = enemyAI.StartCoroutine(SmoothRotation());
         }
     }
 
@@ -188,26 +176,38 @@ public class AttackState : IState
         if (smoothRotationCoroutine != null)
         {
             enemyAI.StopCoroutine(smoothRotationCoroutine);
+            smoothRotationCoroutine = null;
         }
     }
 
     private IEnumerator SmoothRotation()
     {
-        Vector3 direction = (_playerTr.position - _enemyTr.position).normalized;
-        Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-
-        while (Quaternion.Angle(_enemyTr.rotation, targetRotation) > 0.1f)
+        while (true)
         {
-            float step = rotationSpeed * Time.deltaTime;
-            _enemyTr.rotation = Quaternion.RotateTowards(_enemyTr.rotation, targetRotation, step);
+            Vector3 direction = (_playerTr.position - _enemyTr.position).normalized;
+            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+
+            while (Quaternion.Angle(_enemyTr.rotation, targetRotation) > 0.1f)
+            {
+                float step = rotationSpeed * Time.deltaTime;
+                _enemyTr.rotation = Quaternion.RotateTowards(_enemyTr.rotation, targetRotation, step);
+                yield return null;
+            }
+
+            _enemyTr.rotation = targetRotation;
+
+            // 초기 발사
+            if (!hasFiredInitialShot)
+            {
+                _enemyFire.StartCoroutine(_enemyFire.FireAfterRotation());
+                hasFiredInitialShot = true;
+            }
+
             yield return null;
         }
-
-        _enemyTr.rotation = targetRotation;
-        smoothRotationCoroutine = null; // 회전 완료 후 코루틴을 null로 설정
-        _enemyFire.StartCoroutine(_enemyFire.FireAfterRotation());
     }
 }
+
 
 
 

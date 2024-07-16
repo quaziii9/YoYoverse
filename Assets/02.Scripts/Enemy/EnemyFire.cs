@@ -22,6 +22,8 @@ public class EnemyFire : MonoBehaviour
     public float detectionRange = 10.0f;
     private float rotationSpeed = 90f; // 회전 속도를 90도/초로 설정
 
+    public float lastShootTime = 0f; // 마지막 발사 시간을 저장하는 변수
+
     void Start()
     {
         enemyTr = GetComponent<Transform>();
@@ -75,6 +77,16 @@ public class EnemyFire : MonoBehaviour
             enemyAI.ChangeState(EnemyState.Idle);
             pendingIdleState = false;
         }
+        else if (enemyAI.EnemyCurstate == EnemyState.ATTACK)
+        {
+            enemyAI.StartCoroutine(WaitAndFire());
+        }
+    }
+
+    private IEnumerator WaitAndFire()
+    {
+        yield return new WaitForSeconds(2f);
+        Fire();
     }
 
     public void StopFiring()
@@ -110,3 +122,5 @@ public class EnemyFire : MonoBehaviour
         }
     }
 }
+
+
