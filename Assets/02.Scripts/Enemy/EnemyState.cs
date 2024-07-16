@@ -138,20 +138,13 @@ public class AttackState : IState
 
     public void Enter()
     {
+        // enemyfire의 업데이트 문 실행하게끔 설정
         enemyAI.enemyFire.StartFiring();
     }
 
     public void ExecuteOnUpdate()
     {
-        //if (Vector3.Distance(enemyAI.playerTr.position, enemyAI.enemyTr.position) <= enemyAI.attackDist)
-        //{
-        //    enemyAI.enemyFire.AdjustAim(enemyAI.playerTr.position); // 목표 조준 조정
-        //}
-        //else
-        //{
-        //    // 플레이어가 공격 범위 밖으로 벗어나면 공격 상태를 종료
-        //    enemyAI.ChangeState(EnemyState.Idle);
-        //}
+
     }
 
     public void Exit()

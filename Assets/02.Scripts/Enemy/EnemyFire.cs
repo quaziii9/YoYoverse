@@ -58,19 +58,24 @@ public class EnemyFire : MonoBehaviour
         // 애니메이션 재생
         isFireAnimIng = true;
         animator.SetTrigger(hashFire);
+        FireBullet();
     }
 
     public void FireBullet()
     {
+        // 플레이어의 위치를 기준으로 총알의 방향을 설정
+        Vector3 direction = (playerTr.position - firePos.position).normalized;
+
+        // 총알 인스턴스 생성
         GameObject bulletInstance = ObjectPool.Instance.DequeueObject(bullet);
         bulletInstance.transform.position = firePos.position;
-        bulletInstance.transform.rotation = firePos.rotation;
+        bulletInstance.transform.rotation = Quaternion.LookRotation(direction);
 
         // 총알 발사 로직 추가 (예: Rigidbody 사용)
         Rigidbody bulletRb = bulletInstance.GetComponent<Rigidbody>();
         if (bulletRb != null)
         {
-            bulletRb.velocity = bulletInstance.transform.forward * 500;
+            bulletRb.velocity = direction * 500;
         }
 
         //EffectManager.Instance.FireEffectGenerate(firePos.position, firePos.rotation);
@@ -124,5 +129,13 @@ public class EnemyFire : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
+
+        // 총알 발사 위치와 방향을 시각화
+        if (firePos != null && playerTr != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(firePos.position, playerTr.position);
+            Gizmos.DrawSphere(playerTr.position, 0.2f); // 플레이어 위치에 작은 구 표시
+        }
     }
 }

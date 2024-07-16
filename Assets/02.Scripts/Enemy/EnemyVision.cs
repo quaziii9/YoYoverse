@@ -11,7 +11,6 @@ public class EnemyVision : MonoBehaviour
     public int detectionResolution = 10;
     private EnemyAI enemyAI;
 
-
     private void Start()
     {
         enemyAI = GetComponentInParent<EnemyAI>();
@@ -33,7 +32,7 @@ public class EnemyVision : MonoBehaviour
 
                 if (Physics.Raycast(rayStart, dir, out RaycastHit hit, viewDistance, playerLayer))
                 {
-                    if(enemyAI.EnemyCurstate != EnemyState.ATTACK)
+                    if (enemyAI.EnemyCurstate != EnemyState.ATTACK)
                         EventManager<EnemyEvents>.TriggerEvent(EnemyEvents.ChangeEnemyStateAttack);
                     return;
                 }
@@ -69,15 +68,14 @@ public class EnemyVision : MonoBehaviour
         Gizmos.DrawLine(transform.position - Vector3.up * viewHeight + viewAngleB * viewDistance,
                         transform.position + Vector3.up * viewHeight + viewAngleB * viewDistance);
 
-        // 원뿔의 내부 영역 그리기
-        for (float y = -viewHeight; y <= viewHeight; y += viewHeight / detectionResolution)
+        // 원뿔의 위아래 범위 그리기
+        for (float angle = -viewAngle / 2; angle <= viewAngle / 2; angle += viewAngle / detectionResolution)
         {
-            for (float angle = -viewAngle / 2; angle <= viewAngle / 2; angle += viewAngle / detectionResolution)
-            {
-                Vector3 dir = DirFromAngle(angle, false);
-                Vector3 pos = transform.position + Vector3.up * y;
-                Gizmos.DrawLine(pos, pos + dir * viewDistance);
-            }
+            Vector3 dir = DirFromAngle(angle, false);
+            Vector3 top = transform.position + Vector3.up * viewHeight;
+            Vector3 bottom = transform.position - Vector3.up * viewHeight;
+            Gizmos.DrawLine(top, top + dir * viewDistance);
+            Gizmos.DrawLine(bottom, bottom + dir * viewDistance);
         }
     }
 
