@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -98,7 +97,7 @@ public abstract class PlayerState : BaseState
         }
     }
 
-    //°ø°İ½Ã ¾ÕÀ¸·Î ¿òÁ÷ÀÌ´Â ¸Ş¼Òµå
+    //ï¿½ï¿½ï¿½İ½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½Ş¼Òµï¿½
     protected IEnumerator AttackMove()
     {
         float startTime = Time.time;
@@ -161,7 +160,7 @@ public class MoveState : PlayerState
 {
     public MoveState(Player player) : base(player) { }
 
-    //»óÅÂ ÁøÀÔ.
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
     public override void StateEnter()
     {
         _player.Agent.isStopped = false;
@@ -169,19 +168,19 @@ public class MoveState : PlayerState
         RayCast();
     }
 
-    //ÇöÀç »óÅÂ ¾÷µ¥ÀÌÆ®.
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®.
     public override void StateUpdate()
     {
         ClickMove();
     }
 
-    //»óÅÂ Á¾·á.
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
     public override void StateExit()
     {
         _player.Agent.SetDestination(_player.transform.position);
     }
 
-    //ÀÌµ¿Ã³¸® ¸Ş¼Òµå
+    //ï¿½Ìµï¿½Ã³ï¿½ï¿½ ï¿½Ş¼Òµï¿½
     private void ClickMove()
     {
         if (Input.GetMouseButtonDown(1))
@@ -201,7 +200,7 @@ public class MoveState : PlayerState
         ChangeAttack();
     }
 
-    //·¹ÀÌÄ³½ºÆ®·Î ÀÌµ¿ ¹æÇâÀ» ¼³Á¤ÇÏ´Â ¸Ş¼Òµå
+    //ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ş¼Òµï¿½
     private void RayCast()
     {
         if (Physics.Raycast(_player.MouseRay, out RaycastHit hit, Mathf.Infinity))
@@ -214,13 +213,13 @@ public class MoveState : PlayerState
         }
     }
 
-    //Å¸°Ù ¿ÀºêÁ§Æ® È°¼ºÈ­, ºñÈ°¼ºÈ­ ¸Ş¼Òµå
+    //Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® È°ï¿½ï¿½È­, ï¿½ï¿½È°ï¿½ï¿½È­ ï¿½Ş¼Òµï¿½
     private void ActiveTargetObject(bool isActive)
     {
         _player.ClickObject.gameObject.SetActive(isActive);
     }
 
-    //Agent ¼Óµµ¿¡ µû¸¥ ÀÌµ¿ ¾Ö´Ï¸ŞÀÌ¼Ç ¸Ş¼Òµå
+    //Agent ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½Ş¼Òµï¿½
     private void AnimationMoveMent()
     {
         Vector3 currentVelocity = _player.Agent.velocity;
@@ -265,7 +264,7 @@ public class FirstAttackState : PlayerState
         _player.Anim.SetBool(_player.IsComboAttack1, false);
     }
 
-    //³×ºê¸Ş½¬ ºñÈ°¼ºÈ­, ·çÆ®¸ğ¼Ç È°¼ºÈ­
+    //ï¿½×ºï¿½Ş½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­, ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
     private void InitializeFirstAttack()
     {
         _player.Agent.enabled = false;
@@ -275,7 +274,7 @@ public class FirstAttackState : PlayerState
         _player.StartCoroutine(AttackMove());
     }
 
-    //Ã¹¹øÂ° °ø°İ ¾÷µ¥ÀÌÆ®
+    //Ã¹ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
     private void OnFirstAttackUpdate()
     {
         var animatorStateInfo = _player.Anim.GetCurrentAnimatorStateInfo(0);
@@ -336,7 +335,6 @@ public class SecondAttackState : PlayerState
             _player.State.ChangeState(_State.ComboAttack3);
         }
     }
-
 }
 
 public class ThirdAttackState : PlayerState
@@ -374,4 +372,18 @@ public class ThirdAttackState : PlayerState
             _player.State.ChangeState(_State.Idle);
         }
     }
+    
+    /*
+    // ìŠ¤í‚¬ ì‚¬ìš©
+    private void UseSkill(int slotIndex)
+    {
+        SkillData skillData = GameManager.Instance.GetSkillData(slotIndex);
+        if (skillData != null)
+        {
+            Debug.Log($"{skillData.name} ìŠ¤í‚¬ ì‚¬ìš©!");
+            inGameUI.UseSkill(slotIndex);
+            // ìŠ¤í‚¬ì˜ ì¿¨íƒ€ì„, ë°ë¯¸ì§€, ë²”ìœ„ ë“±ì˜ ë°ì´í„°ë¥¼ ì´ìš©í•´ ìŠ¤í‚¬ ì‹¤í–‰
+        }
+    }
+     */
 }

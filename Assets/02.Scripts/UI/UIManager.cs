@@ -245,6 +245,7 @@ public class UIManager : Singleton<UIManager>
     // 게임 시작
     private void StartGame()
     {
-        Debug.Log("게임 시작!");
+        EventManager<GameEvents>.TriggerEvent(GameEvents.StartGame);
+        DebugLogger.Log("게임 시작!");
     }
 }

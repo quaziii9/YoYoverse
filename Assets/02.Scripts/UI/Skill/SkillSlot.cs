@@ -15,6 +15,9 @@ public class SkillSlot : MonoBehaviour, IDropHandler
     public TMP_Text skillCooldownText; // 스킬 쿨타임 텍스트
     public TMP_Text skillDamageText; // 스킬 데미지 텍스트
     public TMP_Text skillRangeText; // 스킬 범위 텍스트
+    public int slotIndex;   // 슬롯 인덱스
+
+    private SkillData _assignedSkill;   // 현재 슬롯에 할당된 스킬 데이터
 
     // 스킬 이름의 번역 매핑
     private Dictionary<string, string> _nameTranslations = new Dictionary<string, string>
@@ -60,6 +63,10 @@ public class SkillSlot : MonoBehaviour, IDropHandler
                 draggedSkillIcon.originalParent = transform;
 
                 UpdateSkillDescription(draggedSkillIcon.GetSkillData());
+                
+                _assignedSkill = draggedSkillIcon.GetSkillData();
+                UpdateSkillDescription(_assignedSkill);
+                GameManager.Instance.UpdateSkillAssignment(slotIndex, _assignedSkill);
             }
         }
     }

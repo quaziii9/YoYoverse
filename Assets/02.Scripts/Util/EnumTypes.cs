@@ -44,6 +44,7 @@ namespace EnumTypes
         SelectedWire,
         IsEquipReady,
         IsSkillReady,
+        StartGame,
     }
 
     public enum DataEvents

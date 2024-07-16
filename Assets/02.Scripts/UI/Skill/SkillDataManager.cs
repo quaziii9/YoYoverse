@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class SkillDataManager : MonoBehaviour
 {
-    public string skillDataJson; // JSON 파일 이름을 Unity 에디터에서 할당
     public GameObject skillIconPrefab; // SkillIcon 프리팹
     public Transform skillIconList; // GridLayoutGroup를 가지는 오브젝트
+    public string skillDataJson; // JSON 파일 이름을 Unity 에디터에서 할당
 
-    private List<SkillData> _activeSkills;
+    private List<SkillData> _skills;
 
     private void Start()
     {
@@ -17,12 +17,12 @@ public class SkillDataManager : MonoBehaviour
 
     private void LoadSkillData()
     {
-        _activeSkills = DataLoader<SkillData>.LoadDataFromJson(skillDataJson).FindAll(skill => skill.skillType == "Active");
+        _skills = DataLoader<SkillData>.LoadDataFromJson(skillDataJson);
     }
 
     private void CreateActiveSkillIcons()
     {
-        foreach (SkillData skill in _activeSkills)
+        foreach (SkillData skill in _skills)
         {
             GameObject skillIcon = Instantiate(skillIconPrefab, skillIconList);
             SkillIcon skillIconScript = skillIcon.GetComponent<SkillIcon>();

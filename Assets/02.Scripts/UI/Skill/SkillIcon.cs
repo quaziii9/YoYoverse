@@ -9,6 +9,7 @@ public class SkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     public Image iconImage;
     public Transform originalParent;
     public Transform skillListParent; // 스킬 리스트의 부모 Transform
+    
     private SkillData _skillData;
     private Canvas _canvas;
     private CanvasGroup _canvasGroup;
@@ -112,7 +113,6 @@ public class SkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         SkillIcon existingSkillIcon = slot.GetComponentInChildren<SkillIcon>();
         if (existingSkillIcon != null && existingSkillIcon != this)
         {
-            Transform tempParent = existingSkillIcon.originalParent;
             existingSkillIcon.transform.SetParent(originalParent);
             existingSkillIcon.transform.localPosition = Vector3.zero;
             existingSkillIcon.originalParent = originalParent;
@@ -158,7 +158,6 @@ public class SkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     // 모든 SkillIcon의 raycastTarget 활성화
     private void EnableRaycastTarget()
     {
-        // 모든 SkillIcon의 raycastTarget을 활성화
         SkillIcon[] skillIcons = FindObjectsOfType<SkillIcon>();
         foreach (SkillIcon icon in skillIcons)
         {
