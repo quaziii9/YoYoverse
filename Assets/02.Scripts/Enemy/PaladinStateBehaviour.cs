@@ -14,11 +14,18 @@ public class PaladinStateBehaviour : StateMachineBehaviour
         }
     }
 
+    public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    {
+        _paladin.IsAction = true;
+    }
+
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.ResetTrigger("Attack");
 
-        if(Vector3.Distance(_paladin.transform.position, _paladin.Player.transform.position) > 1.0f)
+        _paladin.IsAction = false;
+
+        if(Vector3.Distance(_paladin.transform.position, _paladin.Player.transform.position) > 1.5f)
         {
             _paladin.State.ChangeState(EnemyState.Trace);
         }

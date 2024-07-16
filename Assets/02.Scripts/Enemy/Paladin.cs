@@ -17,7 +17,8 @@ public class Paladin : MonoBehaviour
     private float _moveSpeed = 1f;
     private float _traceSpeed = 5f;
     private float _traceDistance = 10f;
-    private bool isDie;
+    private bool isAction;
+    private bool isDie = false;
     private GameObject _player;
     //private float _detectAngle = 45f;
     #endregion
@@ -31,6 +32,7 @@ public class Paladin : MonoBehaviour
     public float MoveSpeed { get { return _moveSpeed; } }
     public float TraceSpeed { get { return _traceSpeed;} }
     public float TraceDistance {  get { return _traceDistance;} }
+    public bool IsAction { get { return isAction; }  set { isAction = value; } }
     public bool IsDie { get {  return isDie; } }
     //public float DetectAngle { get { return _detectAngle; } }
     #endregion
@@ -80,6 +82,29 @@ public abstract class PaladinState : EnemyBase
     {
         _paladin = paladin;
     }
+
+    protected IEnumerator ChangeDelay(Collider other)
+    {
+        yield return new WaitForSeconds(0.25f);
+
+        if (_paladin.Player == null)
+        {
+            _paladin.Player = other.gameObject;
+        }
+        _paladin.DetectCollider.enabled = false;
+
+        _paladin.State.ChangeState(EnemyState.Trace);
+    }
+
+    protected void AnimationMoveMent()
+    {
+        Vector3 currentVelocity = _paladin.Agent.velocity;
+
+        float speed = currentVelocity.magnitude;
+
+        _paladin.Anim.SetFloat("Move", speed);
+    }
+
 }
 
 public class Paladin_Idle : PaladinState
@@ -123,19 +148,6 @@ public class Paladin_Idle : PaladinState
             _paladin.StartCoroutine(ChangeDelay(other));
         }
     }
-
-    private IEnumerator ChangeDelay(Collider other)
-    {
-        yield return new WaitForSeconds(0.25f);
-
-        if(_paladin.Player == null)
-        {
-            _paladin.Player = other.gameObject;
-        }
-        _paladin.DetectCollider.enabled = false;
-        _paladin.State.ChangeState(EnemyState.Trace);
-    }
-
 }
 
 public class Paladin_Move : PaladinState
@@ -143,6 +155,7 @@ public class Paladin_Move : PaladinState
     public Paladin_Move(Paladin paladin) : base(paladin) { }
     
     private List<Transform> _wayPointList = new List<Transform>();
+
     private int _order = -1;
 
     public override void StateEnter()
@@ -177,15 +190,6 @@ public class Paladin_Move : PaladinState
         _paladin.Agent.SetDestination(_wayPointList[_order].position);
     }
 
-    private void AnimationMoveMent()
-    {
-        Vector3 currentVelocity = _paladin.Agent.velocity;
-
-        float speed = currentVelocity.magnitude;
-
-        _paladin.Anim.SetFloat("Move", speed);
-    }
-
     public override void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
@@ -203,19 +207,6 @@ public class Paladin_Move : PaladinState
             _paladin.StartCoroutine(ChangeDelay(other));
         }
     }
-
-    private IEnumerator ChangeDelay(Collider other)
-    {
-        yield return new WaitForSeconds(0.25f);
-
-        if (_paladin.Player == null)
-        {
-            _paladin.Player = other.gameObject;
-        }
-        _paladin.DetectCollider.enabled = false;
-        _paladin.State.ChangeState(EnemyState.Trace);
-    }
-
 }
 
 public class Paladin_Trace : PaladinState
@@ -225,7 +216,7 @@ public class Paladin_Trace : PaladinState
     public override void StateEnter()
     {
         _paladin.Agent.speed = _paladin.TraceSpeed;
-        _paladin.Agent.stoppingDistance = 1.0f;
+        _paladin.Agent.stoppingDistance = 1.5f;
         _paladin.Agent.SetDestination(_paladin.Player.transform.position);
     }
 
@@ -239,13 +230,6 @@ public class Paladin_Trace : PaladinState
         _paladin.Agent.speed = _paladin.MoveSpeed;
         _paladin.Agent.stoppingDistance = 0;
         _paladin.DetectCollider.enabled = true;
-    }
-
-    private void AnimationMoveMent()
-    {
-        Vector3 currentVelocity = _paladin.Agent.velocity;
-        float speed = currentVelocity.magnitude;
-        _paladin.Anim.SetFloat("Move", speed);
     }
 
     private void TraceToPlayer()
@@ -274,15 +258,23 @@ public class Paladin_Trace : PaladinState
 public class Paladin_Attack : PaladinState
 {
     public Paladin_Attack(Paladin paladin) : base(paladin) { }
+
     private Vector3 _target;
 
     public override void StateEnter()
     {
-        _paladin.Agent.enabled = false;
-        _paladin.Anim.applyRootMotion = true;
+        if (!_paladin.IsDie)
+        {
+            _paladin.Agent.enabled = false;
+            _paladin.Anim.applyRootMotion = true;
 
+            AttackToPlayer();
+        }
+    }
+
+    public override void StateUpdate()
+    {
         RotateToPlayer();
-        AttackToPlayer();
     }
 
     public override void StateExit()
@@ -301,7 +293,7 @@ public class Paladin_Attack : PaladinState
 
             Quaternion rotation = Quaternion.LookRotation(rotateDirection);
 
-            _paladin.transform.rotation = rotation;
+            _paladin.transform.rotation = Quaternion.Slerp(_paladin.transform.rotation, rotation, 5.0f * Time.deltaTime);
         }
     }
 
