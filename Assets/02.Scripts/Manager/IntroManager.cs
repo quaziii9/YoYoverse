@@ -21,7 +21,7 @@ public class IntroManager : MonoBehaviour
     // 게임 시작
     private void StartGame()
     {
-        Debug.Log("게임 시작");
         UIManager.Instance.SwitchToNextUI();
+        gameObject.SetActive(false);
     }
 }
