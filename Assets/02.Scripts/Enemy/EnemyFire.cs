@@ -5,31 +5,22 @@ using UnityEngine.Pool;
 
 public class EnemyFire : MonoBehaviour
 {
-    //public AudioSource gunShot;
-    //public AudioSource reload;
-
     private Animator animator;
     private Transform playerTr;
     private Transform enemyTr;
+    private EnemyAI enemyAI;
 
     private readonly int hashFire = Animator.StringToHash("Fire");
-    private readonly int hashReload = Animator.StringToHash("Reload");
 
-    private float nextFire = 1.5f;
-    private readonly float fireRate = 0.1f;
-    private readonly float damping = 10.0f;
+    private float nextFire = 0f; // 초기 쿨타임 설정
+    private readonly float fireRate = 2.0f; // 쿨타임을 2초로 설정
 
     [SerializeField] private readonly float reloadTime = 3.0f;
     [SerializeField] private readonly int maxBullet = 10;
-    public float MinFireTime { get; set; }
-    public float MaxFireTime { get; set; }
-
-    private int currBullet = 10;
-    private bool isReload = false;
-
-    private WaitForSeconds wsReload;
 
     public bool isFire = false;
+    public bool isFireAnimIng = false;
+    private bool pendingIdleState = false; // Idle 상태 전환 대기 플래그
 
     [Header("Bullet")]
     public GameObject bullet;
@@ -37,80 +28,101 @@ public class EnemyFire : MonoBehaviour
 
     [SerializeField] private Transform firePos;
 
-    private Vector3 randomFirePos;
-    private float randomX;
-    private float randomY;
+    [SerializeField] private float detectionRange = 10.0f; // 사정거리 설정
 
     void Start()
     {
         enemyTr = GetComponent<Transform>();
         animator = GetComponent<Animator>();
-        wsReload = new WaitForSeconds(reloadTime);
+        enemyAI = GetComponent<EnemyAI>();
 
-        MinFireTime = 0f;
-        MaxFireTime = 2f;
+        // 적의 사정거리 감지를 위해 SphereCollider 추가
+        SphereCollider rangeCollider = gameObject.AddComponent<SphereCollider>();
+        rangeCollider.isTrigger = true;
+        rangeCollider.radius = detectionRange;
+
+        // 플레이어 Transform 가져오기
+        playerTr = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void Update()
     {
-        if (!isReload && isFire)
+        if (isFire && Time.time >= nextFire && !isFireAnimIng)
         {
-            if (Time.time >= nextFire)
-            {
-                Fire();
-                nextFire = Time.time + fireRate + Random.Range(MinFireTime, MaxFireTime);
-            }
+            Fire();
         }
     }
 
     private void Fire()
     {
-        randomX = Random.Range(0, 0.8f);
-        randomY = Random.Range(0, 1.2f);
-        randomFirePos = new Vector3(randomX, randomY, 0);
+        // 애니메이션 재생
+        isFireAnimIng = true;
         animator.SetTrigger(hashFire);
+    }
 
+    public void FireBullet()
+    {
         GameObject bulletInstance = ObjectPool.Instance.DequeueObject(bullet);
-        bulletInstance.transform.position = firePos.position + randomFirePos;
+        bulletInstance.transform.position = firePos.position;
         bulletInstance.transform.rotation = firePos.rotation;
 
-        bulletInstance.GetComponent<Rigidbody>().velocity = bulletInstance.transform.forward * 500;
+        // 총알 발사 로직 추가 (예: Rigidbody 사용)
+        Rigidbody bulletRb = bulletInstance.GetComponent<Rigidbody>();
+        if (bulletRb != null)
+        {
+            bulletRb.velocity = bulletInstance.transform.forward * 500;
+        }
 
         //EffectManager.Instance.FireEffectGenerate(firePos.position, firePos.rotation);
         //gunShot.PlayOneShot(gunShot.clip);
-        isReload = (--currBullet % maxBullet == 0);
+    }
 
-        if (isReload)
+    // 애니메이션 끝났을 때 호출될 메서드
+    public void OnFireAnimationEnd()
+    {
+        // 다음 발사 시간을 현재 시간 + 쿨타임으로 설정
+        nextFire = Time.time + fireRate;
+        isFireAnimIng = false;
+
+        // 애니메이션이 끝난 후 Idle 상태로 전환
+        if (pendingIdleState)
         {
-            StartCoroutine(Reloading());
+            enemyAI.ChangeState(EnemyState.Idle);
+            pendingIdleState = false;
         }
-    }
-
-    IEnumerator Reloading()
-    {
-        animator.SetTrigger(hashReload);
-       // reload.PlayOneShot(reload.clip);
-
-        yield return wsReload;
-
-        currBullet = maxBullet;
-        isReload = false;
-    }
-
-    // 추가할 메서드
-    public void AdjustAim(Vector3 targetPosition)
-    {
-        // Aim adjustment logic here
     }
 
     public void StartFiring()
     {
         isFire = true;
+        pendingIdleState = false; // Fire 상태에서 대기하지 않음
     }
 
     public void StopFiring()
     {
         isFire = false;
+        if (isFireAnimIng)
+        {
+            pendingIdleState = true; // 애니메이션이 실행 중이면 Idle 상태 전환 대기
+        }
+        else
+        {
+            enemyAI.ChangeState(EnemyState.Idle); // 바로 Idle 상태로 전환
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            StopFiring();
+        }
+    }
+
+    // 기즈모를 사용하여 사정거리를 시각화
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
     }
 }
-

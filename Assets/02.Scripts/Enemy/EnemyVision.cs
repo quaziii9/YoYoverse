@@ -9,6 +9,13 @@ public class EnemyVision : MonoBehaviour
     public float viewHeight = 15f;
     public LayerMask playerLayer;
     public int detectionResolution = 10;
+    private EnemyAI enemyAI;
+
+
+    private void Start()
+    {
+        enemyAI = GetComponentInParent<EnemyAI>();
+    }
 
     private void Update()
     {
@@ -26,9 +33,8 @@ public class EnemyVision : MonoBehaviour
 
                 if (Physics.Raycast(rayStart, dir, out RaycastHit hit, viewDistance, playerLayer))
                 {
-                    Debug.Log("플레이어가 감지되었습니다!");
-
-                    EventManager<EnemyEvents>.TriggerEvent(EnemyEvents.ChangeEnemyStateAttack);
+                    if(enemyAI.EnemyCurstate != EnemyState.ATTACK)
+                        EventManager<EnemyEvents>.TriggerEvent(EnemyEvents.ChangeEnemyStateAttack);
                     return;
                 }
             }

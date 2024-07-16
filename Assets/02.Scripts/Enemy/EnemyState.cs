@@ -12,6 +12,7 @@ public interface IState
 public class IdleState : IState
 {
     private EnemyAI enemyAI;
+    private Coroutine rotateCoroutine;
 
     public IdleState(EnemyAI enemyAI)
     {
@@ -21,7 +22,7 @@ public class IdleState : IState
     public void Enter()
     {
         enemyAI.animator.SetBool(enemyAI.Idle, true);
-        enemyAI.StartCoroutine(RotateCoroutine());
+        rotateCoroutine = enemyAI.StartCoroutine(RotateCoroutine());
     }
 
     public void ExecuteOnUpdate()
@@ -32,7 +33,11 @@ public class IdleState : IState
     public void Exit()
     {
         enemyAI.animator.SetBool(enemyAI.Idle, false);
-        enemyAI.StopCoroutine(RotateCoroutine());
+        if (rotateCoroutine != null)
+        {
+            enemyAI.StopCoroutine(rotateCoroutine);
+            rotateCoroutine = null;
+        }
     }
 
     private IEnumerator RotateCoroutine()
@@ -56,7 +61,7 @@ public class IdleState : IState
         float currentAngle = enemyAI.transform.eulerAngles.y;
         float startAngle = currentAngle;
         float t = 0f;
-        float duration = 2f; // 1 second duration for rotation
+        float duration = 2f; // 2 second duration for rotation
 
         while (t < duration)
         {
@@ -133,11 +138,7 @@ public class AttackState : IState
 
     public void Enter()
     {
-        Debug.Log("ENTER");
-        //enemyAI.moveAgent.Stop();
-        //enemyAI.animator.SetBool(enemyAI.hashMove, false);
-        //enemyAI.enemyFire.isFire = true;
-        //enemyAI.enemyFire.StartFiring();
+        enemyAI.enemyFire.StartFiring();
     }
 
     public void ExecuteOnUpdate()
@@ -155,7 +156,6 @@ public class AttackState : IState
 
     public void Exit()
     {
-        //enemyAI.enemyFire.isFire = false; // 적이 발사 중지
         //enemyAI.enemyFire.StopFiring();
     }
 }

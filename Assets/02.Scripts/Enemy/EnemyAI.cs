@@ -55,7 +55,7 @@ public class EnemyAI : MonoBehaviour
         //if (player != null) playerTr = player.GetComponent<Transform>();
 
         enemyTr = GetComponent<Transform>();
-        animator = GetComponentInChildren<Animator>();
+        animator = GetComponent<Animator>();
         moveAgent = GetComponent<EnemyMoveAgent>();
         enemyFire = GetComponent<EnemyFire>();
     }
@@ -83,7 +83,6 @@ public class EnemyAI : MonoBehaviour
 
     public void ChangeState(EnemyState newState)
     {
-        Debug.Log("!");
         CurrentStateInstance?.Exit(); // 현재 상태 종료
 
         EnemyCurstate = newState;
