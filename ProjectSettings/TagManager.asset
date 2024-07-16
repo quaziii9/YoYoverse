@@ -11,6 +11,7 @@ TagManager:
   - Wall
   - Terrain
   - Floor
+  - Bullet
   layers:
   - Default
   - TransparentFX

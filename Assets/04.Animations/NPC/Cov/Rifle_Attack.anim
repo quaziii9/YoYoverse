@@ -49011,7 +49011,7 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 2.85
+  - time: 2.7833333
     functionName: OnFireAnimationEnd
     data: 
     objectReferenceParameter: {fileID: 0}
