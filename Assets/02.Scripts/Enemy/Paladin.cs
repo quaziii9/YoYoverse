@@ -17,7 +17,6 @@ public class Paladin : MonoBehaviour
     private float _moveSpeed = 1f;
     private float _traceSpeed = 5f;
     private float _traceDistance = 10f;
-    private bool isAction;
     private bool isDie;
     private GameObject _player;
     //private float _detectAngle = 45f;
@@ -32,7 +31,6 @@ public class Paladin : MonoBehaviour
     public float MoveSpeed { get { return _moveSpeed; } }
     public float TraceSpeed { get { return _traceSpeed;} }
     public float TraceDistance {  get { return _traceDistance;} }
-    public bool IsAction { get {  return isAction; } set { isAction = value; } }
     public bool IsDie { get {  return isDie; } }
     //public float DetectAngle { get { return _detectAngle; } }
     #endregion
@@ -129,7 +127,11 @@ public class Paladin_Idle : PaladinState
     private IEnumerator ChangeDelay(Collider other)
     {
         yield return new WaitForSeconds(0.25f);
-        _paladin.Player = other.gameObject;
+
+        if(_paladin.Player == null)
+        {
+            _paladin.Player = other.gameObject;
+        }
         _paladin.DetectCollider.enabled = false;
         _paladin.State.ChangeState(EnemyState.Trace);
     }
@@ -205,7 +207,11 @@ public class Paladin_Move : PaladinState
     private IEnumerator ChangeDelay(Collider other)
     {
         yield return new WaitForSeconds(0.25f);
-        _paladin.Player = other.gameObject;
+
+        if (_paladin.Player == null)
+        {
+            _paladin.Player = other.gameObject;
+        }
         _paladin.DetectCollider.enabled = false;
         _paladin.State.ChangeState(EnemyState.Trace);
     }
@@ -276,16 +282,7 @@ public class Paladin_Attack : PaladinState
         _paladin.Anim.applyRootMotion = true;
 
         RotateToPlayer();
-    }
-
-    public override void StateUpdate()
-    {
-        if (Vector3.Distance(_paladin.transform.position, _paladin.Player.transform.position) > 1.0f && !_paladin.IsAction)
-        {
-            _paladin.State.ChangeState(EnemyState.Trace);
-        }
-        else
-            AttackToPlayer();
+        AttackToPlayer();
     }
 
     public override void StateExit()
@@ -312,7 +309,4 @@ public class Paladin_Attack : PaladinState
     {
         _paladin.Anim.SetTrigger("Attack");
     }
-
-    
-
 }
