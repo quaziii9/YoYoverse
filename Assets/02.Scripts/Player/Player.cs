@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
 
     #region PlayerValue
     private Ray _mouseRay;
+    private LayerMask _layerMask;
     private Camera _mainCamera;
     private bool isNext;
     #endregion
@@ -31,6 +32,7 @@ public class Player : MonoBehaviour
     public Transform ClickObject { get { return clickTransform; } }
     public Camera MainCamera { get {  return _mainCamera; } }
     public Rigidbody RigidBody { get { return _rigidBody; } }   
+    public LayerMask Mask { get { return _layerMask; } }
     public Ray MouseRay { get { return _mouseRay; } set { _mouseRay = value; } }
     public bool IsNext { get { return isNext; } set { isNext = value; } }
     #endregion
@@ -54,6 +56,7 @@ public class Player : MonoBehaviour
         _rigidBody = GetComponent<Rigidbody>();
         _mainCamera = Camera.main;
         _agent.speed = walkSpeed;
+        _layerMask = LayerMask.GetMask("Ground");
         clickTransform.gameObject.SetActive(false);
     }
 
@@ -85,7 +88,7 @@ public abstract class PlayerState : BaseState
     {
         _player.MouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(_player.MouseRay, out RaycastHit hit, 100))
+        if (Physics.Raycast(_player.MouseRay, out RaycastHit hit, 100, _player.Mask, QueryTriggerInteraction.Ignore))
         {
             Vector3 lookPosition = new Vector3(hit.point.x, _player.transform.position.y, hit.point.z);
 
@@ -98,7 +101,7 @@ public abstract class PlayerState : BaseState
         }
     }
 
-    //°ø°İ½Ã ¾ÕÀ¸·Î ¿òÁ÷ÀÌ´Â ¸Ş¼Òµå
+    //ê³µê²©ì‹œ ì•ìœ¼ë¡œ ì›€ì§ì´ëŠ” ë©”ì†Œë“œ
     protected IEnumerator AttackMove()
     {
         float startTime = Time.time;
@@ -161,7 +164,7 @@ public class MoveState : PlayerState
 {
     public MoveState(Player player) : base(player) { }
 
-    //»óÅÂ ÁøÀÔ.
+    //ìƒíƒœ ì§„ì….
     public override void StateEnter()
     {
         _player.Agent.isStopped = false;
@@ -169,19 +172,19 @@ public class MoveState : PlayerState
         RayCast();
     }
 
-    //ÇöÀç »óÅÂ ¾÷µ¥ÀÌÆ®.
+    //í˜„ì¬ ìƒíƒœ ì—…ë°ì´íŠ¸.
     public override void StateUpdate()
     {
         ClickMove();
     }
 
-    //»óÅÂ Á¾·á.
+    //ìƒíƒœ ì¢…ë£Œ.
     public override void StateExit()
     {
         _player.Agent.SetDestination(_player.transform.position);
     }
 
-    //ÀÌµ¿Ã³¸® ¸Ş¼Òµå
+    //ì´ë™ì²˜ë¦¬ ë©”ì†Œë“œ
     private void ClickMove()
     {
         if (Input.GetMouseButtonDown(1))
@@ -201,10 +204,10 @@ public class MoveState : PlayerState
         ChangeAttack();
     }
 
-    //·¹ÀÌÄ³½ºÆ®·Î ÀÌµ¿ ¹æÇâÀ» ¼³Á¤ÇÏ´Â ¸Ş¼Òµå
+    //ë ˆì´ìºìŠ¤íŠ¸ë¡œ ì´ë™ ë°©í–¥ì„ ì„¤ì •í•˜ëŠ” ë©”ì†Œë“œ
     private void RayCast()
     {
-        if (Physics.Raycast(_player.MouseRay, out RaycastHit hit, Mathf.Infinity))
+        if (Physics.Raycast(_player.MouseRay, out RaycastHit hit, Mathf.Infinity, _player.Mask, QueryTriggerInteraction.Ignore))
         {
             _player.Agent.SetDestination(hit.point);
 
@@ -214,13 +217,13 @@ public class MoveState : PlayerState
         }
     }
 
-    //Å¸°Ù ¿ÀºêÁ§Æ® È°¼ºÈ­, ºñÈ°¼ºÈ­ ¸Ş¼Òµå
+    //íƒ€ê²Ÿ ì˜¤ë¸Œì íŠ¸ í™œì„±í™”, ë¹„í™œì„±í™” ë©”ì†Œë“œ
     private void ActiveTargetObject(bool isActive)
     {
         _player.ClickObject.gameObject.SetActive(isActive);
     }
 
-    //Agent ¼Óµµ¿¡ µû¸¥ ÀÌµ¿ ¾Ö´Ï¸ŞÀÌ¼Ç ¸Ş¼Òµå
+    //Agent ì†ë„ì— ë”°ë¥¸ ì´ë™ ì• ë‹ˆë©”ì´ì…˜ ë©”ì†Œë“œ
     private void AnimationMoveMent()
     {
         Vector3 currentVelocity = _player.Agent.velocity;
@@ -265,7 +268,7 @@ public class FirstAttackState : PlayerState
         _player.Anim.SetBool(_player.IsComboAttack1, false);
     }
 
-    //³×ºê¸Ş½¬ ºñÈ°¼ºÈ­, ·çÆ®¸ğ¼Ç È°¼ºÈ­
+    //ë„¤ë¸Œë©”ì‰¬ ë¹„í™œì„±í™”, ë£¨íŠ¸ëª¨ì…˜ í™œì„±í™”
     private void InitializeFirstAttack()
     {
         _player.Agent.enabled = false;
@@ -275,7 +278,7 @@ public class FirstAttackState : PlayerState
         _player.StartCoroutine(AttackMove());
     }
 
-    //Ã¹¹øÂ° °ø°İ ¾÷µ¥ÀÌÆ®
+    //ì²«ë²ˆì§¸ ê³µê²© ì—…ë°ì´íŠ¸
     private void OnFirstAttackUpdate()
     {
         var animatorStateInfo = _player.Anim.GetCurrentAnimatorStateInfo(0);
