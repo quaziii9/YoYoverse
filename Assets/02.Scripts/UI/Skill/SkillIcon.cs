@@ -7,7 +7,7 @@ using EventLibrary;
 public class SkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public Image iconImage;
-    [HideInInspector] public Transform originalParent;
+    public Transform originalParent;
     public Transform skillListParent; // 스킬 리스트의 부모 Transform
     private SkillData _skillData;
     private Canvas _canvas;
@@ -48,6 +48,12 @@ public class SkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         transform.SetParent(_canvas.transform, true);
         transform.SetAsLastSibling();
         EventManager<UIEvents>.TriggerEvent(UIEvents.StartDraggingSkillIcon);
+        
+        SkillSlot originalSlot = originalParent.GetComponent<SkillSlot>();
+        if (originalSlot != null)
+        {
+            originalSlot.ClearSkillDescription();
+        }
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -111,6 +117,12 @@ public class SkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             existingSkillIcon.transform.localPosition = Vector3.zero;
             existingSkillIcon.originalParent = originalParent;
 
+            SkillSlot originalSlot = originalParent.GetComponent<SkillSlot>();
+            if (originalSlot != null)
+            {
+                originalSlot.ClearSkillDescription();
+            }
+
             originalParent.GetComponent<SkillSlot>().UpdateSkillDescription(existingSkillIcon.GetSkillData());
 
             originalParent = slot.transform;
@@ -119,7 +131,7 @@ public class SkillIcon : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         transform.SetParent(slot.transform);
         transform.localPosition = Vector3.zero;
         originalParent = slot.transform;
-
+        
         slot.UpdateSkillDescription(_skillData);
     }
 

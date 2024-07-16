@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class SkillSlot : MonoBehaviour, IDropHandler
 {
@@ -15,7 +16,16 @@ public class SkillSlot : MonoBehaviour, IDropHandler
     public TMP_Text skillDamageText; // 스킬 데미지 텍스트
     public TMP_Text skillRangeText; // 스킬 범위 텍스트
 
-    // 드래그한 스킬 아이콘을 기존 슬롯 아이콘 과 스왑
+    // 스킬 이름의 번역 매핑
+    private Dictionary<string, string> _nameTranslations = new Dictionary<string, string>
+    {
+        { "Assassination", "조르기" },
+        { "Defense", "방어" },
+        { "Pull", "끌기" },
+        { "Move", "이동" }
+    };
+
+    // 드래그한 스킬 아이콘을 기존 슬롯 아이콘과 스왑
     public void OnDrop(PointerEventData eventData)
     {
         if (eventData.pointerDrag != null)
@@ -57,7 +67,13 @@ public class SkillSlot : MonoBehaviour, IDropHandler
     // 스킬 설명을 업데이트
     public void UpdateSkillDescription(SkillData skillData)
     {
-        skillNameText.text = skillData.name;
+        string translatedName = skillData.name;
+        if (_nameTranslations.ContainsKey(skillData.name))
+        {
+            translatedName = _nameTranslations[skillData.name];
+        }
+
+        skillNameText.text = translatedName;
         skillIconImage.sprite = Resources.Load<Sprite>($"Skill/Skill_{skillData.name}");
         skillDescriptionText.text = skillData.description;
         skillCooldownText.text = $"쿨타임: {skillData.cooldown} 초";

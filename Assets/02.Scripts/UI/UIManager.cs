@@ -108,7 +108,7 @@ public class UIManager : Singleton<UIManager>
     }
 
     // 현재 UI를 비활성화하고 다음 UI를 활성화하는 메서드
-    private void SwitchToNextUI()
+    public void SwitchToNextUI()
     {
         int activeIndex = -1;
         for (int i = 0; i < transform.childCount; i++)
