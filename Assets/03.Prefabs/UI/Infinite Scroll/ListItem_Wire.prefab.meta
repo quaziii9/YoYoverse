@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: c1a56d2dccd50284380342939beaf33d
+<<<<<<<< HEAD:Assets/03.Prefabs/UI/Infinite Scroll/ListItem_Wire.prefab.meta
+guid: 37e3ff710ecf41a42b236888a6a096a8
+========
+guid: a407ac5a3fb474047b9d5b4db8a57f3e
+>>>>>>>> junhyung:Assets/03.Prefabs/Player/Mouse/ClickPosition.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 

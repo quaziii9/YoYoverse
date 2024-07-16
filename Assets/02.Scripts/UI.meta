@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: 8e2e9f60b2e7ad14f9d3a70c1d4ba341
+<<<<<<<< HEAD:Assets/02.Scripts/UI.meta
+guid: 71ef230776eed5e458673ff0d371f82e
+========
+guid: 13a4181db7b3f294487948a1fbe2d4b3
+>>>>>>>> junhyung:Assets/02.Scripts/GameData.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

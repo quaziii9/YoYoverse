@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: 00506a9d26bfb684988149104f13bb93
+<<<<<<<< HEAD:Assets/02.Scripts/Data/DataLoader.cs.meta
+guid: c7d58a56a7152e341ba73135baf80f63
+========
+guid: f015eb2ba427c0e42944406e21f903f6
+>>>>>>>> junhyung:Assets/02.Scripts/GameData/DataManager.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

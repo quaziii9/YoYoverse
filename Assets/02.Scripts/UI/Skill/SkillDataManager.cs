@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +7,7 @@ public class SkillDataManager : MonoBehaviour
     public GameObject skillIconPrefab; // SkillIcon 프리팹
     public Transform skillIconList; // GridLayoutGroup를 가지는 오브젝트
 
-    private List<SkillData> activeSkills;
+    private List<SkillData> _activeSkills;
 
     private void Start()
     {
@@ -18,12 +17,12 @@ public class SkillDataManager : MonoBehaviour
 
     private void LoadSkillData()
     {
-        activeSkills = DataLoader<SkillData>.LoadDataFromJson(skillDataJson).FindAll(skill => skill.skillType == "Active");
+        _activeSkills = DataLoader<SkillData>.LoadDataFromJson(skillDataJson).FindAll(skill => skill.skillType == "Active");
     }
 
     private void CreateActiveSkillIcons()
     {
-        foreach (SkillData skill in activeSkills)
+        foreach (SkillData skill in _activeSkills)
         {
             GameObject skillIcon = Instantiate(skillIconPrefab, skillIconList);
             SkillIcon skillIconScript = skillIcon.GetComponent<SkillIcon>();
@@ -32,24 +31,4 @@ public class SkillDataManager : MonoBehaviour
             skillIconScript.iconImage.sprite = Resources.Load<Sprite>($"Skill/Skill_{skill.name}");
         }
     }
-}
-
-[Serializable]
-public class SkillData
-{
-    public int id;
-    public string name;
-    public string description;
-    public string attackType;
-    public string skillType;
-    public string slotNumbering;
-    public float attackMultiplier;
-    public int cooldown;
-    public float delay;
-    public string target;
-    public int range;
-    public string skillArea;
-    public float[] skillSize;
-    public string specialFunction;
-    public string specialFunctionValue;
 }

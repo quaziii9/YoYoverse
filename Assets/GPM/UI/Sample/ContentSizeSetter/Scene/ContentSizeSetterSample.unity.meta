@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: 7db947aa0d6cce245890316e50b7c934
+<<<<<<<< HEAD:Assets/GPM/UI/Sample/ContentSizeSetter/Scene/ContentSizeSetterSample.unity.meta
+guid: 4da445bd062ba804198df364e63abcb1
+========
+guid: 5f6fc20c5cd0ab340a44fd4a2a4f3f5a
+>>>>>>>> junhyung:Assets/08.Models/persona(캐릭모델_무기모델)/Meele Weapon/Meeleweapon/xps.xps.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

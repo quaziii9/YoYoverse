@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ public static class DataLoader<T> where T : class
     }
 
     // JSON 데이터를 담는 내부 클래스
-    [System.Serializable]
+    [Serializable]
     private class DataWrapper<TData>
     {
         public List<TData> data;
