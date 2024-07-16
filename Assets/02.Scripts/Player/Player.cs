@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -14,6 +15,7 @@ public class Player : MonoBehaviour
     private NavMeshAgent _agent;
     private Animator _animator;
     private PlayerStateMachine _state;
+    private Rigidbody _rigidBody;
     #endregion
 
     #region PlayerValue
@@ -28,6 +30,7 @@ public class Player : MonoBehaviour
     public PlayerStateMachine State { get { return _state; } }
     public Transform ClickObject { get { return clickTransform; } }
     public Camera MainCamera { get {  return _mainCamera; } }
+    public Rigidbody RigidBody { get { return _rigidBody; } }   
     public Ray MouseRay { get { return _mouseRay; } set { _mouseRay = value; } }
     public bool IsNext { get { return isNext; } set { isNext = value; } }
     #endregion
@@ -48,6 +51,7 @@ public class Player : MonoBehaviour
     {
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
+        _rigidBody = GetComponent<Rigidbody>();
         _mainCamera = Camera.main;
         _agent.speed = walkSpeed;
         clickTransform.gameObject.SetActive(false);
@@ -91,6 +95,22 @@ public abstract class PlayerState : BaseState
             {
                 _player.transform.LookAt(lookPosition);
             }
+        }
+    }
+
+    //공격시 앞으로 움직이는 메소드
+    protected IEnumerator AttackMove()
+    {
+        float startTime = Time.time;
+
+        float moveSpeed = 2.0f;
+
+        Vector3 direction = _player.transform.forward;
+
+        while(Time.time < startTime + 0.2f)
+        {
+            _player.RigidBody.AddForce(direction * moveSpeed,ForceMode.Impulse);
+            yield return null;
         }
     }
 }
@@ -144,6 +164,8 @@ public class MoveState : PlayerState
     //상태 진입.
     public override void StateEnter()
     {
+        _player.Agent.isStopped = false;
+
         RayCast();
     }
 
@@ -176,6 +198,7 @@ public class MoveState : PlayerState
         }
 
         AnimationMoveMent();
+        ChangeAttack();
     }
 
     //레이캐스트로 이동 방향을 설정하는 메소드
@@ -206,6 +229,21 @@ public class MoveState : PlayerState
 
         _player.Anim.SetFloat("Move", speed);
     }
+
+    private void ChangeAttack()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            AttackRotation();
+            ActiveTargetObject(false);
+
+            _player.Agent.isStopped = true;
+
+            _player.Anim.SetFloat("Move", 0);
+
+            _player.State.ChangeState(_State.ComboAttack1);
+        }
+    }
 }
 
 public class FirstAttackState : PlayerState
@@ -234,6 +272,7 @@ public class FirstAttackState : PlayerState
         _player.Anim.applyRootMotion = true;
         _player.Anim.SetBool(_player.IsComboAttack1, true);
         _player.IsNext = false;
+        _player.StartCoroutine(AttackMove());
     }
 
     //첫번째 공격 업데이트
@@ -278,6 +317,7 @@ public class SecondAttackState : PlayerState
     {
         _player.Anim.SetBool(_player.IsComboAttack2, true);
         _player.IsNext = false;
+        _player.StartCoroutine(AttackMove());
     }
 
     private void OnSecondAttackUpdate()
@@ -322,6 +362,7 @@ public class ThirdAttackState : PlayerState
     {
         _player.Anim.SetBool(_player.IsComboAttack3, true);
         _player.IsNext = false;
+        _player.StartCoroutine(AttackMove());
     }
 
     private void OnThirdAttackUpDate()
