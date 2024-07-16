@@ -13,6 +13,9 @@ public class UIManager : Singleton<UIManager>
     // Equip UI
     [FoldoutGroup("Equip UI")] [PropertySpace(0f, 5f)] public GameObject equipUI;
     
+    [FoldoutGroup("Equip UI")] public Button equipDecisionButton;
+    [FoldoutGroup("Equip UI")] [PropertySpace(0f, 5f)] public GameObject equipDecisionButtonAlpha;
+    
     [HorizontalGroup("Equip UI/Horizontal")]
     [FoldoutGroup("Equip UI/Horizontal/Selected Disk")] public Image selectedDiskImage;
     [FoldoutGroup("Equip UI/Horizontal/Selected Disk")] public Image selectedDiskStatImage;
@@ -33,15 +36,17 @@ public class UIManager : Singleton<UIManager>
     [FoldoutGroup("Equip UI/Horizontal/Total Stat")] public TMP_Text totalAttack;
     [FoldoutGroup("Equip UI/Horizontal/Total Stat")] public TMP_Text totalAttackRange;
     [FoldoutGroup("Equip UI/Horizontal/Total Stat")] public TMP_Text totalAttackSpeed;
-
-    public Button decisionButton;
-    public GameObject decisionButtonAlpha;
+    
+    // Skill UI
+    [FoldoutGroup("Skill UI")] public GameObject skillDescriptionsPanel;
+    [FoldoutGroup("Skill UI")] public Button skillDecisionButton;
+    [FoldoutGroup("Skill UI")] public GameObject skillDecisionButtonAlpha;
 
     private float _diskAttack, _wireAttack;
     private float _diskAttackRange, _wireAttackRange;
     private float _diskAttackSpeed, _wireAttackSpeed;
 
-    private const float baseRange = 5f;
+    private const float BaseRange = 5f;
 
     #endregion
 
@@ -55,6 +60,7 @@ public class UIManager : Singleton<UIManager>
         { "Electric Wire", "전기 와이어" }
     };
 
+    // 초기화 시 호출
     protected override void Awake()
     {
         base.Awake();
@@ -62,6 +68,7 @@ public class UIManager : Singleton<UIManager>
         AddButtonEvents();
     }
 
+    // 파괴 시 호출
     protected virtual void OnDestroy()
     {
         RemoveEvents(); // 이벤트 리스너 제거
@@ -73,7 +80,8 @@ public class UIManager : Singleton<UIManager>
     {
         EventManager<UIEvents>.StartListening<YoYoData>(UIEvents.OnClickDiskListItem, UpdateSelectedDisk);
         EventManager<UIEvents>.StartListening<YoYoData>(UIEvents.OnClickWireListItem, UpdateSelectedWire);
-        EventManager<GameEvents>.StartListening(GameEvents.IsEquipReady, EnableDecisionButton);
+        EventManager<UIEvents>.StartListening(UIEvents.StopDraggingSkillIcon, CheckSkillDescriptions);
+        EventManager<GameEvents>.StartListening(GameEvents.IsEquipReady, EnableEquipDecisionButton);
     }
 
     // 이벤트 리스너를 제거하는 메서드
@@ -81,17 +89,43 @@ public class UIManager : Singleton<UIManager>
     {
         EventManager<UIEvents>.StopListening<YoYoData>(UIEvents.OnClickDiskListItem, UpdateSelectedDisk);
         EventManager<UIEvents>.StopListening<YoYoData>(UIEvents.OnClickWireListItem, UpdateSelectedWire);
-        EventManager<GameEvents>.StopListening(GameEvents.IsEquipReady, EnableDecisionButton);
+        EventManager<UIEvents>.StopListening(UIEvents.StopDraggingSkillIcon, CheckSkillDescriptions);
+        EventManager<GameEvents>.StopListening(GameEvents.IsEquipReady, EnableEquipDecisionButton);
     }
 
+    // 버튼 이벤트를 등록하는 메서드
     private void AddButtonEvents()
     {
-        decisionButton.onClick.AddListener(OnClickDecisionButton);
+        equipDecisionButton.onClick.AddListener(OnClickDecisionButton);
+        skillDecisionButton.onClick.AddListener(OnClickSkillDecisionButton);
     }
 
+    // 버튼 이벤트를 제거하는 메서드
     private void RemoveButtonEvents()
     {
-        decisionButton.onClick.RemoveListener(OnClickDecisionButton);
+        equipDecisionButton.onClick.RemoveListener(OnClickDecisionButton);
+        skillDecisionButton.onClick.RemoveListener(OnClickSkillDecisionButton);
+    }
+
+    // 현재 UI를 비활성화하고 다음 UI를 활성화하는 메서드
+    private void SwitchToNextUI()
+    {
+        int activeIndex = -1;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            if (transform.GetChild(i).gameObject.activeSelf)
+            {
+                activeIndex = i;
+                transform.GetChild(i).gameObject.SetActive(false);
+                break;
+            }
+        }
+
+        if (activeIndex >= 0)
+        {
+            int nextIndex = (activeIndex + 1) % transform.childCount;
+            transform.GetChild(nextIndex).gameObject.SetActive(true);
+        }
     }
 
     // 이름을 한글로 변환하는 메서드
@@ -149,25 +183,68 @@ public class UIManager : Singleton<UIManager>
     // 디스크의 공격 사거리를 계산하는 메서드
     private float CalculateDiskRange(float attackRange)
     {
-        return baseRange * (1f / 5f) * attackRange;
+        return BaseRange * (1f / 5f) * attackRange;
     }
 
     // 와이어의 공격 사거리를 계산하는 메서드
     private float CalculateWireRange(float attackRange)
     {
-        return baseRange * (4f / 5f) * attackRange;
+        return BaseRange * (4f / 5f) * attackRange;
     }
 
-    private void EnableDecisionButton()
+    // 스킬 설명 UI가 모두 활성화 되었는지 확인
+    private void CheckSkillDescriptions()
     {
-        decisionButton.enabled = true;
-        decisionButtonAlpha.SetActive(false);
+        foreach (Transform child in skillDescriptionsPanel.transform)
+        {
+            if (!child.gameObject.activeSelf)
+            {
+                DisableSkillDecisionButton();
+                return;
+            }
+        }
+
+        EventManager<GameEvents>.TriggerEvent(GameEvents.IsSkillReady);
+        EnableSkillDecisionButton();
     }
 
+    // 장비 결정 버튼 활성화
+    private void EnableEquipDecisionButton()
+    {
+        equipDecisionButton.enabled = true;
+        equipDecisionButtonAlpha.SetActive(false);
+    }
+
+    // 스킬 결정 버튼 활성화
+    private void EnableSkillDecisionButton()
+    {
+        skillDecisionButton.enabled = true;
+        skillDecisionButtonAlpha.SetActive(false);
+    }
+
+    // 스킬 결정 버튼 비활성화
+    private void DisableSkillDecisionButton()
+    {
+        skillDecisionButton.enabled = false;
+        skillDecisionButtonAlpha.SetActive(true);
+    }
+
+    // 장비 결정 버튼 클릭 시 호출
     private void OnClickDecisionButton()
     {
-        equipUI.SetActive(false);
-        // 기술 세팅 UI 활성화
-        // 장비, 공격력, 공격 사거리, 공격 범위 적용
+        SwitchToNextUI();
+    }
+
+    // 스킬 결정 버튼 클릭 시 호출
+    private void OnClickSkillDecisionButton()
+    {
+        SwitchToNextUI();
+        StartGame();
+    }
+
+    // 게임 시작
+    private void StartGame()
+    {
+        Debug.Log("게임 시작!");
     }
 }

@@ -1,3 +1,5 @@
+using EnumTypes;
+using EventLibrary;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -63,6 +65,7 @@ public class SkillSlot : MonoBehaviour, IDropHandler
         skillRangeText.text = $"스킬 범위 : {skillData.range}";
 
         skillDescriptionUI.SetActive(true);
+        EventManager<UIEvents>.TriggerEvent(UIEvents.UpdateSkillDescription);
     }
 
     // 스킬 설명을 초기화

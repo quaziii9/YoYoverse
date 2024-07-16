@@ -35,6 +35,7 @@ namespace EnumTypes
         OnClickWireListItem,
         StartDraggingSkillIcon,
         StopDraggingSkillIcon,
+        UpdateSkillDescription,
     }
 
     public enum GameEvents
@@ -42,6 +43,7 @@ namespace EnumTypes
         SelectedDisk,
         SelectedWire,
         IsEquipReady,
+        IsSkillReady,
     }
 
     public enum DataEvents
