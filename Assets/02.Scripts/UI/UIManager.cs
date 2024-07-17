@@ -233,6 +233,7 @@ public class UIManager : Singleton<UIManager>
     private void OnClickDecisionButton()
     {
         SwitchToNextUI();
+        // 장비 데이터 GameManager에 전달
     }
 
     // 스킬 결정 버튼 클릭 시 호출

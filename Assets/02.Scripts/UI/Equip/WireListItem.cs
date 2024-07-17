@@ -27,8 +27,11 @@ public class WireListItem : InfiniteScrollItem
         _yoYoData = scrollData as YoYoData;
         if (_yoYoData == null) return;
 
-        // 텍스트와 이미지 업데이트
+        // 이미지 업데이트
         image.sprite = Resources.Load<Sprite>(_yoYoData.imagePath);
+        
+        // 게임 매니저에 와이어 데이터 저장
+        GameManager.Instance.UpdateYoYoAssignment(1, _yoYoData);
     }
 
     // 버튼 클릭하면 선택된 아이템 업데이트

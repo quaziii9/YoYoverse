@@ -4,16 +4,19 @@ using UnityEngine;
 
 public class InGameUI : MonoBehaviour
 {
-    public InGameSkillSlot[] inGameSkillSlots; // InGameSlot 오브젝트 배열
+    public InGameSkillSlot[] inGameSkillSlots;
+    public InGameYoYoSlot[] inGameYoYoSlots;
 
     private void Awake()
     {
         EventManager<GameEvents>.StartListening(GameEvents.StartGame, InitializeSkills);
+        EventManager<GameEvents>.StartListening(GameEvents.StartGame, InitializeYoYo);
     }
 
     private void OnDestroy()
     {
         EventManager<GameEvents>.StopListening(GameEvents.StartGame, InitializeSkills);
+        EventManager<GameEvents>.StopListening(GameEvents.StartGame, InitializeYoYo);
     }
 
     // 스킬 슬롯 초기화
@@ -25,6 +28,19 @@ public class InGameUI : MonoBehaviour
             if (skillData != null)
             {
                 inGameSkillSlots[i].Initialize(skillData);
+            }
+        }
+    }
+    
+    // 스킬 슬롯 초기화
+    private void InitializeYoYo()
+    {
+        for (int i = 0; i < inGameYoYoSlots.Length; i++)
+        {
+            YoYoData yoyoData = GameManager.Instance.GetYoYoData(i);
+            if (yoyoData != null)
+            {
+                inGameYoYoSlots[i].Initialize(yoyoData);
             }
         }
     }
