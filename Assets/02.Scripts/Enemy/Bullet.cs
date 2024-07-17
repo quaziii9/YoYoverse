@@ -1,21 +1,33 @@
 using System.Collections;
 using UnityEngine;
-
 public class Bullet : MonoBehaviour
 {
+    public GameObject shooter; // 총알을 발사한 객체
+
     private void OnEnable()
     {
         StartCoroutine(DisableBullet());
     }
 
-    private void OnCollisionEnter(Collision col)
+    private void OnTriggerEnter(Collider other)
     {
-        Collider collider = col.collider;
+        if (other.gameObject == shooter)
+        {
+            // 발사한 적 자신과의 충돌은 무시
+            return;
+        }
 
-        if (collider.CompareTag("Player"))
+        if (other.CompareTag("Player"))
             Debug.Log("enter player");
         else
-            Debug.Log("else ");
+            Debug.Log(other.name);
+
+       // ProjectileDisable(transform.position);
+    }
+
+    public void SetShooter(GameObject shooterObject)
+    {
+        shooter = shooterObject;
     }
 
     void ProjectileDisable(Vector3 hitPosition)

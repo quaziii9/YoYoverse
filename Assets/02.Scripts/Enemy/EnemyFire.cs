@@ -55,16 +55,23 @@ public class EnemyFire : MonoBehaviour
 
     public void FireBullet()
     {
-        Vector3 direction = (_playerTr.position - firePos.position).normalized;
-
+        Vector3 targetPosition = _playerTr.position + new Vector3(0, 1f, 0);
+        Vector3 direction = (targetPosition - firePos.position).normalized;
         GameObject bulletInstance = ObjectPool.Instance.DequeueObject(bullet);
         bulletInstance.transform.position = firePos.position;
         bulletInstance.transform.rotation = Quaternion.LookRotation(direction);
 
+        // 총알에 발사자 정보 설정
+        Bullet bulletScript = bulletInstance.GetComponent<Bullet>();
+        if (bulletScript != null)
+        {
+            bulletScript.SetShooter(this.gameObject);
+        }
+
         Rigidbody bulletRb = bulletInstance.GetComponent<Rigidbody>();
         if (bulletRb != null)
         {
-            bulletRb.velocity = direction * 100;
+            bulletRb.velocity = direction * 50;
         }
     }
 
@@ -109,17 +116,17 @@ public class EnemyFire : MonoBehaviour
             inPlayer = false;
         }
     }
-    
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
-
         if (firePos != null && _playerTr != null)
         {
+            Vector3 targetPosition = _playerTr.position + new Vector3(0, 1f, 0);
             Gizmos.color = Color.blue;
-            Gizmos.DrawLine(firePos.position, _playerTr.position);
-            Gizmos.DrawSphere(_playerTr.position, 0.2f);
+            Gizmos.DrawLine(firePos.position, targetPosition); // firePos에서 targetPosition까지 선 그리기
+            Gizmos.DrawSphere(targetPosition, 0.2f);
         }
     }
 }

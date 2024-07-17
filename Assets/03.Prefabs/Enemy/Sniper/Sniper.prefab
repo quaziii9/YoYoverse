@@ -2440,7 +2440,7 @@ MonoBehaviour:
   viewHeight: 15
   playerLayer:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 2048
   detectionResolution: 10
 --- !u!1 &8176791983792841858
 GameObject:
