@@ -13,8 +13,18 @@ public class Player : MonoBehaviour
     [Header("ClickPosition")]
     [SerializeField] private Transform clickTransform;
 
+    [Header("FirstAttackParticle")]
+    [SerializeField] private GameObject _firstParticle;
+
+    [Header("SecondAttackParticle")]
+    [SerializeField] private GameObject _secondParticle;
+
+    [Header("ThirdAttackParticle")]
+    [SerializeField] private GameObject _thirdParticle;
+
     #region PlayerComponent
     private NavMeshAgent _agent;
+    private ParticleSystem _first, _second, _third;
     private Animator _animator;
     private PlayerStateMachine _state;
     private Rigidbody _rigidBody;
@@ -53,6 +63,7 @@ public class Player : MonoBehaviour
     {
         InitializePlayer();
         InitializeState();
+        InitializeEffect();
     }
 
     //플레이어 초기화
@@ -65,6 +76,13 @@ public class Player : MonoBehaviour
         _agent.speed = walkSpeed;
         _layerMask = LayerMask.GetMask("Ground");
         clickTransform.gameObject.SetActive(false);
+    }
+
+    private void InitializeEffect()
+    {
+        _first = _firstParticle.GetComponent<ParticleSystem>();
+        _second = _secondParticle.GetComponent<ParticleSystem>();
+        _third = _thirdParticle.GetComponent<ParticleSystem>();
     }
 
     //상태 추가 메소드 
@@ -82,5 +100,20 @@ public class Player : MonoBehaviour
     public void ChangeNextAttack()
     {
         isNext = true;
+    }
+
+    public void FirstAttackParticle()
+    {
+        _first.Play();
+    }
+
+    public void SecondAttackParticle()
+    {
+        _second.Play();
+    }
+
+    public void ThirdAttackParticle()
+    {
+        _third.Play();
     }
 }
