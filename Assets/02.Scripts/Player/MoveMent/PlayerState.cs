@@ -36,7 +36,7 @@ public class IdleState : PlayerState
     public override void StateEnter()
     {
         _player.Agent.enabled = false;
-        _player.Anim.applyRootMotion = true;
+        // _player.Anim.applyRootMotion = true;
     }
 
     public override void StateUpdate()

@@ -111,6 +111,7 @@ public class ThirdAttackState : PlayerState
     public override void StateExit()
     {
         _player.Anim.SetBool(_player.IsComboAttack3, false);
+        AttackRotation();
     }
 
     private void InitializeThirdAttack()
