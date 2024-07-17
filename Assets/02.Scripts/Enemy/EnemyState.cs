@@ -144,7 +144,7 @@ public class AttackState : IState
     private Transform _enemyTr;
     private Transform _playerTr;
     private EnemyFire _enemyFire;
-    private float rotationSpeed = 60f; // 회전 속도
+    private float rotationSpeed = 10; // 회전 속도
     private Coroutine smoothRotationCoroutine;
     private bool hasFiredInitialShot = false; // 초기 발사 여부를 추적하는 변수
 
@@ -188,17 +188,10 @@ public class AttackState : IState
             Vector3 direction = (_playerTr.position - _enemyTr.position).normalized;
             Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
 
-            while (Quaternion.Angle(_enemyTr.rotation, targetRotation) > 0.1f)
-            {
-                float step = rotationSpeed * Time.deltaTime;
-                _enemyTr.rotation = Quaternion.RotateTowards(_enemyTr.rotation, targetRotation, step);
-                yield return null;
-            }
-
-            _enemyTr.rotation = targetRotation;
+            _enemyTr.rotation = Quaternion.Slerp(_enemyTr.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
             // 초기 발사
-            if (!hasFiredInitialShot)
+            if (!hasFiredInitialShot && Quaternion.Angle(_enemyTr.rotation, targetRotation) < 5f)
             {
                 _enemyFire.StartCoroutine(_enemyFire.FireAfterRotation());
                 hasFiredInitialShot = true;

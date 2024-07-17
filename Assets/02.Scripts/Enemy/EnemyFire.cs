@@ -51,10 +51,11 @@ public class EnemyFire : MonoBehaviour
         {
             isFireAnimIng = true;
             animator.SetTrigger(hashFire);
+            FireBullet();
         }
     }
 
-    // FireBullet은 애니메이션 이벤트를 통해 호출됩니다.
+
     public void FireBullet()
     {
         Vector3 direction = (playerTr.position - firePos.position).normalized;
@@ -66,7 +67,7 @@ public class EnemyFire : MonoBehaviour
         Rigidbody bulletRb = bulletInstance.GetComponent<Rigidbody>();
         if (bulletRb != null)
         {
-            bulletRb.velocity = direction * 500;
+            bulletRb.velocity = direction * 100;
         }
     }
 

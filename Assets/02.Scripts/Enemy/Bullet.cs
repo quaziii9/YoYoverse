@@ -13,7 +13,9 @@ public class Bullet : MonoBehaviour
         Collider collider = col.collider;
 
         if (collider.CompareTag("Player"))
-                    Debug.Log("enter player");
+            Debug.Log("enter player");
+        else
+            Debug.Log("else ");
     }
 
     void ProjectileDisable(Vector3 hitPosition)

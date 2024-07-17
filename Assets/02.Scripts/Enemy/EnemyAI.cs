@@ -21,8 +21,6 @@ public enum EnemyType
 }
 
 
-
-
 public class EnemyAI : MonoBehaviour
 {
     public IState CurrentStateInstance { get; private set; }
