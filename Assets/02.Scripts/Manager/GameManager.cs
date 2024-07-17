@@ -1,8 +1,11 @@
+using System.Collections.Generic;
 using EnumTypes;
 using EventLibrary;
 
 public class GameManager : Singleton<GameManager>
 {
+    private Dictionary<int, SkillData> _assignedSkills = new Dictionary<int, SkillData>();
+    
     private bool _selectedDisk;
     private bool _selectedWire;
 
@@ -23,6 +26,25 @@ public class GameManager : Singleton<GameManager>
         EventManager<GameEvents>.StopListening(GameEvents.SelectedDisk, SelectDisk);
         EventManager<GameEvents>.StopListening(GameEvents.SelectedWire, SelectWire);
         EventManager<GameEvents>.StopListening(GameEvents.IsSkillReady, ChangeSkillReadyState);
+    }
+    
+    // 스킬 할당 업데이트
+    public void UpdateSkillAssignment(int slotIndex, SkillData skillData)
+    {
+        _assignedSkills[slotIndex] = skillData;
+        // DebugLogger.Log($"{slotIndex} 슬롯에 {skillData.name} 스킬이 할당되었습니다.");
+    }
+    
+    // 슬롯 인덱스에 따른 스킬 데이터 반환
+    public SkillData GetSkillData(int slotIndex)
+    {
+        return _assignedSkills.ContainsKey(slotIndex) ? _assignedSkills[slotIndex] : null;
+    }
+
+    // 모든 스킬 데이터를 반환
+    public Dictionary<int, SkillData> GetAllAssignedSkills()
+    {
+        return _assignedSkills;
     }
 
     // 디스크 선택 시 호출

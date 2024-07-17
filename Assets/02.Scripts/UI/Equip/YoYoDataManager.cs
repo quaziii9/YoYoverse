@@ -18,7 +18,7 @@ public class YoYoDataManager : Singleton<YoYoDataManager>
     {
         base.Awake();
     }
-
+    
     // 객체가 파괴될 때 호출
     private void OnDestroy()
     {
