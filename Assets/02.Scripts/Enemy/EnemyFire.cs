@@ -1,43 +1,41 @@
 using System.Collections;
-using System.Collections.Generic;
 using EnumTypes;
+using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Pool;
 
 public class EnemyFire : MonoBehaviour
 {
-    private Animator animator;
-    public Transform playerTr;
-    public Transform firePos;
-    private EnemyAI enemyAI;
-    private Transform enemyTr;
+    [PropertySpace(0f, 5f)] public Transform firePos; // 총구 포지션
+    
+    [FoldoutGroup("State")] public bool isFireAnimIng = false; // 현재 발사 중인지 확인하는 변수
+    [FoldoutGroup("State")] public bool inPlayer; // 현재 플레이어가 시야각내에 들어왔는지 확인하는 변수
+    
+    private bool _pendingIdleState = false;
 
-    private readonly int hashFire = Animator.StringToHash("Fire");
+    [FoldoutGroup("Bullet")]public GameObject bullet;
+    [FoldoutGroup("Bullet")]public float detectionRange = 10.0f;
+    
+    private Animator _animator;
+    private Transform _playerTr;
+    private EnemyAI _enemyAI;
 
-    public bool isFireAnimIng = false;
-    private bool pendingIdleState = false;
+    private readonly int _hashFire = Animator.StringToHash("Fire");
 
-    [Header("Bullet")]
-    public GameObject bullet;
-
-    public float detectionRange = 10.0f;
-    private float rotationSpeed = 90f; // 회전 속도를 90도/초로 설정
-
-    public float lastShootTime = 0f; // 마지막 발사 시간을 저장하는 변수
-    public bool InPlayer;
-
-
-    void Start()
+    private void Awake()
     {
-        enemyTr = GetComponent<Transform>();
-        animator = GetComponent<Animator>();
-        enemyAI = GetComponent<EnemyAI>();
+        Initialize();
+    }
+
+    private void Initialize()
+    {
+        _animator = GetComponent<Animator>();
+        _enemyAI = GetComponent<EnemyAI>();
 
         SphereCollider rangeCollider = gameObject.AddComponent<SphereCollider>();
         rangeCollider.isTrigger = true;
         rangeCollider.radius = detectionRange;
 
-        playerTr = GameObject.FindGameObjectWithTag("Player").transform;
+        _playerTr = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     public IEnumerator FireAfterRotation()
@@ -48,18 +46,16 @@ public class EnemyFire : MonoBehaviour
 
     public void Fire()
     {
-        if (!isFireAnimIng)
-        {
-            isFireAnimIng = true;
-            animator.SetTrigger(hashFire);
-            FireBullet();
-        }
+        if (isFireAnimIng) return;
+        
+        isFireAnimIng = true;
+        _animator.SetTrigger(_hashFire);
+        FireBullet();
     }
-
 
     public void FireBullet()
     {
-        Vector3 direction = (playerTr.position - firePos.position).normalized;
+        Vector3 direction = (_playerTr.position - firePos.position).normalized;
 
         GameObject bulletInstance = ObjectPool.Instance.DequeueObject(bullet);
         bulletInstance.transform.position = firePos.position;
@@ -76,14 +72,14 @@ public class EnemyFire : MonoBehaviour
     {
         isFireAnimIng = false;
 
-        if (pendingIdleState)
+        if (_pendingIdleState)
         {
-            enemyAI.ChangeState(EnemyState.Idle);
-            pendingIdleState = false;
+            _enemyAI.ChangeState(EnemyState.Idle);
+            _pendingIdleState = false;
         }
-        else if (enemyAI.EnemyCurstate == EnemyState.Attack)
+        else if (_enemyAI.EnemyCurstate == EnemyState.Attack && inPlayer == true)
         {
-            enemyAI.StartCoroutine(WaitAndFire());
+            _enemyAI.StartCoroutine(WaitAndFire());
         }
     }
 
@@ -97,12 +93,11 @@ public class EnemyFire : MonoBehaviour
     {
         if (isFireAnimIng)
         {
-            pendingIdleState = true;
+            _pendingIdleState = true;
         }
         else
         {
-            if(enemyAI.EnemyCurstate == EnemyState.Attack)
-            enemyAI.ChangeState(EnemyState.Idle);
+            if(_enemyAI.EnemyCurstate == EnemyState.Attack) _enemyAI.ChangeState(EnemyState.Idle);
         }
     }
 
@@ -111,22 +106,20 @@ public class EnemyFire : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             StopFiring();
-            InPlayer = false;
+            inPlayer = false;
         }
     }
-
+    
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        if (firePos != null && playerTr != null)
+        if (firePos != null && _playerTr != null)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawLine(firePos.position, playerTr.position);
-            Gizmos.DrawSphere(playerTr.position, 0.2f);
+            Gizmos.DrawLine(firePos.position, _playerTr.position);
+            Gizmos.DrawSphere(_playerTr.position, 0.2f);
         }
     }
 }
-
-

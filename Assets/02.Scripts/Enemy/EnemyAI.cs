@@ -1,10 +1,7 @@
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.AI;
+using System;
 using EnumTypes;
 using EventLibrary;
-using UnityEngine.Serialization;
+using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -12,7 +9,6 @@ public class EnemyAI : MonoBehaviour
     public EnemyState EnemyCurstate = EnemyState.Idle;
     public Transform playerTr;
     public Transform enemyTr;
-    public Transform firePos; // firePos 추가
     public Animator animator;
     public EnemyMoveAgent enemyMoveAgent;
     public EnemyFire enemyFire;
@@ -90,7 +86,7 @@ public class EnemyAI : MonoBehaviour
             case EnemyState.Die:
                 return new EnemyDieState(this);
             default:
-                throw new System.ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException();
         }
     }
 

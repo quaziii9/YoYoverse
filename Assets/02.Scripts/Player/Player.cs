@@ -88,11 +88,11 @@ public class Player : MonoBehaviour
     private void InitializeState()
     {
         _state = gameObject.AddComponent<PlayerStateMachine>();
-        _state.AddState(_State.Idle, new IdleState(this));
-        _state.AddState(_State.Move , new MoveState(this));  
-        _state.AddState(_State.ComboAttack1, new FirstAttackState(this));
-        _state.AddState(_State.ComboAttack2, new SecondAttackState(this));
-        _state.AddState(_State.ComboAttack3, new ThirdAttackState(this));  
+        _state.AddState(global::State.Idle, new IdleState(this));
+        _state.AddState(global::State.Move , new MoveState(this));  
+        _state.AddState(global::State.ComboAttack1, new FirstAttackState(this));
+        _state.AddState(global::State.ComboAttack2, new SecondAttackState(this));
+        _state.AddState(global::State.ComboAttack3, new ThirdAttackState(this));  
     }
 
     //애니메이션 이벤트

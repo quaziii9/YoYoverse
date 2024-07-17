@@ -8,15 +8,14 @@ public class EnemyStateMachine : MonoBehaviour
     private Dictionary<EnemyState, EnemyBase> _stateDic = new Dictionary<EnemyState, EnemyBase>();
     private EnemyBase _currentState;
 
-    void Start()
+    private void Start()
     {
         _currentState = _stateDic[EnemyState.Idle];
 
         _currentState.StateEnter();
     }
 
-    
-    void Update()
+    private void Update()
     {
         _currentState.StateUpdate();
     }

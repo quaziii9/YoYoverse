@@ -32,7 +32,7 @@ public class EnemyIdleState : IState
 
     public void ExecuteOnUpdate()
     {
-        // �ʿ��� ��� �߰� ����
+        // 필요한 경우 추가 로직
     }
 
     public void Exit()
@@ -54,7 +54,7 @@ public class EnemyIdleState : IState
         Vector3 startPosition = enemyAI.transform.position;
         Quaternion startRotation = enemyAI.transform.rotation;
         float elapsedTime = 0f;
-        float returnDuration = 2f; // �ε巯�� ��ȯ�� ���� �ð� (���� ����)
+        float returnDuration = 2f; // 부드러운 전환을 위한 시간 (조절 가능)
 
         while (elapsedTime < returnDuration)
         {
@@ -128,7 +128,7 @@ public class EnemyPatrolState : IState
 
     public void ExecuteOnUpdate()
     {
-        // ���� ������Ʈ �ڵ�
+        // 상태 업데이트 코드
     }
 
     public void Exit()
@@ -156,14 +156,14 @@ public class EnemyTraceState : IState
     {
         enemyAI.enemyMoveAgent.SetDestination(enemyAI.playerTr.position);
 
-        if (Vector3.Distance(enemyAI.playerTr.position, enemyAI.enemyTr.position) <= enemyAI.attackDist)
-        {
-            // �÷��̾���� ���̿� ��ֹ��� ������ ���� ���·� ��ȯ
-            if (!Physics.Linecast(enemyAI.firePos.position, enemyAI.playerTr.position, out RaycastHit hit))
-            {
-                enemyAI.ChangeState(EnemyState.Attack);
-            }
-        }
+        //if (Vector3.Distance(enemyAI.playerTr.position, enemyAI.enemyTr.position) <= enemyAI.attackDist)
+        //{
+        //    // 플레이어와의 사이에 장애물이 없으면 공격 상태로 전환
+        //    if (!Physics.Linecast(enemyAI.firePos.position, enemyAI.playerTr.position, out RaycastHit hit))
+        //    {
+        //        enemyAI.ChangeState(EnemyState.ATTACK);
+        //    }
+        //}
     }
 
     public void Exit()
@@ -179,9 +179,9 @@ public class EnemyAttackState : IState
     private Transform _enemyTr;
     private Transform _playerTr;
     private EnemyFire _enemyFire;
-    private float rotationSpeed = 10; // ȸ�� �ӵ�
+    private float rotationSpeed = 10; // 회전 속도
     private Coroutine smoothRotationCoroutine;
-    private bool hasFiredInitialShot = false; // �ʱ� �߻� ���θ� �����ϴ� ����
+    private bool hasFiredInitialShot = false; // 초기 발사 여부를 추적하는 변수
 
     public EnemyAttackState(EnemyAI enemyAI)
     {
@@ -193,14 +193,14 @@ public class EnemyAttackState : IState
 
     public void Enter()
     {
-        // �ε巯�� �ʱ� ȸ�� ���� �� �������� ȸ�� �ڷ�ƾ ����
+        // 부드러운 초기 회전 시작 및 지속적인 회전 코루틴 실행
         smoothRotationCoroutine = enemyAI.StartCoroutine(SmoothRotation());
-        _enemyFire.InPlayer = true;
+        _enemyFire.inPlayer = true;
     }
 
     public void ExecuteOnUpdate()
     {
-        // �ε巯�� ȸ���� ���������� ����
+        // 부드러운 회전을 지속적으로 수행
         if (smoothRotationCoroutine == null)
         {
             smoothRotationCoroutine = enemyAI.StartCoroutine(SmoothRotation());
@@ -218,14 +218,14 @@ public class EnemyAttackState : IState
 
     private IEnumerator SmoothRotation()
     {
-        while (_enemyFire.InPlayer == true)
+        while (_enemyFire.inPlayer == true)
         {
             Vector3 direction = (_playerTr.position - _enemyTr.position).normalized;
-            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z)) * Quaternion.Euler(0, enemyAI.modelRotationOffset, 0);
+            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
 
             _enemyTr.rotation = Quaternion.Slerp(_enemyTr.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-            // �ʱ� �߻�
+            // 초기 발사
             if (!hasFiredInitialShot && Quaternion.Angle(_enemyTr.rotation, targetRotation) < 5f)
             {
                 _enemyFire.StartCoroutine(_enemyFire.FireAfterRotation());
@@ -257,11 +257,11 @@ public class EnemyDieState : IState
 
     public void ExecuteOnUpdate()
     {
-        // ��� ���� ������Ʈ �ڵ�
+        // 사망 상태 업데이트 코드
     }
 
     public void Exit()
     {
-        // ��� ���� ���� �ڵ�
+        // 사망 상태 종료 코드
     }
 }

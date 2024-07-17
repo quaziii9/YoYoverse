@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum _State
+public enum State
 {
     Idle,
     Move,
@@ -12,27 +12,27 @@ public enum _State
 
 public class PlayerStateMachine : MonoBehaviour
 {
-    private Dictionary<_State, BaseState> _stateDictionary = new Dictionary<_State, BaseState>();
+    private Dictionary<State, BaseState> _stateDictionary = new Dictionary<State, BaseState>();
     private BaseState _currentState;
-    
-    void Start()
+
+    private void Start()
     {
-        _currentState = _stateDictionary[_State.Idle];
+        _currentState = _stateDictionary[State.Idle];
 
         _currentState.StateEnter();
     }
 
-    void Update()
+    private void Update()
     {
         _currentState.StateUpdate();
     }
 
-    public void AddState(_State state, BaseState newState)
+    public void AddState(State state, BaseState newState)
     {
         _stateDictionary.Add(state, newState); 
     }
 
-    public void ChangeState(_State newState)
+    public void ChangeState(State newState)
     {
         _currentState.StateExit();
 

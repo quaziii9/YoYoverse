@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace EnumTypes
 {
-    public enum PlayerState { Stand, Move, Run, Hold }
     public enum EnemyState { Idle, Patrol, Move, Trace, Attack, Die }
     
     public enum EnemyType { Sniper, Paladin }
@@ -48,6 +47,11 @@ namespace EnumTypes
         IsSkillReady,
         StartGame,
     }
+    
+    public enum EnemyEvents
+    {
+        ChangeEnemyStateAttack,
+    }
 
     public enum DataEvents
     {
@@ -56,7 +60,3 @@ namespace EnumTypes
 
     public class EnumTypes : MonoBehaviour { }
 }
-    public enum EnemyEvents
-    {
-        ChangeEnemyStateAttack,
-    }

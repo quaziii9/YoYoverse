@@ -55,7 +55,7 @@ public class IdleState : PlayerState
         {
             _player.MouseRay = _player.MainCamera.ScreenPointToRay(Input.mousePosition);
 
-            _player.State.ChangeState(_State.Move);
+            _player.State.ChangeState(State.Move);
         }
     }
 
@@ -64,7 +64,7 @@ public class IdleState : PlayerState
         if (Input.GetMouseButtonDown(0))
         {
             AttackRotation();
-            _player.State.ChangeState(_State.ComboAttack1);
+            _player.State.ChangeState(State.ComboAttack1);
         }
     }
 }
@@ -106,7 +106,7 @@ public class MoveState : PlayerState
         {
             ActiveTargetObject(false);
 
-            _player.State.ChangeState(_State.Idle);
+            _player.State.ChangeState(State.Idle);
         }
 
         AnimationMoveMent();
@@ -153,7 +153,7 @@ public class MoveState : PlayerState
 
             _player.Anim.SetFloat("Move", 0);
 
-            _player.State.ChangeState(_State.ComboAttack1);
+            _player.State.ChangeState(State.ComboAttack1);
         }
     }
 }

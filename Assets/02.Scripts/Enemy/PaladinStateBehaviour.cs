@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using EnumTypes;
 using UnityEngine;
 
 public class PaladinStateBehaviour : StateMachineBehaviour
 {
     Paladin _paladin;
+    private static readonly int Attack = Animator.StringToHash("Attack");
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
@@ -22,7 +21,7 @@ public class PaladinStateBehaviour : StateMachineBehaviour
 
     public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animator.ResetTrigger("Attack");
+        animator.ResetTrigger(Attack);
 
         _paladin.IsAction = false;
 

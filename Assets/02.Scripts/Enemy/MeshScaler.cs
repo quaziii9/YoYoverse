@@ -6,30 +6,33 @@ public class MeshScaler : MonoBehaviour
     [Range(0.01f, 90f)]
     public float viewAngle = 45f;
     private MeshRenderer meshRenderer;
+    
+    private static readonly int Scale = Shader.PropertyToID("_Scale");
+    private static readonly int ViewAngle = Shader.PropertyToID("_ViewAngle");
 
-    void Start()
+    private void Start()
     {
         meshRenderer = GetComponent<MeshRenderer>();
         UpdateProperties();
     }
 
-    void Update()
+    private void Update()
     {
       // UpdateProperties();
     }
 
-    void UpdateProperties()
+    private void UpdateProperties()
     {
         if (meshRenderer != null && meshRenderer.sharedMaterial != null)
         {
-            // ÆíÁı ¸ğµå¿¡¼­´Â MaterialÀ» Á÷Á¢ ¼öÁ¤ÇÏÁö ¾Ê½À´Ï´Ù.
+            // í¸ì§‘ ëª¨ë“œì—ì„œëŠ” Materialì„ ì§ì ‘ ìˆ˜ì •í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.
             if (Application.isPlaying)
             {
-                meshRenderer.sharedMaterial.SetVector("_Scale", new Vector4(scale.x, scale.y, scale.z, 1));
-                meshRenderer.sharedMaterial.SetFloat("_ViewAngle", viewAngle);
+                meshRenderer.sharedMaterial.SetVector(Scale, new Vector4(scale.x, scale.y, scale.z, 1));
+                meshRenderer.sharedMaterial.SetFloat(ViewAngle, viewAngle);
             }
 
-            // Transform ½ºÄÉÀÏ ¾÷µ¥ÀÌÆ®´Â ÆíÁı ¸ğµå¿¡¼­µµ ¾ÈÀüÇÕ´Ï´Ù.
+            // Transform ìŠ¤ì¼€ì¼ ì—…ë°ì´íŠ¸ëŠ” í¸ì§‘ ëª¨ë“œì—ì„œë„ ì•ˆì „í•©ë‹ˆë‹¤.
             meshRenderer.transform.localScale = scale;
         }
     }
