@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FirstAttackState : PlayerState
@@ -48,7 +46,6 @@ public class FirstAttackState : PlayerState
     }
 }
 
-
 public class SecondAttackState : PlayerState
 {
     public SecondAttackState(Player player) : base(player) { }
@@ -90,9 +87,7 @@ public class SecondAttackState : PlayerState
         }
         
     }
-
 }
-
 
 public class ThirdAttackState : PlayerState
 {

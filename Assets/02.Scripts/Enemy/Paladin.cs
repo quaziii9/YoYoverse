@@ -6,34 +6,40 @@ using UnityEngine.AI;
 public class Paladin : MonoBehaviour
 {
     #region PaladinComponent
+    
     private NavMeshAgent _agent;
     private EnemyStateMachine _state;
     private Animator _animator;
     private SphereCollider _detectCollider;
+    
     #endregion
 
     #region PaladinValue
+    
     private float _moveSpeed = 1f;
     private float _traceSpeed = 5f;
     private float _traceDistance = 10f;
-    private bool isAction;
-    private bool isDie = false;
+    private bool _isAction;
+    private bool _isDie = false;
     private GameObject _player;
-    //private float _detectAngle = 45f;
+
+    private static readonly int DieParam = Animator.StringToHash("Die");
+    
     #endregion
 
     #region Property
-    public NavMeshAgent Agent { get { return _agent; } }
-    public EnemyStateMachine State { get { return _state; } }
-    public Animator Anim { get { return _animator; } }
-    public SphereCollider DetectCollider { get { return _detectCollider; } }
+    
+    public NavMeshAgent Agent => _agent;
+    public EnemyStateMachine State => _state;
+    public Animator Anim => _animator;
+    public SphereCollider DetectCollider => _detectCollider;
     public GameObject Player { get { return _player; }  set { _player = value; } }
-    public float MoveSpeed { get { return _moveSpeed; } }
-    public float TraceSpeed { get { return _traceSpeed;} }
-    public float TraceDistance {  get { return _traceDistance;} }
-    public bool IsAction { get { return isAction; }  set { isAction = value; } }
-    public bool IsDie { get {  return isDie; } }
-    //public float DetectAngle { get { return _detectAngle; } }
+    public float MoveSpeed => _moveSpeed;
+    public float TraceSpeed => _traceSpeed;
+    public float TraceDistance => _traceDistance;
+    public bool IsAction { get { return _isAction; }  set { _isAction = value; } }
+    public bool IsDie => _isDie;
+
     #endregion
 
     private void Awake()
@@ -53,17 +59,17 @@ public class Paladin : MonoBehaviour
     private void InitializeState()
     {
         _state = gameObject.AddComponent<EnemyStateMachine>();
-        _state.AddState(EnemyState.Idle, new Paladin_Idle(this));
-        _state.AddState(EnemyState.Move, new Paladin_Move(this));
-        _state.AddState(EnemyState.Trace, new Paladin_Trace(this));
-        _state.AddState(EnemyState.Attack, new Paladin_Attack(this));
+        _state.AddState(EnemyState.Idle, new PaladinIdle(this));
+        _state.AddState(EnemyState.Move, new PaladinMove(this));
+        _state.AddState(EnemyState.Trace, new PaladinTrace(this));
+        _state.AddState(EnemyState.Attack, new PaladinAttack(this));
     }
 
     private IEnumerator Die()
     {
-        isDie = true;
+        _isDie = true;
 
-        _animator.SetTrigger("Die");
+        _animator.SetTrigger(DieParam);
 
         gameObject.layer = LayerMask.NameToLayer("DeadEnemy");
 
@@ -76,6 +82,7 @@ public class Paladin : MonoBehaviour
 public abstract class PaladinState : EnemyBase
 {
     protected Paladin _paladin;
+    private static readonly int MoveParam = Animator.StringToHash("Move");
 
     public PaladinState(Paladin paladin)
     {
@@ -101,14 +108,13 @@ public abstract class PaladinState : EnemyBase
 
         float speed = currentVelocity.magnitude;
 
-        _paladin.Anim.SetFloat("Move", speed);
+        _paladin.Anim.SetFloat(MoveParam, speed);
     }
-
 }
 
-public class Paladin_Idle : PaladinState
+public class PaladinIdle : PaladinState
 {
-    public Paladin_Idle(Paladin paladin) : base(paladin) { }
+    public PaladinIdle(Paladin paladin) : base(paladin) { }
 
     public override void StateEnter()
     {
@@ -134,24 +140,14 @@ public class Paladin_Idle : PaladinState
     {
         if(other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            //Vector3 direction = (other.transform.position - _paladin.transform.position).normalized;
-
-            //float angle = Vector3.Angle(_paladin.transform.forward, direction);
-
-            //if(angle <= _paladin.DetectAngle)
-            //{
-            //    _paladin.DetectCollider.enabled = false;
-
-            //    _paladin.State.ChangeState(EnemyState.Trace);
-            //}
             _paladin.StartCoroutine(ChangeDelay(other));
         }
     }
 }
 
-public class Paladin_Move : PaladinState
+public class PaladinMove : PaladinState
 {
-    public Paladin_Move(Paladin paladin) : base(paladin) { }
+    public PaladinMove(Paladin paladin) : base(paladin) { }
     
     private List<Transform> _wayPointList = new List<Transform>();
 
@@ -193,24 +189,14 @@ public class Paladin_Move : PaladinState
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            //Vector3 direction = (other.transform.position - _paladin.transform.position).normalized;
-
-            //float angle = Vector3.Angle(_paladin.transform.forward, direction);
-
-            //if (angle <= _paladin.DetectAngle)
-            //{
-            //    _paladin.DetectCollider.enabled = false;
-
-            //    _paladin.State.ChangeState(EnemyState.Trace);
-            //}
             _paladin.StartCoroutine(ChangeDelay(other));
         }
     }
 }
 
-public class Paladin_Trace : PaladinState
+public class PaladinTrace : PaladinState
 {
-    public Paladin_Trace(Paladin paladin) : base(paladin) { }
+    public PaladinTrace(Paladin paladin) : base(paladin) { }
 
     public override void StateEnter()
     {
@@ -254,11 +240,12 @@ public class Paladin_Trace : PaladinState
     }
 }
 
-public class Paladin_Attack : PaladinState
+public class PaladinAttack : PaladinState
 {
-    public Paladin_Attack(Paladin paladin) : base(paladin) { }
+    public PaladinAttack(Paladin paladin) : base(paladin) { }
 
     private Vector3 _target;
+    private static readonly int AttackParam = Animator.StringToHash("Attack");
 
     public override void StateEnter()
     {
@@ -298,6 +285,6 @@ public class Paladin_Attack : PaladinState
 
     private void AttackToPlayer()
     {
-        _paladin.Anim.SetTrigger("Attack");
+        _paladin.Anim.SetTrigger(AttackParam);
     }
 }
