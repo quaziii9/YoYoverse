@@ -23,6 +23,7 @@ namespace EnumTypes
     public enum PlayerEvents
     {
         PlayerDead,
+        OnAttackEffect,
     }
 
     public enum YoYoEvents

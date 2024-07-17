@@ -1,3 +1,5 @@
+using EnumTypes;
+using EventLibrary;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -104,15 +106,21 @@ public class Player : MonoBehaviour
     public void FirstAttackParticle()
     {
         _first.Play();
+        OnEffect effectComponent = _firstParticle.GetComponent<OnEffect>();
+        effectComponent.TriggerEvent(1);
     }
 
     public void SecondAttackParticle()
     {
         _second.Play();
+        OnEffect effectComponent = _secondParticle.GetComponent<OnEffect>();
+        effectComponent.TriggerEvent(2);
     }
 
     public void ThirdAttackParticle()
     {
         _third.Play();
+        OnEffect effectComponent = _thirdParticle.GetComponent<OnEffect>();
+        effectComponent.TriggerEvent(3);
     }
 }

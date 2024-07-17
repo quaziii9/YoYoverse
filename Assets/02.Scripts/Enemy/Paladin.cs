@@ -4,7 +4,7 @@ using EnumTypes;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Paladin : MonoBehaviour
+public class Paladin : MonoBehaviour, IDamage
 {
     #region PaladinComponent
     
@@ -12,11 +12,16 @@ public class Paladin : MonoBehaviour
     private EnemyStateMachine _state;
     private Animator _animator;
     private SphereCollider _detectCollider;
-    
+
     #endregion
 
     #region PaladinValue
-    
+    [Header("Health")]
+    [SerializeField] private float _health;
+
+    [Header("Power")]
+    [SerializeField] private float _power;
+
     private float _moveSpeed = 1f;
     private float _traceSpeed = 5f;
     private float _traceDistance = 10f;
@@ -25,7 +30,6 @@ public class Paladin : MonoBehaviour
     private GameObject _player;
 
     private static readonly int DieParam = Animator.StringToHash("Die");
-    
     #endregion
 
     #region Property
@@ -77,6 +81,16 @@ public class Paladin : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
 
         gameObject.SetActive(false);
+    }
+
+    public void TakeDamage(float damage)
+    {
+        _health -= damage;
+
+        if(_health <= 0)
+        {
+            StartCoroutine(Die());
+        }
     }
 }
 
