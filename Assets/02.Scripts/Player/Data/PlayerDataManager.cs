@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerDataManager : MonoBehaviour
 {
-    private static PlayerDataManager instance;
+    public static PlayerDataManager instance;
 
     [Header("AttackDataJson")]
     public string playerAttackJson;
