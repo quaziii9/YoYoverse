@@ -31,7 +31,7 @@ public class IdleState : IState
 
     public void ExecuteOnUpdate()
     {
-        // ÇÊ¿äÇÑ °æ¿ì Ãß°¡ ·ÎÁ÷
+        // í•„ìš”í•œ ê²½ìš° ì¶”ê°€ ë¡œì§
     }
 
     public void Exit()
@@ -53,7 +53,7 @@ public class IdleState : IState
         Vector3 startPosition = enemyAI.transform.position;
         Quaternion startRotation = enemyAI.transform.rotation;
         float elapsedTime = 0f;
-        float returnDuration = 2f; // ºÎµå·¯¿î ÀüÈ¯À» À§ÇÑ ½Ã°£ (Á¶Àı °¡´É)
+        float returnDuration = 2f; // ë¶€ë“œëŸ¬ìš´ ì „í™˜ì„ ìœ„í•œ ì‹œê°„ (ì¡°ì ˆ ê°€ëŠ¥)
 
         while (elapsedTime < returnDuration)
         {
@@ -127,7 +127,7 @@ public class PatrolState : IState
 
     public void ExecuteOnUpdate()
     {
-        // »óÅÂ ¾÷µ¥ÀÌÆ® ÄÚµå
+        // ìƒíƒœ ì—…ë°ì´íŠ¸ ì½”ë“œ
     }
 
     public void Exit()
@@ -155,14 +155,14 @@ public class TraceState : IState
     {
         enemyAI.enemyMoveAgent.SetDestination(enemyAI.playerTr.position);
 
-        if (Vector3.Distance(enemyAI.playerTr.position, enemyAI.enemyTr.position) <= enemyAI.attackDist)
-        {
-            // ÇÃ·¹ÀÌ¾î¿ÍÀÇ »çÀÌ¿¡ Àå¾Ö¹°ÀÌ ¾øÀ¸¸é °ø°İ »óÅÂ·Î ÀüÈ¯
-            if (!Physics.Linecast(enemyAI.firePos.position, enemyAI.playerTr.position, out RaycastHit hit))
-            {
-                enemyAI.ChangeState(EnemyState.ATTACK);
-            }
-        }
+        //if (Vector3.Distance(enemyAI.playerTr.position, enemyAI.enemyTr.position) <= enemyAI.attackDist)
+        //{
+        //    // í”Œë ˆì´ì–´ì™€ì˜ ì‚¬ì´ì— ì¥ì• ë¬¼ì´ ì—†ìœ¼ë©´ ê³µê²© ìƒíƒœë¡œ ì „í™˜
+        //    if (!Physics.Linecast(enemyAI.firePos.position, enemyAI.playerTr.position, out RaycastHit hit))
+        //    {
+        //        enemyAI.ChangeState(EnemyState.ATTACK);
+        //    }
+        //}
     }
 
     public void Exit()
@@ -178,9 +178,9 @@ public class AttackState : IState
     private Transform _enemyTr;
     private Transform _playerTr;
     private EnemyFire _enemyFire;
-    private float rotationSpeed = 10; // È¸Àü ¼Óµµ
+    private float rotationSpeed = 10; // íšŒì „ ì†ë„
     private Coroutine smoothRotationCoroutine;
-    private bool hasFiredInitialShot = false; // ÃÊ±â ¹ß»ç ¿©ºÎ¸¦ ÃßÀûÇÏ´Â º¯¼ö
+    private bool hasFiredInitialShot = false; // ì´ˆê¸° ë°œì‚¬ ì—¬ë¶€ë¥¼ ì¶”ì í•˜ëŠ” ë³€ìˆ˜
 
     public AttackState(EnemyAI enemyAI)
     {
@@ -192,14 +192,14 @@ public class AttackState : IState
 
     public void Enter()
     {
-        // ºÎµå·¯¿î ÃÊ±â È¸Àü ½ÃÀÛ ¹× Áö¼ÓÀûÀÎ È¸Àü ÄÚ·çÆ¾ ½ÇÇà
+        // ë¶€ë“œëŸ¬ìš´ ì´ˆê¸° íšŒì „ ì‹œì‘ ë° ì§€ì†ì ì¸ íšŒì „ ì½”ë£¨í‹´ ì‹¤í–‰
         smoothRotationCoroutine = enemyAI.StartCoroutine(SmoothRotation());
         _enemyFire.InPlayer = true;
     }
 
     public void ExecuteOnUpdate()
     {
-        // ºÎµå·¯¿î È¸ÀüÀ» Áö¼ÓÀûÀ¸·Î ¼öÇà
+        // ë¶€ë“œëŸ¬ìš´ íšŒì „ì„ ì§€ì†ì ìœ¼ë¡œ ìˆ˜í–‰
         if (smoothRotationCoroutine == null)
         {
             smoothRotationCoroutine = enemyAI.StartCoroutine(SmoothRotation());
@@ -220,11 +220,11 @@ public class AttackState : IState
         while (_enemyFire.InPlayer == true)
         {
             Vector3 direction = (_playerTr.position - _enemyTr.position).normalized;
-            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z)) * Quaternion.Euler(0, enemyAI.modelRotationOffset, 0);
+            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
 
             _enemyTr.rotation = Quaternion.Slerp(_enemyTr.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-            // ÃÊ±â ¹ß»ç
+            // ì´ˆê¸° ë°œì‚¬
             if (!hasFiredInitialShot && Quaternion.Angle(_enemyTr.rotation, targetRotation) < 5f)
             {
                 _enemyFire.StartCoroutine(_enemyFire.FireAfterRotation());
@@ -259,11 +259,11 @@ public class DieState : IState
 
     public void ExecuteOnUpdate()
     {
-        // »ç¸Á »óÅÂ ¾÷µ¥ÀÌÆ® ÄÚµå
+        // ì‚¬ë§ ìƒíƒœ ì—…ë°ì´íŠ¸ ì½”ë“œ
     }
 
     public void Exit()
     {
-        // »ç¸Á »óÅÂ Á¾·á ÄÚµå
+        // ì‚¬ë§ ìƒíƒœ ì¢…ë£Œ ì½”ë“œ
     }
 }

@@ -20,29 +20,24 @@ public enum EnemyType
     Paladin
 }
 
-
 public class EnemyAI : MonoBehaviour
 {
     public IState CurrentStateInstance { get; private set; }
     public EnemyState EnemyCurstate = EnemyState.Idle;
     public Transform playerTr;
     public Transform enemyTr;
-    public Transform firePos; // firePos Ãß°¡
+    public Transform firePos; // firePos ì¶”ê°€
     public Animator animator;
     public EnemyMoveAgent enemyMoveAgent;
     public EnemyFire enemyFire;
 
-    public float attackDist = 8.0f; // °ø°İ °Å¸®
-    public float traceDis = 15.0f; // ÃßÀû °Å¸®
-    public float staticTraceDis = 15.0f; // °íÁ¤ ÃßÀû °Å¸®
     public int RotationAngle;
     public bool isDie = false;
 
-    // ¾Ö´Ï¸ŞÀÌÅÍ ÄÁÆ®·Ñ·¯¿¡ Á¤ÀÇÇÑ ÆÄ¶ó¹ÌÅÍÀÇ ÇØ½Ã °ªÀ» ¹Ì¸® ÃßÃâ
+    // ì• ë‹ˆë©”ì´í„° ì»¨íŠ¸ë¡¤ëŸ¬ì— ì •ì˜í•œ íŒŒë¼ë¯¸í„°ì˜ í•´ì‹œ ê°’ì„ ë¯¸ë¦¬ ì¶”ì¶œ
     public readonly int Idle = Animator.StringToHash("IsIdle");
     public readonly int hashDie = Animator.StringToHash("IsDie");
 
-    public float modelRotationOffset = 30f; // ¸ğµ¨ÀÇ È¸Àü ¿ÀÇÁ¼Â
 
     public Vector3 initialPosition { get; private set; }
     public Quaternion initialRotation { get; private set; }
@@ -82,12 +77,12 @@ public class EnemyAI : MonoBehaviour
 
     public void ChangeState(EnemyState newState)
     {
-        CurrentStateInstance?.Exit(); // ÇöÀç »óÅÂ Á¾·á
+        CurrentStateInstance?.Exit(); // í˜„ì¬ ìƒíƒœ ì¢…ë£Œ
 
         EnemyCurstate = newState;
 
-        CurrentStateInstance = CreateStateInstance(newState); // »õ·Î¿î »óÅÂ ÀÎ½ºÅÏ½º »ı¼º
-        CurrentStateInstance?.Enter(); // »õ·Î¿î »óÅÂ ÁøÀÔ
+        CurrentStateInstance = CreateStateInstance(newState); // ìƒˆë¡œìš´ ìƒíƒœ ì¸ìŠ¤í„´ìŠ¤ ìƒì„±
+        CurrentStateInstance?.Enter(); // ìƒˆë¡œìš´ ìƒíƒœ ì§„ì…
     }
 
     private IState CreateStateInstance(EnemyState enemyState)
@@ -109,7 +104,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // Àû°¨Áö eventmanager·Î ºÒ·¯¿Ã ÇÔ¼ö 
+    // ì ê°ì§€ eventmanagerë¡œ ë¶ˆëŸ¬ì˜¬ í•¨ìˆ˜ 
     private void ChangeAttackState()
     {
         ChangeState(EnemyState.ATTACK);

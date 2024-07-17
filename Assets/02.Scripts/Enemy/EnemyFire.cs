@@ -6,8 +6,8 @@ using UnityEngine.Pool;
 public class EnemyFire : MonoBehaviour
 {
     private Animator animator;
-    public Transform playerTr;
-    public Transform firePos;
+    private Transform playerTr;
+    private Transform firePos;
     private EnemyAI enemyAI;
     private Transform enemyTr;
 
@@ -20,9 +20,7 @@ public class EnemyFire : MonoBehaviour
     public GameObject bullet;
 
     public float detectionRange = 10.0f;
-    private float rotationSpeed = 90f; // È¸Àü ¼Óµµ¸¦ 90µµ/ÃÊ·Î ¼³Á¤
 
-    public float lastShootTime = 0f; // ¸¶Áö¸· ¹ß»ç ½Ã°£À» ÀúÀåÇÏ´Â º¯¼ö
     public bool InPlayer;
 
 
@@ -41,7 +39,7 @@ public class EnemyFire : MonoBehaviour
 
     public IEnumerator FireAfterRotation()
     {
-        yield return new WaitForSeconds(0.5f); // 0.5ÃÊ ´ë±â ÈÄ ¹ß»ç
+        yield return new WaitForSeconds(0.5f); // 0.5ì´ˆ ëŒ€ê¸° í›„ ë°œì‚¬
         Fire();
     }
 
@@ -80,7 +78,7 @@ public class EnemyFire : MonoBehaviour
             enemyAI.ChangeState(EnemyState.Idle);
             pendingIdleState = false;
         }
-        else if (enemyAI.EnemyCurstate == EnemyState.ATTACK)
+        else if (enemyAI.EnemyCurstate == EnemyState.ATTACK && InPlayer == true)
         {
             enemyAI.StartCoroutine(WaitAndFire());
         }
@@ -114,6 +112,7 @@ public class EnemyFire : MonoBehaviour
         }
     }
 
+    
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
