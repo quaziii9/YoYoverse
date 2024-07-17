@@ -48,6 +48,7 @@ public class EnemyAI : MonoBehaviour
     public readonly int hashOffset = Animator.StringToHash("Offset");
     public readonly int hashWalkSpeed = Animator.StringToHash("WalkSpeed");
 
+
     private void Awake()
     {
         enemyTr = GetComponent<Transform>();

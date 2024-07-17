@@ -23,6 +23,8 @@ public class EnemyFire : MonoBehaviour
     private float rotationSpeed = 90f; // 회전 속도를 90도/초로 설정
 
     public float lastShootTime = 0f; // 마지막 발사 시간을 저장하는 변수
+    public bool InPlayer;
+
 
     void Start()
     {
@@ -106,6 +108,7 @@ public class EnemyFire : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             StopFiring();
+            InPlayer = false;
         }
     }
 

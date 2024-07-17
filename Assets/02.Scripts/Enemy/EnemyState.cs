@@ -160,6 +160,7 @@ public class AttackState : IState
     {
         // 부드러운 초기 회전 시작 및 지속적인 회전 코루틴 실행
         smoothRotationCoroutine = enemyAI.StartCoroutine(SmoothRotation());
+        _enemyFire.InPlayer = true;
     }
 
     public void ExecuteOnUpdate()
@@ -182,7 +183,7 @@ public class AttackState : IState
 
     private IEnumerator SmoothRotation()
     {
-        while (true)
+        while (_enemyFire.InPlayer == true)
         {
             Vector3 direction = (_playerTr.position - _enemyTr.position).normalized;
             Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
