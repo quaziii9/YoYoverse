@@ -39,34 +39,62 @@ public class SkillSlot : MonoBehaviour, IDropHandler
                 SkillIcon existingSkillIcon = GetComponentInChildren<SkillIcon>();
                 if (existingSkillIcon != null && existingSkillIcon != draggedSkillIcon)
                 {
-                    existingSkillIcon.iconImage.raycastTarget = false;
-
+                    // 기존 스킬 아이콘과 드래그한 스킬 아이콘의 위치와 데이터를 교환
                     Transform originalParent = draggedSkillIcon.originalParent;
-                    if (originalParent != null)
+                    Transform newParent = existingSkillIcon.originalParent;
+
+                    SkillData existingSkillData = existingSkillIcon.GetSkillData();
+                    SkillData draggedSkillData = draggedSkillIcon.GetSkillData();
+
+                    existingSkillIcon.transform.SetParent(originalParent);
+                    existingSkillIcon.transform.localPosition = Vector3.zero;
+                    existingSkillIcon.originalParent = originalParent;
+
+                    draggedSkillIcon.transform.SetParent(newParent);
+                    draggedSkillIcon.transform.localPosition = Vector3.zero;
+                    draggedSkillIcon.originalParent = newParent;
+
+                    // 각 슬롯의 스킬 데이터를 업데이트
+                    SkillSlot originalSlot = originalParent.GetComponent<SkillSlot>();
+                    SkillSlot newSlot = newParent.GetComponent<SkillSlot>();
+
+                    if (originalSlot != null)
                     {
-                        draggedSkillIcon.originalParent = existingSkillIcon.transform.parent;
-                        existingSkillIcon.transform.SetParent(originalParent);
-                        existingSkillIcon.transform.localPosition = Vector3.zero;
+                        originalSlot._assignedSkill = existingSkillData;
+                        originalSlot.UpdateSkillDescription(existingSkillData);
+                    }
 
-                        existingSkillIcon.iconImage.raycastTarget = true;
-
-                        SkillSlot originalSlot = originalParent.GetComponent<SkillSlot>();
-                        if (originalSlot != null)
-                        {
-                            originalSlot.UpdateSkillDescription(existingSkillIcon.GetSkillData());
-                        }
+                    if (newSlot != null)
+                    {
+                        newSlot._assignedSkill = draggedSkillData;
+                        newSlot.UpdateSkillDescription(draggedSkillData);
+                    }
+                    
+                    if (originalSlot != null)
+                    {
+                        // 게임 매니저에 업데이트된 스킬 데이터를 전달
+                        GameManager.Instance.UpdateSkillAssignment(originalSlot.slotIndex, existingSkillData);
+                        GameManager.Instance.UpdateSkillAssignment(newSlot.slotIndex, draggedSkillData);
+                        DebugLogger.Log("OnDrop1");
+                    }
+                    else
+                    {
+                        GameManager.Instance.UpdateSkillAssignment(newSlot.slotIndex, draggedSkillData);
+                        DebugLogger.Log("OnDrop1");
                     }
                 }
+                else
+                {
+                    // 기존 스킬 아이콘이 없을 경우 드래그한 스킬 아이콘만 새 슬롯에 할당
+                    draggedSkillIcon.transform.SetParent(transform);
+                    draggedSkillIcon.transform.localPosition = Vector3.zero;
+                    draggedSkillIcon.originalParent = transform;
 
-                draggedSkillIcon.transform.SetParent(transform);
-                draggedSkillIcon.transform.localPosition = Vector3.zero;
-                draggedSkillIcon.originalParent = transform;
-
-                UpdateSkillDescription(draggedSkillIcon.GetSkillData());
-                
-                _assignedSkill = draggedSkillIcon.GetSkillData();
-                UpdateSkillDescription(_assignedSkill);
-                GameManager.Instance.UpdateSkillAssignment(slotIndex, _assignedSkill);
+                    _assignedSkill = draggedSkillIcon.GetSkillData();
+                    UpdateSkillDescription(_assignedSkill);
+                    GameManager.Instance.UpdateSkillAssignment(slotIndex, _assignedSkill);
+                    DebugLogger.Log("OnDrop2");
+                }
             }
         }
     }
