@@ -1,14 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using EnumTypes;
 using UnityEngine;
-
-public enum EnemyState
-{
-    Idle,
-    Move,
-    Trace,
-    Attack
-}
 
 public class EnemyStateMachine : MonoBehaviour
 {

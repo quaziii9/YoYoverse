@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using EnumTypes;
 using UnityEngine;
 
 public class PaladinStateBehaviour : StateMachineBehaviour

@@ -4,7 +4,14 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - Forbidden_Area
   - Enemy
+  - Sniper
+  - Exit
+  - Wall
+  - Terrain
+  - Floor
+  - Bullet
   layers:
   - Default
   - TransparentFX
@@ -12,9 +19,11 @@ TagManager:
   - Ground
   - Water
   - UI
-  - Enemy
   - Patrol
   - DeadEnemy
+  - Obstacle
+  - ConeOfSight
+  - Enemy
   - Player
   - 
   - 

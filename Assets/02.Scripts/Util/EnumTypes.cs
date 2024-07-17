@@ -2,8 +2,10 @@ using UnityEngine;
 
 namespace EnumTypes
 {
-    public enum LookDirection { Up, Down, Left, Right }
-    public enum PlayerState { Stand, Move, Run, Hold, Cook }
+    public enum PlayerState { Stand, Move, Run, Hold }
+    public enum EnemyState { Idle, Patrol, Move, Trace, Attack, Die }
+    
+    public enum EnemyType { Sniper, Paladin }
 
     public enum Layers
     {
@@ -54,3 +56,7 @@ namespace EnumTypes
 
     public class EnumTypes : MonoBehaviour { }
 }
+    public enum EnemyEvents
+    {
+        ChangeEnemyStateAttack,
+    }
