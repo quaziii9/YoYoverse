@@ -40,12 +40,12 @@ public class EnemyAI : MonoBehaviour
 
     // 애니메이터 컨트롤러에 정의한 파라미터의 해시 값을 미리 추출
     public readonly int Idle = Animator.StringToHash("IsIdle");
-    public readonly int hashMove = Animator.StringToHash("IsMove");
-    public readonly int hashSpeed = Animator.StringToHash("Speed");
     public readonly int hashDie = Animator.StringToHash("IsDie");
-    public readonly int hashOffset = Animator.StringToHash("Offset");
-    public readonly int hashWalkSpeed = Animator.StringToHash("WalkSpeed");
 
+    public float modelRotationOffset = 30f; // 모델의 회전 오프셋
+
+    public Vector3 initialPosition { get; private set; }
+    public Quaternion initialRotation { get; private set; }
 
     private void Awake()
     {
@@ -53,6 +53,9 @@ public class EnemyAI : MonoBehaviour
         animator = GetComponent<Animator>();
         enemyMoveAgent = GetComponent<EnemyMoveAgent>();
         enemyFire = GetComponent<EnemyFire>();
+
+        initialPosition = enemyTr.position;
+        initialRotation = enemyTr.rotation;
     }
 
     private void OnEnable()
@@ -70,6 +73,7 @@ public class EnemyAI : MonoBehaviour
         playerTr = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         ChangeState(EnemyState.Idle);
     }
+
 
     private void Update()
     {
@@ -109,6 +113,12 @@ public class EnemyAI : MonoBehaviour
     private void ChangeAttackState()
     {
         ChangeState(EnemyState.ATTACK);
+    }
+
+    public void ResetToInitialTransform()
+    {
+        enemyTr.position = initialPosition;
+        enemyTr.rotation = initialRotation;
     }
 }
 

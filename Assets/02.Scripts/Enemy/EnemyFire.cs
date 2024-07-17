@@ -100,6 +100,7 @@ public class EnemyFire : MonoBehaviour
         }
         else
         {
+            if(enemyAI.EnemyCurstate == EnemyState.ATTACK)
             enemyAI.ChangeState(EnemyState.Idle);
         }
     }

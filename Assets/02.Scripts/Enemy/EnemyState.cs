@@ -13,7 +13,9 @@ public interface IState
 public class IdleState : IState
 {
     private EnemyAI enemyAI;
+    private Coroutine returnCoroutine;
     private Coroutine rotateCoroutine;
+    private bool isReturning = false;
 
     public IdleState(EnemyAI enemyAI)
     {
@@ -23,56 +25,88 @@ public class IdleState : IState
     public void Enter()
     {
         enemyAI.animator.SetBool(enemyAI.Idle, true);
-        rotateCoroutine = enemyAI.StartCoroutine(RotateCoroutine());
+        isReturning = true;
+        returnCoroutine = enemyAI.StartCoroutine(ReturnToInitialTransform());
     }
 
     public void ExecuteOnUpdate()
     {
-        // Add any other update logic if needed
+        // 필요한 경우 추가 로직
     }
 
     public void Exit()
     {
         enemyAI.animator.SetBool(enemyAI.Idle, false);
+        if (returnCoroutine != null)
+        {
+            enemyAI.StopCoroutine(returnCoroutine);
+        }
         if (rotateCoroutine != null)
         {
             enemyAI.StopCoroutine(rotateCoroutine);
-            rotateCoroutine = null;
         }
+        isReturning = false;
+    }
+
+    private IEnumerator ReturnToInitialTransform()
+    {
+        Vector3 startPosition = enemyAI.transform.position;
+        Quaternion startRotation = enemyAI.transform.rotation;
+        float elapsedTime = 0f;
+        float returnDuration = 2f; // 부드러운 전환을 위한 시간 (조절 가능)
+
+        while (elapsedTime < returnDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / returnDuration;
+
+            enemyAI.transform.position = Vector3.Lerp(startPosition, enemyAI.initialPosition, t);
+            enemyAI.transform.rotation = Quaternion.Slerp(startRotation, enemyAI.initialRotation, t);
+
+            yield return null;
+        }
+
+        enemyAI.transform.position = enemyAI.initialPosition;
+        enemyAI.transform.rotation = enemyAI.initialRotation;
+
+        isReturning = false;
+        rotateCoroutine = enemyAI.StartCoroutine(RotateCoroutine());
     }
 
     private IEnumerator RotateCoroutine()
     {
-        while (true)
+        while (!isReturning)
         {
             float targetAngle = enemyAI.transform.eulerAngles.y + enemyAI.RotationAngle;
             yield return RotateToAngle(targetAngle);
 
-            yield return new WaitForSeconds(1f); // Wait for 1 second before rotating back
+            yield return new WaitForSeconds(1f);
 
             targetAngle = enemyAI.transform.eulerAngles.y - enemyAI.RotationAngle;
             yield return RotateToAngle(targetAngle);
 
-            yield return new WaitForSeconds(1f); // Wait for 1 second before rotating again
+            yield return new WaitForSeconds(1f);
         }
     }
 
     private IEnumerator RotateToAngle(float targetAngle)
     {
-        float currentAngle = enemyAI.transform.eulerAngles.y;
-        float startAngle = currentAngle;
-        float t = 0f;
-        float duration = 2f; // 2 second duration for rotation
+        float startAngle = enemyAI.transform.eulerAngles.y;
+        float elapsedTime = 0f;
+        float rotateDuration = 2f;
 
-        while (t < duration)
+        while (elapsedTime < rotateDuration)
         {
-            t += Time.deltaTime;
-            float angle = Mathf.Lerp(startAngle, targetAngle, t / duration);
-            enemyAI.transform.eulerAngles = new Vector3(enemyAI.transform.eulerAngles.x, angle, enemyAI.transform.eulerAngles.z);
+            elapsedTime += Time.deltaTime;
+            float t = elapsedTime / rotateDuration;
+            float angle = Mathf.LerpAngle(startAngle, targetAngle, t);
+
+            enemyAI.transform.rotation = Quaternion.Euler(enemyAI.transform.eulerAngles.x, angle, enemyAI.transform.eulerAngles.z);
+
             yield return null;
         }
 
-        enemyAI.transform.eulerAngles = new Vector3(enemyAI.transform.eulerAngles.x, targetAngle, enemyAI.transform.eulerAngles.z);
+        enemyAI.transform.rotation = Quaternion.Euler(enemyAI.transform.eulerAngles.x, targetAngle, enemyAI.transform.eulerAngles.z);
     }
 }
 
@@ -88,7 +122,7 @@ public class PatrolState : IState
     public void Enter()
     {
         enemyAI.enemyMoveAgent.patrolling = true;
-        enemyAI.animator.SetBool(enemyAI.hashMove, true);
+       // enemyAI.animator.SetBool(enemyAI.hashMove, true);
     }
 
     public void ExecuteOnUpdate()
@@ -99,7 +133,7 @@ public class PatrolState : IState
     public void Exit()
     {
         enemyAI.enemyMoveAgent.patrolling = false;
-        enemyAI.animator.SetBool(enemyAI.hashMove, false);
+        //enemyAI.animator.SetBool(enemyAI.hashMove, false);
     }
 }
 
@@ -114,7 +148,7 @@ public class TraceState : IState
 
     public void Enter()
     {
-        enemyAI.animator.SetBool(enemyAI.hashMove, true);
+       // enemyAI.animator.SetBool(enemyAI.hashMove, true);
     }
 
     public void ExecuteOnUpdate()
@@ -133,7 +167,7 @@ public class TraceState : IState
 
     public void Exit()
     {
-        enemyAI.animator.SetBool(enemyAI.hashMove, false);
+        //enemyAI.animator.SetBool(enemyAI.hashMove, false);
     }
 }
 
@@ -186,7 +220,7 @@ public class AttackState : IState
         while (_enemyFire.InPlayer == true)
         {
             Vector3 direction = (_playerTr.position - _enemyTr.position).normalized;
-            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z)) * Quaternion.Euler(0, enemyAI.modelRotationOffset, 0);
 
             _enemyTr.rotation = Quaternion.Slerp(_enemyTr.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
