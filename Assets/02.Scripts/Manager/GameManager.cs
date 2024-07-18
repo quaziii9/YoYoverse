@@ -12,12 +12,15 @@ public class GameManager : Singleton<GameManager>
     private bool _selectedDisk;
     private bool _selectedWire;
 
+    public GameObject Player { get; private set; }
     public bool IsEquipReady { get; private set; }
     public bool IsSkillReady { get; private set; }
 
     protected override void Awake()
     {
         base.Awake();
+
+        Player = FindObjectOfType<Player>().gameObject;
         
         EventManager<GameEvents>.StartListening(GameEvents.SelectedDisk, SelectDisk);
         EventManager<GameEvents>.StartListening(GameEvents.SelectedWire, SelectWire);
@@ -108,7 +111,6 @@ public class GameManager : Singleton<GameManager>
     // 플레이어 사망 시 게임 오버 처리
     private IEnumerator GameOver()
     {
-        DebugLogger.Log("GameOver");
         EventManager<EnemyEvents>.TriggerEvent(EnemyEvents.AllStop); // 적 정지 이벤트 발생
         
         UIManager.Instance.ToggleDeathUI(); // Death UI 활성화

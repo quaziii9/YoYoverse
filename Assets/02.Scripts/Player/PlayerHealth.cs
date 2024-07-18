@@ -38,4 +38,9 @@ public class PlayerHealth : MonoBehaviour, IDamage
 
         gameObject.SetActive(false);
     }
+
+    public float GetHealth()
+    {
+        return _health;
+    }
 }

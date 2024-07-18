@@ -1,3 +1,4 @@
+using System;
 using EnumTypes;
 using EventLibrary;
 using Sirenix.OdinInspector;
@@ -17,6 +18,13 @@ public class InGameUI : MonoBehaviour
         EventManager<GameEvents>.StartListening(GameEvents.StartGame, InitializeSkills);
         EventManager<GameEvents>.StartListening(GameEvents.StartGame, InitializeYoYo);
         EventManager<PlayerEvents>.StartListening<float>(PlayerEvents.PlayerDamaged, UpdateHPBar);
+    }
+
+    private void Start()
+    {
+        hpBar.maxValue = GameManager.Instance.Player.GetComponent<PlayerHealth>().GetHealth();
+        hpBar.value = hpBar.maxValue;
+        hpBarText.text = $"{hpBar.value} / {hpBar.maxValue}";
     }
 
     private void OnDestroy()
@@ -66,7 +74,7 @@ public class InGameUI : MonoBehaviour
     private void UpdateHPBar(float damage)
     {
         hpBar.value -= damage;
-        hpBarText.text = $"{hpBar.value} / 100";
+        hpBarText.text = $"{hpBar.value} / {hpBar.maxValue}";
         if (hpBar.value <= 0) hpBar.value = 0;
     }
 }
