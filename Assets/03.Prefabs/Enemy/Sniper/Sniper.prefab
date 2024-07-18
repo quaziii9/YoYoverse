@@ -270,7 +270,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1119637156003037174}
   m_LocalRotation: {x: -0.0000000074505797, y: -0.000000059604638, z: 0.00000004470348, w: 1}
-  m_LocalPosition: {x: -0.40000015, y: 0.03000012, z: 0}
+  m_LocalPosition: {x: -0.516, y: 0.03000012, z: -0.009}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -328,9 +328,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
-  m_Height: 3.881072
+  m_Height: 3.6722858
   m_Direction: 1
-  m_Center: {x: 0, y: 1.813643, z: 0}
+  m_Center: {x: 0, y: 1.9180361, z: 0}
 --- !u!54 &1119637156979333249
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -387,7 +387,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 0
+  m_BaseOffset: -0.2
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!114 &1119637156979333309
@@ -443,7 +443,7 @@ MonoBehaviour:
   firePos: {fileID: 1119637156003037175}
   isFireAnimIng: 0
   inPlayer: 0
-  bullet: {fileID: 8585597380140330194, guid: 0b035f21331b0654d93b634177088c17, type: 3}
+  bullet: {fileID: 2821223401175209249, guid: 44608fc9089164445a96a9b84c3b40ca, type: 3}
   detectionRange: 30
 --- !u!1 &1119637157056862248
 GameObject:
