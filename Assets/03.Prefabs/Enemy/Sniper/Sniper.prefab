@@ -404,14 +404,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EnemyCurstate: 0
-  playerTr: {fileID: 0}
   enemyTr: {fileID: 0}
+  playerTr: {fileID: 0}
   animator: {fileID: 0}
-  enemyMoveAgent: {fileID: 0}
   enemyFire: {fileID: 0}
-  attackDist: 8
-  traceDis: 15
-  staticTraceDis: 15
+  enemyHealth: {fileID: 0}
   rotationAngle: 45
   isDie: 0
   modelRotationOffset: 30
@@ -445,7 +442,9 @@ MonoBehaviour:
   isFireAnimIng: 0
   inPlayer: 0
   bullet: {fileID: 2821223401175209249, guid: 44608fc9089164445a96a9b84c3b40ca, type: 3}
-  detectionRange: 30
+  bulletRange: 10
+  bulletSpeed: 50
+  bulletLifetime: 2
 --- !u!1 &1119637157056862248
 GameObject:
   m_ObjectHideFlags: 0
