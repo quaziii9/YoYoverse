@@ -75,12 +75,10 @@ public class SkillSlot : MonoBehaviour, IDropHandler
                         // 게임 매니저에 업데이트된 스킬 데이터를 전달
                         GameManager.Instance.UpdateSkillAssignment(originalSlot.slotIndex, existingSkillData);
                         GameManager.Instance.UpdateSkillAssignment(newSlot.slotIndex, draggedSkillData);
-                        DebugLogger.Log("OnDrop1");
                     }
                     else
                     {
                         GameManager.Instance.UpdateSkillAssignment(newSlot.slotIndex, draggedSkillData);
-                        DebugLogger.Log("OnDrop1");
                     }
                 }
                 else
@@ -93,7 +91,6 @@ public class SkillSlot : MonoBehaviour, IDropHandler
                     _assignedSkill = draggedSkillIcon.GetSkillData();
                     UpdateSkillDescription(_assignedSkill);
                     GameManager.Instance.UpdateSkillAssignment(slotIndex, _assignedSkill);
-                    DebugLogger.Log("OnDrop2");
                 }
             }
         }

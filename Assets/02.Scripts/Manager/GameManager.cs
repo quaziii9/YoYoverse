@@ -95,4 +95,14 @@ public class GameManager : Singleton<GameManager>
     {
         IsSkillReady = true;
     }
+    
+    // 플레이어 사망 시 게임 오버 처리
+    private void GameOver()
+    {
+        // Death UI 활성화
+        // 5초 후 재시작
+        // 장비, 스킬 초기화
+        // 레벨 디자인 초기화
+        // Equip UI 활성화
+    }
 }

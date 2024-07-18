@@ -13,12 +13,12 @@ public class InGameYoYoSlot : MonoBehaviour
         _yoyoData = yoyoData;
         if (_yoyoData.type == "Disk")
         {
-            yoyoIconImage.sprite = Resources.Load<Sprite>($"YoYo/Disk/{_yoyoData.name}");
+            yoyoIconImage.sprite = Resources.Load<Sprite>($"{_yoyoData.imagePath}");
         }
         else
         {
-            yoyoIconImage.sprite = Resources.Load<Sprite>($"YoYo/Wire/{_yoyoData.name}");
-        }
+            yoyoIconImage.sprite = Resources.Load<Sprite>($"{_yoyoData.imagePath}");
+}
         
     }
 }
