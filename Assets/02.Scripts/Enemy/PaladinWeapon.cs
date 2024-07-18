@@ -36,6 +36,8 @@ public class PaladinWeapon : MonoBehaviour
     {
         if(other.gameObject.layer == LayerMask.NameToLayer("Player") && canHit)
         {
+            DebugLogger.Log("Paladin Attack");
+            
             OffCollider();
 
             canHit = false;

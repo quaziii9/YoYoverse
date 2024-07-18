@@ -1034,6 +1034,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 1474372087985907014, guid: b0b2ffe29cb3aba448f26e56de29dfb6, type: 3}
+      propertyPath: m_Size.z
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 1474372087985907014, guid: b0b2ffe29cb3aba448f26e56de29dfb6, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1505692143014093768, guid: b0b2ffe29cb3aba448f26e56de29dfb6, type: 3}
       propertyPath: m_Layer
       value: 10
@@ -1604,6 +1612,10 @@ PrefabInstance:
       propertyPath: clickTransform
       value: 
       objectReference: {fileID: 1131867487}
+    - target: {fileID: 857493267096633753, guid: bb35255340445c045ab353cd5887261b, type: 3}
+      propertyPath: _health
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6218787108926521688, guid: bb35255340445c045ab353cd5887261b, type: 3}
       propertyPath: m_Name
       value: Player

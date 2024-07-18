@@ -42,6 +42,8 @@ public class UIManager : Singleton<UIManager>
     [FoldoutGroup("Skill UI")] public Button skillDecisionButton;
     [FoldoutGroup("Skill UI")] public GameObject skillDecisionButtonAlpha;
 
+    [PropertySpace(5f, 0f)] public GameObject deathUI;
+
     private float _diskAttack, _wireAttack;
     private float _diskAttackRange, _wireAttackRange;
     private float _diskAttackSpeed, _wireAttackSpeed;
@@ -248,5 +250,19 @@ public class UIManager : Singleton<UIManager>
     {
         EventManager<GameEvents>.TriggerEvent(GameEvents.StartGame);
         DebugLogger.Log("게임 시작!");
+    }
+
+    // 장비 UI 활성화
+    public void EnableEquipUI()
+    {
+        equipUI.SetActive(true);
+    }
+
+    // 사망 UI 토글
+    public void ToggleDeathUI()
+    {
+        bool isActive = deathUI.activeSelf;
+        
+        deathUI.SetActive(!isActive);
     }
 }

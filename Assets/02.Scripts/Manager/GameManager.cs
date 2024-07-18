@@ -1,11 +1,14 @@
+using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using EnumTypes;
 using EventLibrary;
+using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    private Dictionary<int, SkillData> _assignedSkills = new Dictionary<int, SkillData>();
     private Dictionary<int, YoYoData> _assignedYoYo = new Dictionary<int, YoYoData>();
+    private Dictionary<int, SkillData> _assignedSkills = new Dictionary<int, SkillData>();
     
     private bool _selectedDisk;
     private bool _selectedWire;
@@ -19,6 +22,7 @@ public class GameManager : Singleton<GameManager>
         
         EventManager<GameEvents>.StartListening(GameEvents.SelectedDisk, SelectDisk);
         EventManager<GameEvents>.StartListening(GameEvents.SelectedWire, SelectWire);
+        EventManager<GameEvents>.StartListening(GameEvents.PlayerDeath, PlayerDeath);
         EventManager<GameEvents>.StartListening(GameEvents.IsSkillReady, ChangeSkillReadyState);
     }
 
@@ -26,6 +30,7 @@ public class GameManager : Singleton<GameManager>
     {
         EventManager<GameEvents>.StopListening(GameEvents.SelectedDisk, SelectDisk);
         EventManager<GameEvents>.StopListening(GameEvents.SelectedWire, SelectWire);
+        EventManager<GameEvents>.StopListening(GameEvents.PlayerDeath, PlayerDeath);
         EventManager<GameEvents>.StopListening(GameEvents.IsSkillReady, ChangeSkillReadyState);
     }
 
@@ -95,14 +100,26 @@ public class GameManager : Singleton<GameManager>
     {
         IsSkillReady = true;
     }
+
+    private void PlayerDeath()
+    {
+        StartCoroutine(nameof(GameOver));
+    }
     
     // 플레이어 사망 시 게임 오버 처리
-    private void GameOver()
+    private IEnumerator GameOver()
     {
-        // Death UI 활성화
-        // 5초 후 재시작
-        // 장비, 스킬 초기화
-        // 레벨 디자인 초기화
-        // Equip UI 활성화
+        EventManager<EnemyEvents>.TriggerEvent(EnemyEvents.AllStop); // 적 정지 이벤트 발생
+        
+        UIManager.Instance.ToggleDeathUI(); // Death UI 활성화
+        yield return new WaitForSeconds(5f); // 5초 후 재시작
+        UIManager.Instance.ToggleDeathUI(); // Death UI 비활성화
+        
+        _assignedYoYo.Clear(); // 할당된 장비 초기화
+        _assignedSkills.Clear(); // 할당된 스킬 초기화
+        
+        EnemyManager.Instance.ResetEnemies(); // 적 위치 초기화 및 재생성
+        
+        UIManager.Instance.EnableEquipUI();  // Equip UI 활성화
     }
 }

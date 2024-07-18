@@ -4,7 +4,7 @@ namespace EnumTypes
 {
     public enum EnemyState { Idle, Patrol, Move, Trace, Attack, Die }
     
-    public enum EnemyType { Sniper, Paladin }
+    public enum EnemyType { Melee, Sniper }
 
     public enum Layers
     {
@@ -48,12 +48,13 @@ namespace EnumTypes
         IsEquipReady,
         IsSkillReady,
         StartGame,
-        GameOver,
+        PlayerDeath,
     }
     
     public enum EnemyEvents
     {
         ChangeEnemyStateAttack,
+        AllStop,
     }
 
     public enum DataEvents

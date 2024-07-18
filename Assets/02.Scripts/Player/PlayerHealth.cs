@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class PlayerHealth : MonoBehaviour, IDamage
 {
@@ -8,6 +7,7 @@ public class PlayerHealth : MonoBehaviour, IDamage
     [SerializeField] private float _health;
 
     private Animator _animator;
+    private static readonly int DieParam = Animator.StringToHash("Die");
 
     private void Awake()
     {
@@ -28,11 +28,10 @@ public class PlayerHealth : MonoBehaviour, IDamage
     {
         gameObject.layer = LayerMask.NameToLayer("DeadPlayer");
 
-        _animator.SetTrigger("Die");
+        _animator.SetTrigger(DieParam);
 
         yield return new WaitForSeconds(3.0f);
 
         gameObject.SetActive(false);
-
     }
 }
