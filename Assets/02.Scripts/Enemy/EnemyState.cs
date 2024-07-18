@@ -215,61 +215,6 @@ public class EnemyAttackState : IState
     }
 }
 
-public class EnemyAssassinationDieState : IState
-{
-    private EnemyAI enemyAI;
-
-    public EnemyAssassinationDieState(EnemyAI enemyAI)
-    {
-        this.enemyAI = enemyAI;
-    }
-
-    [System.Obsolete]
-    public void Enter()
-    {
-        enemyAI.isDie = true;
-        // enemyAI.enemyMoveAgent.agent.Stop();
-
-        enemyAI.animator.SetBool(enemyAI.HashAssassinationDie, true);
-    }
-
-    public void ExecuteOnUpdate()
-    {
-    }
-
-    public void Exit()
-    {
-    }
-
-}
-
-public class EnemyDieState : IState
-{
-    private EnemyAI enemyAI;
-
-    public EnemyDieState(EnemyAI enemyAI)
-    {
-        this.enemyAI = enemyAI;
-    }
-
-    [System.Obsolete]
-    public void Enter()
-    {
-        enemyAI.isDie = true;
-        // enemyAI.enemyMoveAgent.agent.Stop();
-
-        enemyAI.animator.SetBool(enemyAI.HashDie, true);
-    }
-
-    public void ExecuteOnUpdate()
-    {
-    }
-
-    public void Exit()
-    {
-    }
-}
-
 public class EnemyTraceState : IState
 {
     private EnemyAI enemyAI;
@@ -309,3 +254,60 @@ public class EnemyTraceState : IState
         enemyAI.currentTraceTimer = 0f;
     }
 }
+
+
+public class EnemyAssassinationDieState : IState
+{
+    private EnemyAI enemyAI;
+
+    public EnemyAssassinationDieState(EnemyAI enemyAI)
+    {
+        this.enemyAI = enemyAI;
+    }
+
+    [System.Obsolete]
+    public void Enter()
+    {
+        enemyAI.isDie = true;
+        enemyAI.enemyHealth.BeAssassinateDamage();
+        enemyAI.animator.SetBool(enemyAI.HashAssassinationDie, true);
+    }
+
+    public void ExecuteOnUpdate()
+    {
+    }
+
+    public void Exit()
+    {
+        enemyAI.animator.SetBool(enemyAI.HashAssassinationDie, false);
+    }
+
+}
+
+public class EnemyDieState : IState
+{
+    private EnemyAI enemyAI;
+
+    public EnemyDieState(EnemyAI enemyAI)
+    {
+        this.enemyAI = enemyAI;
+    }
+
+    [System.Obsolete]
+    public void Enter()
+    {
+        enemyAI.isDie = true;
+        // enemyAI.enemyMoveAgent.agent.Stop();
+
+        enemyAI.animator.SetBool(enemyAI.HashDie, true);
+    }
+
+    public void ExecuteOnUpdate()
+    {
+    }
+
+    public void Exit()
+    {
+    }
+}
+

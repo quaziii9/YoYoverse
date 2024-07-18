@@ -116,8 +116,8 @@ public class EnemyAI : MonoBehaviour
                 return new EnemyTraceState(this);
             case EnemyState.Die:
                 return new EnemyDieState(this);
-            //case EnemyState.AssassinationDie:
-            //    return new EnemyAssassinationDieState(this);
+            case EnemyState.AssassinationDie:
+               return new EnemyAssassinationDieState(this);
             default:
                 throw new System.ArgumentOutOfRangeException(nameof(enemyState), enemyState, null);
         }
@@ -131,6 +131,7 @@ public class EnemyAI : MonoBehaviour
 
     public void BeAssassinate()
     {
+        ChangeState(EnemyState.AssassinationDie);
         enemyHealth.BeAssassinateDamage();
     }
 
