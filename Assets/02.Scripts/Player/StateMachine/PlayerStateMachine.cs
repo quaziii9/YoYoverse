@@ -7,7 +7,12 @@ public enum State
     Move,
     ComboAttack1,
     ComboAttack2,
-    ComboAttack3
+    ComboAttack3,
+
+    SkillAssassination,
+    SkillMovement,
+    SkillDefense,
+    SkillDraft,
 }
 
 public class PlayerStateMachine : MonoBehaviour
