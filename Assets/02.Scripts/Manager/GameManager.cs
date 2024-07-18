@@ -5,7 +5,7 @@ using EventLibrary;
 public class GameManager : Singleton<GameManager>
 {
     private Dictionary<int, SkillData> _assignedSkills = new Dictionary<int, SkillData>();
-    
+
     private bool _selectedDisk;
     private bool _selectedWire;
 

@@ -92,8 +92,6 @@ public class Paladin : MonoBehaviour, IDamage
     {
         _health -= damage;
 
-        Debug.Log("EnemyHit");
-
         if(_health <= 0)
         {
             StartCoroutine(Die());
