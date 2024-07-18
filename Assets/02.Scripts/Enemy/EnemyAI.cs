@@ -20,7 +20,9 @@ public class EnemyAI : MonoBehaviour, IDamage
     // 애니메이터 컨트롤러에 정의한 파라미터의 해시 값을 미리 추출
     public readonly int Idle = Animator.StringToHash("IsIdle");
     public readonly int HashDie = Animator.StringToHash("Die");
-    public readonly int HashAssassinationDie = Animator.StringToHash("IsAssassinationDie");
+    public readonly int HashAssassinationDie = Animator.StringToHash("AssassinationDie");
+    public readonly int HashAssassination = Animator.StringToHash("Assassination");
+    public readonly int HashAssassinationFail = Animator.StringToHash("AssassinationFail");
 
     // public Vector3 initialPosition { get; private set; }
     public Quaternion initialRotation { get; private set; }
@@ -124,21 +126,36 @@ public class EnemyAI : MonoBehaviour, IDamage
                 return new EnemyTraceState(this);
             case EnemyState.Die:
                 return new EnemyDieState(this);
+            case EnemyState.Assassination:
+                return new EnemyAssassinationState(this);
+            case EnemyState.AssassinationFail:
+                return new EnemyAssassinationFailState(this);
+            case EnemyState.AssassinationDie:
+                return new EnemyAssassinationDieState(this);
             default:
                 throw new System.ArgumentOutOfRangeException(nameof(enemyState), enemyState, null);
         }
     }
 
-    //public void ResetToInitialTransform()
-    //{
-    //   // enemyTr.position = initialPosition;
-    //    enemyTr.rotation = initialRotation;
-    //}
 
-    public void BeAssassinate()
+    // 조르기 당했을시 
+    public void Assassinate()
     {
-        currentEnemyHealth = 0;
-        StartCoroutine(AssainateDie());
+        ChangeState(EnemyState.Assassination);
+    }
+    public void AssaniateFail()
+    {
+        ChangeState(EnemyState.AssassinationFail);
+    }
+    public void AssaniateDie()
+    {
+        ChangeState(EnemyState.AssassinationDie);
+    }
+
+    // fail 애니메이션이 끝나고 attackstate로 바뀌게 하는 애니메이션 이벤트
+    public void ChangeAttackStateAnimationEvent()
+    {
+        ChangeState(EnemyState.Attack);
     }
 
 
@@ -153,9 +170,10 @@ public class EnemyAI : MonoBehaviour, IDamage
         }
     }
 
-
+    
     public void StartCoroutineDie()
     {
+        VisionCone.SetActive(false);
         StartCoroutine(Die());
     }
 
@@ -170,6 +188,12 @@ public class EnemyAI : MonoBehaviour, IDamage
         yield return new WaitForSeconds(2.0f);
 
         gameObject.SetActive(false);
+    }
+
+    public void StartCoroutineAssainateDie()
+    {
+        VisionCone.SetActive(false);
+        StartCoroutine(AssainateDie());
     }
 
     private IEnumerator AssainateDie()

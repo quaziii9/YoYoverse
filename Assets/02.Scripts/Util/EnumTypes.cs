@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace EnumTypes
 {
-    public enum EnemyState { Idle, Patrol, Move, Trace, Attack, Die , AssassinationDie }
+    public enum EnemyState { Idle, Patrol, Move, Trace, Attack, Die , Assassination, AssassinationFail, AssassinationDie }
     
     public enum EnemyType { Melee, Sniper }
 

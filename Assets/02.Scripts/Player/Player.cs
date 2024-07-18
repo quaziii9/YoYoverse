@@ -160,13 +160,14 @@ public class Player : MonoBehaviour
         }
     }
 
+    // 암살 시도 함수 
     // 암살 시도 시 _assinationTargetEnemy에 null 할당
     public void TryAssassinate()
     {
         if (_assinationTargetEnemy != null)
         {
-            _assinationTargetEnemy.BeAssassinate();
-            _assinationTargetEnemy = null;
+            // 실패나 성공시 _assinationtargetenemy의 상태를 변경시켜주면 될듯 
+            _assinationTargetEnemy.Assassinate();
         }
     }
 
