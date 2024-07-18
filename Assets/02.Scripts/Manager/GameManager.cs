@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using DG.Tweening;
 using EnumTypes;
 using EventLibrary;
 using UnityEngine;
@@ -22,16 +21,16 @@ public class GameManager : Singleton<GameManager>
         
         EventManager<GameEvents>.StartListening(GameEvents.SelectedDisk, SelectDisk);
         EventManager<GameEvents>.StartListening(GameEvents.SelectedWire, SelectWire);
-        EventManager<GameEvents>.StartListening(GameEvents.PlayerDeath, PlayerDeath);
         EventManager<GameEvents>.StartListening(GameEvents.IsSkillReady, ChangeSkillReadyState);
+        EventManager<GameEvents>.StartListening(GameEvents.PlayerDeath, PlayerDeath);
     }
 
     private void OnDestroy()
     {
         EventManager<GameEvents>.StopListening(GameEvents.SelectedDisk, SelectDisk);
         EventManager<GameEvents>.StopListening(GameEvents.SelectedWire, SelectWire);
-        EventManager<GameEvents>.StopListening(GameEvents.PlayerDeath, PlayerDeath);
         EventManager<GameEvents>.StopListening(GameEvents.IsSkillReady, ChangeSkillReadyState);
+        EventManager<GameEvents>.StopListening(GameEvents.PlayerDeath, PlayerDeath);
     }
 
     // 요요 할당 업데이트
@@ -109,6 +108,7 @@ public class GameManager : Singleton<GameManager>
     // 플레이어 사망 시 게임 오버 처리
     private IEnumerator GameOver()
     {
+        DebugLogger.Log("GameOver");
         EventManager<EnemyEvents>.TriggerEvent(EnemyEvents.AllStop); // 적 정지 이벤트 발생
         
         UIManager.Instance.ToggleDeathUI(); // Death UI 활성화

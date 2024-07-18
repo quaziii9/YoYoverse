@@ -22,6 +22,7 @@ namespace EnumTypes
 
     public enum PlayerEvents
     {
+        PlayerDamaged,
         PlayerDead,
         OnAttackEffect,
         Clear

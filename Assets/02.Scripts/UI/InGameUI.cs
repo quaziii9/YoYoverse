@@ -1,9 +1,14 @@
 using EnumTypes;
 using EventLibrary;
+using Sirenix.OdinInspector;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InGameUI : MonoBehaviour
 {
+    [PropertySpace(5f, 0f)]public Slider hpBar;
+    [PropertySpace(0f, 5f)] public TMP_Text hpBarText;
     public InGameSkillSlot[] inGameSkillSlots;
     public InGameYoYoSlot[] inGameYoYoSlots;
 
@@ -11,12 +16,14 @@ public class InGameUI : MonoBehaviour
     {
         EventManager<GameEvents>.StartListening(GameEvents.StartGame, InitializeSkills);
         EventManager<GameEvents>.StartListening(GameEvents.StartGame, InitializeYoYo);
+        EventManager<PlayerEvents>.StartListening<float>(PlayerEvents.PlayerDamaged, UpdateHPBar);
     }
 
     private void OnDestroy()
     {
         EventManager<GameEvents>.StopListening(GameEvents.StartGame, InitializeSkills);
         EventManager<GameEvents>.StopListening(GameEvents.StartGame, InitializeYoYo);
+        EventManager<PlayerEvents>.StopListening<float>(PlayerEvents.PlayerDamaged, UpdateHPBar);
     }
 
     // 스킬 슬롯 초기화
@@ -53,5 +60,13 @@ public class InGameUI : MonoBehaviour
             inGameSkillSlots[slotIndex].StartCooldown();
             // 추가적인 스킬 사용 로직을 여기에 추가
         }
+    }
+    
+    // HP바 업데이트
+    private void UpdateHPBar(float damage)
+    {
+        hpBar.value -= damage;
+        hpBarText.text = $"{hpBar.value} / 100";
+        if (hpBar.value <= 0) hpBar.value = 0;
     }
 }

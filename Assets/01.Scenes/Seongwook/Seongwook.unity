@@ -6268,6 +6268,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meleeEnemyPrefab: {fileID: 0}
   sniperEnemyPrefab: {fileID: 0}
+  meleeSpawnPoints: []
+  sniperSpawnPoints: []
 --- !u!1001 &1128512770
 PrefabInstance:
   m_ObjectHideFlags: 0
