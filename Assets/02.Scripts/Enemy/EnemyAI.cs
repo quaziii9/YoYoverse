@@ -146,6 +146,7 @@ public class EnemyAI : MonoBehaviour, IDamage
     {
         currentEnemyHealth -= damage; //이거 당장은 형변환으로 막았는데 피통 int 사용할거면 이렇게 쓰고 아니면 피통 float으로 변환해주셈.
 
+        ChangeState(EnemyState.Attack);
         if (currentEnemyHealth <= 0)
         {
             ChangeState(EnemyState.Die);
