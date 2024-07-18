@@ -36,12 +36,12 @@ public class FirstAttackState : PlayerState
         if (animatorStateInfo.IsName("attack01") && animatorStateInfo.normalizedTime >= 1.0f)
         {
             _player.Anim.SetTrigger("ComboFail");
-            _player.CurrentState.ChangeState(State.Idle);
+            _player.PlayerStateMachine.ChangeState(State.Idle);
         }
         else if (Input.GetMouseButtonDown(0) && _player.IsNext)
         {
             AttackRotation();
-            _player.CurrentState.ChangeState(State.ComboAttack2);
+            _player.PlayerStateMachine.ChangeState(State.ComboAttack2);
         }
     }
 }
@@ -78,12 +78,12 @@ public class SecondAttackState : PlayerState
         if (animatorStateInfo.IsName("attack02") && animatorStateInfo.normalizedTime >= 1.0f)
         {
             _player.Anim.SetTrigger("ComboFail");
-            _player.CurrentState.ChangeState(State.Idle);
+            _player.PlayerStateMachine.ChangeState(State.Idle);
         }
         else if(Input.GetMouseButtonDown(0) && _player.IsNext)
         {
             AttackRotation();
-            _player.CurrentState.ChangeState(State.ComboAttack3);
+            _player.PlayerStateMachine.ChangeState(State.ComboAttack3);
         }
         
     }
@@ -121,7 +121,7 @@ public class ThirdAttackState : PlayerState
 
         if (animatorStateInfo.IsName("attack03") && animatorStateInfo.normalizedTime >= 1.0f)
         {
-            _player.CurrentState.ChangeState(State.Idle);
+            _player.PlayerStateMachine.ChangeState(State.Idle);
         }
     }
 }

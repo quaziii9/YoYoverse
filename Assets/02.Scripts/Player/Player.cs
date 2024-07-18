@@ -1,3 +1,5 @@
+using EnumTypes;
+using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -48,7 +50,7 @@ public class Player : MonoBehaviour
     #region Property
     public NavMeshAgent Agent { get { return _agent; } }
     public Animator Anim { get { return _animator; } }
-    public PlayerStateMachine CurrentState { get { return _state; } }
+    public PlayerStateMachine PlayerStateMachine { get { return _state; } }
     public Transform ClickObject { get { return clickTransform; } }
     public Camera MainCamera { get { return _mainCamera; } }
     public Rigidbody RigidBody { get { return _rigidBody; } }
@@ -63,6 +65,7 @@ public class Player : MonoBehaviour
     public readonly int IsComboAttack3 = Animator.StringToHash("IsComboAttack3");
 
     public readonly int IsSkillAssassination = Animator.StringToHash("IsSkillAssassination");
+    public readonly int IsSkillDefense = Animator.StringToHash("IsSkillDefense");
     #endregion
 
     private void Awake()
@@ -100,6 +103,8 @@ public class Player : MonoBehaviour
         _state.AddState(global::State.ComboAttack1, new FirstAttackState(this));
         _state.AddState(global::State.ComboAttack2, new SecondAttackState(this));
         _state.AddState(global::State.ComboAttack3, new ThirdAttackState(this));
+        _state.AddState(global::State.SkillDefense, new DefenseState(this));
+        _state.AddState(global::State.SkillAssassination, new AssassinationState(this));
     }
 
     //애니메이션 이벤트
@@ -140,6 +145,13 @@ public class Player : MonoBehaviour
         {
             _assinationTargetEnemy = other.GetComponentInParent<EnemyAI>();
         }
+
+        // 디펜스중 적 무기 맞으면 idlestate로 
+       if ((PlayerStateMachine._currentState == PlayerStateMachine._stateDictionary[State.SkillDefense]) &&
+          (other.CompareTag("EnemyWeapon") || other.CompareTag("Bullet")))
+        {
+            PlayerStateMachine.ChangeState(State.Idle);
+        }
     }
 
     // 적의 backcollider에서 나갔을시 _assinationTargetEnemy에 null 할당
@@ -163,6 +175,6 @@ public class Player : MonoBehaviour
 
     private void AssassinationAnimationEnd()
     {
-        CurrentState.ChangeState(State.Idle);
+        PlayerStateMachine.ChangeState(State.Idle);
     }
 }

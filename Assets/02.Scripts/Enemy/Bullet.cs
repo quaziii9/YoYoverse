@@ -18,9 +18,12 @@ public class Bullet : MonoBehaviour
         {
 
             IDamage hit = other.gameObject.GetComponent<IDamage>();
+            Player player = other.gameObject.GetComponent<Player>();
+            PlayerStateMachine playerStateMachine = player.PlayerStateMachine;
 
-            if (hit != null)
-            {
+            if (hit != null && playerStateMachine._currentState !=
+                                playerStateMachine._stateDictionary[State.SkillDefense])
+            { 
                 hit.TakeDamage(_power);
                 gameObject.SetActive(false);
                 Debug.Log("hit");
