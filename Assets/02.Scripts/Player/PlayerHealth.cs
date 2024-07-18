@@ -1,3 +1,5 @@
+using EnumTypes;
+using EventLibrary;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -27,6 +29,8 @@ public class PlayerHealth : MonoBehaviour, IDamage
     private IEnumerator Die()
     {
         gameObject.layer = LayerMask.NameToLayer("DeadPlayer");
+
+        EventManager<GameEvents>.TriggerEvent(GameEvents.GameOver);
 
         _animator.SetTrigger("Die");
 

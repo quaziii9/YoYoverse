@@ -9,9 +9,11 @@ public class GameManager : Singleton<GameManager>
     
     private bool _selectedDisk;
     private bool _selectedWire;
+    
 
     public bool IsEquipReady { get; private set; }
     public bool IsSkillReady { get; private set; }
+    
 
     protected override void Awake()
     {
@@ -104,5 +106,6 @@ public class GameManager : Singleton<GameManager>
         // 장비, 스킬 초기화
         // 레벨 디자인 초기화
         // Equip UI 활성화
+
     }
 }

@@ -54,6 +54,7 @@ namespace EnumTypes
     public enum EnemyEvents
     {
         ChangeEnemyStateAttack,
+        AllStop,
     }
 
     public enum DataEvents

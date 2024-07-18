@@ -1,9 +1,11 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering;
 public class Bullet : MonoBehaviour
 {
     public GameObject shooter; // 총알을 발사한 객체
     public float DestroyBulletTime;
+    public float _attackPower = 1.0f;
 
     private void OnEnable()
     {
@@ -19,11 +21,20 @@ public class Bullet : MonoBehaviour
         }
 
         if (other.CompareTag("Player"))
+        {
+            IDamage hit = other.gameObject.GetComponent<IDamage>();
+
+            if (hit != null)
+            {
+                hit.TakeDamage(_attackPower);
+                ProjectileDisable(transform.position);
+            }
             Debug.Log("enter player");
+        }
         else
             Debug.Log(other.name);
 
-       // ProjectileDisable(transform.position);
+       
     }
 
     public void SetShooter(GameObject shooterObject)
