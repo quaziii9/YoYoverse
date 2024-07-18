@@ -103,9 +103,7 @@ public class Paladin : MonoBehaviour, IDamage
 
     public void StopPaladin()
     {
-        StopAllCoroutines();
-
-
+        _player = null;
     }
 
     //애니메이션 이벤트

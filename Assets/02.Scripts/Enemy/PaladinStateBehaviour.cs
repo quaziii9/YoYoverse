@@ -25,6 +25,13 @@ public class PaladinStateBehaviour : StateMachineBehaviour
 
         _paladin.IsAction = false;
 
+        if(_paladin.Player == null)
+        {
+            _paladin.State.ChangeState(EnemyState.Idle);
+
+            return;
+        }
+
         if(Vector3.Distance(_paladin.transform.position, _paladin.Player.transform.position) > 1.5f)
         {
             _paladin.State.ChangeState(EnemyState.Trace);
