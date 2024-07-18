@@ -54,7 +54,7 @@ public class UIManager : Singleton<UIManager>
     {
         { "Normal Disk", "노말 디스크" },
         { "Iron Disk", "철 디스크" },
-        { "Blade Disk", "날 디스크" },
+        { "Blade Disk", "칼날 디스크" },
         { "Normal Wire", "노말 와이어" },
         { "Thorn Wire", "가시 와이어" },
         { "Electric Wire", "전기 와이어" }
@@ -233,6 +233,7 @@ public class UIManager : Singleton<UIManager>
     private void OnClickDecisionButton()
     {
         SwitchToNextUI();
+        // 장비 데이터 GameManager에 전달
     }
 
     // 스킬 결정 버튼 클릭 시 호출
