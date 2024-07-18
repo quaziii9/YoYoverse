@@ -256,33 +256,33 @@ public class EnemyTraceState : IState
 }
 
 
-public class EnemyAssassinationDieState : IState
-{
-    private EnemyAI enemyAI;
+//public class EnemyAssassinationDieState : IState
+//{
+//    private EnemyAI enemyAI;
 
-    public EnemyAssassinationDieState(EnemyAI enemyAI)
-    {
-        this.enemyAI = enemyAI;
-    }
+//    public EnemyAssassinationDieState(EnemyAI enemyAI)
+//    {
+//        this.enemyAI = enemyAI;
+//    }
 
-    [System.Obsolete]
-    public void Enter()
-    {
-        enemyAI.isDie = true;
-        enemyAI.enemyHealth.BeAssassinateDamage();
-        enemyAI.animator.SetBool(enemyAI.HashAssassinationDie, true);
-    }
+//    [System.Obsolete]
+//    public void Enter()
+//    {
+//        enemyAI.isDie = true;
+//        enemyAI.BeAssassinateDamage();
+//        enemyAI.animator.SetBool(enemyAI.HashAssassinationDie, true);
+//    }
 
-    public void ExecuteOnUpdate()
-    {
-    }
+//    public void ExecuteOnUpdate()
+//    {
+//    }
 
-    public void Exit()
-    {
-        enemyAI.animator.SetBool(enemyAI.HashAssassinationDie, false);
-    }
+//    public void Exit()
+//    {
+//        enemyAI.animator.SetBool(enemyAI.HashAssassinationDie, false);
+//    }
 
-}
+//}
 
 public class EnemyDieState : IState
 {
@@ -293,13 +293,10 @@ public class EnemyDieState : IState
         this.enemyAI = enemyAI;
     }
 
-    [System.Obsolete]
     public void Enter()
     {
-        enemyAI.isDie = true;
-        // enemyAI.enemyMoveAgent.agent.Stop();
-
-        enemyAI.animator.SetBool(enemyAI.HashDie, true);
+        enemyAI.StartCoroutineDie();
+        enemyAI.VisionCone.SetActive(false);
     }
 
     public void ExecuteOnUpdate()
@@ -309,5 +306,7 @@ public class EnemyDieState : IState
     public void Exit()
     {
     }
+
+
 }
 

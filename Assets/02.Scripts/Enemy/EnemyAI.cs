@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using EnumTypes;
 using EventLibrary;
 using UnityEngine;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : MonoBehaviour, IDamage
 {
     public IState CurrentStateInstance { get; private set; }
     public EnemyState EnemyCurstate = EnemyState.Idle;
@@ -11,13 +13,13 @@ public class EnemyAI : MonoBehaviour
     public Transform playerTr;
     public Animator animator;
     public EnemyFire enemyFire;
-    public EnemyHealth enemyHealth;
+    public GameObject VisionCone;
 
     public bool isDie = false;
 
     // 애니메이터 컨트롤러에 정의한 파라미터의 해시 값을 미리 추출
     public readonly int Idle = Animator.StringToHash("IsIdle");
-    public readonly int HashDie = Animator.StringToHash("IsDie");
+    public readonly int HashDie = Animator.StringToHash("Die");
     public readonly int HashAssassinationDie = Animator.StringToHash("IsAssassinationDie");
 
     // public Vector3 initialPosition { get; private set; }
@@ -40,6 +42,10 @@ public class EnemyAI : MonoBehaviour
     public float continuousRotationSpeed = 10f;
     public float continuousFireDelay = 2f;
 
+    [Header("SniperHealth")]
+    [SerializeField] private float enemyHealth;
+    [SerializeField] private float currentEnemyHealth;
+
     private void Awake()
     {
         enemyTr = GetComponent<Transform>();
@@ -48,6 +54,8 @@ public class EnemyAI : MonoBehaviour
 
        // initialPosition = enemyTr.position;
         initialRotation = enemyTr.rotation;
+        currentEnemyHealth = enemyHealth;
+
     }
 
     private void OnEnable()
@@ -116,25 +124,63 @@ public class EnemyAI : MonoBehaviour
                 return new EnemyTraceState(this);
             case EnemyState.Die:
                 return new EnemyDieState(this);
-            case EnemyState.AssassinationDie:
-               return new EnemyAssassinationDieState(this);
             default:
                 throw new System.ArgumentOutOfRangeException(nameof(enemyState), enemyState, null);
         }
     }
 
-    public void ResetToInitialTransform()
-    {
-       // enemyTr.position = initialPosition;
-        enemyTr.rotation = initialRotation;
-    }
+    //public void ResetToInitialTransform()
+    //{
+    //   // enemyTr.position = initialPosition;
+    //    enemyTr.rotation = initialRotation;
+    //}
 
     public void BeAssassinate()
     {
-        ChangeState(EnemyState.AssassinationDie);
-        enemyHealth.BeAssassinateDamage();
+        currentEnemyHealth = 0;
+        StartCoroutine(AssainateDie());
     }
 
 
+    public void TakeDamage(float damage)
+    {
+        currentEnemyHealth -= damage; //이거 당장은 형변환으로 막았는데 피통 int 사용할거면 이렇게 쓰고 아니면 피통 float으로 변환해주셈.
 
+        if (currentEnemyHealth <= 0)
+        {
+            ChangeState(EnemyState.Die);
+        }
+    }
+
+
+    public void StartCoroutineDie()
+    {
+        StartCoroutine(Die());
+    }
+
+    private IEnumerator Die()
+    {
+        isDie = true;
+
+        animator.SetTrigger(HashDie);
+
+        gameObject.layer = LayerMask.NameToLayer("DeadEnemy");
+
+        yield return new WaitForSeconds(2.0f);
+
+        gameObject.SetActive(false);
+    }
+
+    private IEnumerator AssainateDie()
+    {
+        isDie = true;
+
+        animator.SetTrigger(HashAssassinationDie);
+
+        gameObject.layer = LayerMask.NameToLayer("DeadEnemy");
+
+        yield return new WaitForSeconds(2.0f);
+
+        gameObject.SetActive(false);
+    }
 }
