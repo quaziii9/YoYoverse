@@ -60,9 +60,9 @@ namespace EnumTypes
         PlayerLost
     }
 
-    public enum DataEvents
+    public enum SkillEvents
     {
-       
+        UseSkill,
     }
 
     public class EnumTypes : MonoBehaviour { }

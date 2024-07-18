@@ -3,9 +3,13 @@ using UnityEngine;
 public abstract class PlayerState : BaseState
 {
     protected Player _player;
+    protected PlayerHealth _playerHealth;
+    protected static readonly int Move = Animator.StringToHash("Move");
+
     public PlayerState(Player player)
     {
         _player = player;
+        _playerHealth = _player.gameObject.GetComponent<PlayerHealth>();
     }
 
     protected void AttackRotation()
@@ -24,7 +28,6 @@ public abstract class PlayerState : BaseState
             }
         }
     }
-
 }
 
 public class IdleState : PlayerState
@@ -34,6 +37,7 @@ public class IdleState : PlayerState
     public override void StateEnter()
     {
         _player.Agent.enabled = false;
+        _player.Anim.SetFloat(Move, 0);
         // _player.Anim.applyRootMotion = true;
     }
 
@@ -41,7 +45,7 @@ public class IdleState : PlayerState
     {
         ChangeMove();
         ChangeAttack();
-        ChangeSkillDefense();
+        _player.CheckSkillKeyInput();
     }
 
     public override void StateExit()
@@ -68,14 +72,6 @@ public class IdleState : PlayerState
             _player.PlayerStateMachine.ChangeState(State.ComboAttack1);
         }
     }
-
-    private void ChangeSkillDefense()
-    {
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            _player.PlayerStateMachine.ChangeState(State.SkillDefense);
-        }
-    }
 }
 
 public class MoveState : PlayerState
@@ -94,7 +90,7 @@ public class MoveState : PlayerState
     public override void StateUpdate()
     {
         ClickMove();
-        ChnageSkillDefense();
+        _player.CheckSkillKeyInput();
     }
 
     //상태 종료.
@@ -123,7 +119,7 @@ public class MoveState : PlayerState
         ChangeAttack();
     }
 
-    //레이캐스트로 이동 방향을 설정하는 메소드
+    // 레이캐스트로 이동 방향을 설정하는 메소드
     private void RayCast()
     {
         if (Physics.Raycast(_player.MouseRay, out RaycastHit hit, Mathf.Infinity, _player.Mask, QueryTriggerInteraction.Ignore))
@@ -135,21 +131,21 @@ public class MoveState : PlayerState
             ActiveTargetObject(true);
         }
     }
-
-    //타겟 오브젝트 활성화, 비활성화 메소드
-    private void ActiveTargetObject(bool isActive)
-    {
-        _player.ClickObject.gameObject.SetActive(isActive);
-    }
-
-    //Agent 속도에 따른 이동 애니메이션 메소드
+    
+    // Agent 속도에 따른 이동 애니메이션 메소드
     private void AnimationMoveMent()
     {
         Vector3 currentVelocity = _player.Agent.velocity;
 
         float speed = currentVelocity.magnitude;
 
-        _player.Anim.SetFloat("Move", speed);
+        _player.Anim.SetFloat(Move, speed);
+    }
+
+    // 타겟 오브젝트 활성화, 비활성화 메소드
+    private void ActiveTargetObject(bool isActive)
+    {
+        _player.ClickObject.gameObject.SetActive(isActive);
     }
 
     private void ChangeAttack()
@@ -161,17 +157,9 @@ public class MoveState : PlayerState
 
             _player.Agent.isStopped = true;
 
-            _player.Anim.SetFloat("Move", 0);
+            _player.Anim.SetFloat(Move, 0);
 
             _player.PlayerStateMachine.ChangeState(State.ComboAttack1);
-        }
-    }
-
-    private void ChnageSkillDefense()
-    {
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            _player.PlayerStateMachine.ChangeState(State.SkillDefense);
         }
     }
 }

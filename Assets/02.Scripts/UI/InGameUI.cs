@@ -18,6 +18,7 @@ public class InGameUI : MonoBehaviour
         EventManager<GameEvents>.StartListening(GameEvents.StartGame, InitializeSkills);
         EventManager<GameEvents>.StartListening(GameEvents.StartGame, InitializeYoYo);
         EventManager<PlayerEvents>.StartListening<float>(PlayerEvents.PlayerDamaged, UpdateHPBar);
+        EventManager<SkillEvents>.StartListening<int>(SkillEvents.UseSkill, UseSkill);
     }
 
     private void Start()
@@ -32,6 +33,7 @@ public class InGameUI : MonoBehaviour
         EventManager<GameEvents>.StopListening(GameEvents.StartGame, InitializeSkills);
         EventManager<GameEvents>.StopListening(GameEvents.StartGame, InitializeYoYo);
         EventManager<PlayerEvents>.StopListening<float>(PlayerEvents.PlayerDamaged, UpdateHPBar);
+        EventManager<SkillEvents>.StopListening<int>(SkillEvents.UseSkill, UseSkill);
     }
 
     // 스킬 슬롯 초기화
