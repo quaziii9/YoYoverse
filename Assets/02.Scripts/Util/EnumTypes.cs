@@ -53,7 +53,8 @@ namespace EnumTypes
     
     public enum EnemyEvents
     {
-        ChangeEnemyStateAttack,
+        PlayerDetected,
+        PlayerLost
     }
 
     public enum DataEvents

@@ -409,9 +409,14 @@ MonoBehaviour:
   animator: {fileID: 0}
   enemyFire: {fileID: 0}
   enemyHealth: {fileID: 0}
-  rotationAngle: 45
   isDie: 0
-  modelRotationOffset: 30
+  rotationAngle: 45
+  maxTraceTime: 5
+  currentTraceTimer: 0
+  initialRotationSpeed: 5
+  initialFireDelay: 0.5
+  continuousRotationSpeed: 10
+  continuousFireDelay: 2
 --- !u!114 &1119637156979333251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -440,7 +445,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firePos: {fileID: 1119637156003037175}
   isFireAnimIng: 0
-  inPlayer: 0
   bullet: {fileID: 2821223401175209249, guid: 44608fc9089164445a96a9b84c3b40ca, type: 3}
   bulletRange: 10
   bulletSpeed: 50
@@ -2379,7 +2383,6 @@ GameObject:
   - component: {fileID: 8101864081384060191}
   - component: {fileID: 8101864081384060184}
   - component: {fileID: 8101864081384060185}
-  - component: {fileID: 8101864081384060384}
   - component: {fileID: 8101864081384060385}
   m_Layer: 9
   m_Name: ConeOfSight (1)
@@ -2453,20 +2456,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8101864081384060188}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &8101864081384060384
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8101864081384060188}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae44634d27fbdc948bacc2119dd249bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scale: {x: 15, y: 1, z: 15}
-  viewAngle: 60
 --- !u!114 &8101864081384060385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2480,7 +2469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewAngle: 60
-  viewDistance: 15
+  viewDistance: 10
   viewHeight: 15
   playerLayer:
     serializedVersion: 2

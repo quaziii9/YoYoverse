@@ -8,9 +8,8 @@ public class EnemyFire : MonoBehaviour
     [PropertySpace(0f, 5f)] public Transform firePos; // 총구 포지션
     
     [FoldoutGroup("State")] public bool isFireAnimIng = false; // 현재 발사 중인지 확인하는 변수
-    [FoldoutGroup("State")] public bool inPlayer; // 현재 플레이어가 시야각내에 들어왔는지 확인하는 변수
     
-    private bool _pendingIdleState = false;
+    //private bool _pendingIdleState = false;
 
     [FoldoutGroup("Bullet")] public GameObject bullet;
     [FoldoutGroup("Bullet")] public float bulletRange = 10.0f;  // 사정거리
@@ -81,12 +80,7 @@ public class EnemyFire : MonoBehaviour
     {
         isFireAnimIng = false;
 
-        if (_pendingIdleState)
-        {
-            _enemyAI.ChangeState(EnemyState.Idle);
-            _pendingIdleState = false;
-        }
-        else if (_enemyAI.EnemyCurstate == EnemyState.Attack && inPlayer == true)
+        if (_enemyAI.EnemyCurstate == EnemyState.Attack)
         {
             _enemyAI.StartCoroutine(WaitAndFire());
         }
@@ -96,27 +90,6 @@ public class EnemyFire : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         Fire();
-    }
-
-    public void StopFiring()
-    {
-        if (isFireAnimIng)
-        {
-            _pendingIdleState = true;
-        }
-        else
-        {
-            if(_enemyAI.EnemyCurstate == EnemyState.Attack) _enemyAI.ChangeState(EnemyState.Idle);
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            StopFiring();
-            inPlayer = false;
-        }
     }
 
     private void OnDrawGizmos()
