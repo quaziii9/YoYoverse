@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
     private Ray _mouseRay;
     private LayerMask _layerMask;
     private Camera _mainCamera;
-    private float _power;
+    private float _power = 1f;
     private float _attackSpeed;
     private float _defense;
     private float _moveSpeed;
@@ -107,20 +107,23 @@ public class Player : MonoBehaviour
     {
         _first.Play();
         OnEffect effectComponent = _firstParticle.GetComponent<OnEffect>();
-        effectComponent.TriggerEvent(1);
+        effectComponent.SetPower(_power);
+        effectComponent.AttackEvent(1);
     }
 
     public void SecondAttackParticle()
     {
         _second.Play();
         OnEffect effectComponent = _secondParticle.GetComponent<OnEffect>();
-        effectComponent.TriggerEvent(2);
+        effectComponent.SetPower(_power);
+        effectComponent.AttackEvent(2);
     }
 
     public void ThirdAttackParticle()
     {
         _third.Play();
         OnEffect effectComponent = _thirdParticle.GetComponent<OnEffect>();
-        effectComponent.TriggerEvent(3);
+        effectComponent.SetPower(_power);
+        effectComponent.AttackEvent(3);
     }
 }

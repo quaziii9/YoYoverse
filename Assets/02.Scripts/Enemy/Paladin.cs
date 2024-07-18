@@ -25,8 +25,10 @@ public class Paladin : MonoBehaviour, IDamage
     private float _moveSpeed = 1f;
     private float _traceSpeed = 5f;
     private float _traceDistance = 10f;
+    private int _pointOrder = -1;
     private bool _isAction;
     private bool _isDie = false;
+    private PaladinWeapon _weapon;
     private GameObject _player;
 
     private static readonly int DieParam = Animator.StringToHash("Die");
@@ -42,7 +44,9 @@ public class Paladin : MonoBehaviour, IDamage
     public float MoveSpeed => _moveSpeed;
     public float TraceSpeed => _traceSpeed;
     public float TraceDistance => _traceDistance;
+    public int Order { get { return _pointOrder; } set { _pointOrder = value; } }   
     public bool IsAction { get { return _isAction; }  set { _isAction = value; } }
+    public float Power => _power;
     public bool IsDie => _isDie;
 
     #endregion
@@ -58,6 +62,7 @@ public class Paladin : MonoBehaviour, IDamage
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
         _detectCollider = GetComponent<SphereCollider>();
+        _weapon = transform.GetComponentInChildren<PaladinWeapon>();    
         _agent.speed = _moveSpeed;
     }
 
@@ -87,10 +92,19 @@ public class Paladin : MonoBehaviour, IDamage
     {
         _health -= damage;
 
+        Debug.Log("EnemyHit");
+
         if(_health <= 0)
         {
             StartCoroutine(Die());
         }
+    }
+
+    //애니메이션 이벤트
+    public void Hit()
+    {
+        _weapon.SetPower(_power);
+        _weapon.OnHitCollider();
     }
 }
 
@@ -166,8 +180,6 @@ public class PaladinMove : PaladinState
     
     private List<Transform> _wayPointList = new List<Transform>();
 
-    private int _order = -1;
-
     public override void StateEnter()
     {
         FindWayPoint();
@@ -192,12 +204,14 @@ public class PaladinMove : PaladinState
             _wayPointList.Add(trans);
         }
 
-        _order++;
+        _paladin.Order++;
 
-        if (_order >= _wayPointList.Count)
-            _order = 0;
+        if (_paladin.Order >= _wayPointList.Count)
+            _paladin.Order = 0;
 
-        _paladin.Agent.SetDestination(_wayPointList[_order].position);
+        _paladin.Agent.SetDestination(_wayPointList[_paladin.Order].position);
+
+        _paladin.DetectCollider.enabled = true;
     }
 
     public override void OnTriggerEnter(Collider other)
@@ -213,10 +227,14 @@ public class PaladinTrace : PaladinState
 {
     public PaladinTrace(Paladin paladin) : base(paladin) { }
 
+    private List<Transform> _wayPointList = new List<Transform>();    
+    private bool isReturn = false;
+    private float _returnSpeed = 8f;
+
     public override void StateEnter()
     {
         _paladin.Agent.speed = _paladin.TraceSpeed;
-        _paladin.Agent.stoppingDistance = 1.5f;
+        _paladin.Agent.stoppingDistance = 3.0f;
         _paladin.Agent.SetDestination(_paladin.Player.transform.position);
     }
 
@@ -227,13 +245,16 @@ public class PaladinTrace : PaladinState
 
     public override void StateExit()
     {
+        isReturn = false;
         _paladin.Agent.speed = _paladin.MoveSpeed;
         _paladin.Agent.stoppingDistance = 0;
-        _paladin.DetectCollider.enabled = true;
     }
 
     private void TraceToPlayer()
     {
+        if (isReturn)
+            return;
+
         if(_paladin.Agent.remainingDistance <= _paladin.Agent.stoppingDistance)
         {
             _paladin.State.ChangeState(EnemyState.Attack);
@@ -246,12 +267,80 @@ public class PaladinTrace : PaladinState
         AnimationMoveMent();
     }
 
+    //인지 범위에 있으면 계속 추적
+    //범위를 벗어나도 추적하지만 일정 시간이 있다.
+
     private void ReturnMove()
     {
-        if(Vector3.Distance(_paladin.transform.position, _paladin.Player.transform.position) >= _paladin.TraceDistance)
+        if(Vector3.Distance(_paladin.transform.position, _paladin.Player.transform.position) >= _paladin.TraceDistance
+            && !isReturn)
         {
-            _paladin.State.ChangeState(EnemyState.Move);
+            isReturn = true;
+            
+            _paladin.StartCoroutine(ReturnTime());
         }
+    }
+
+    private IEnumerator ReturnTime()
+    {
+        float timer = 0f;
+
+        while(timer < 3.0f)
+        {
+            _paladin.Agent.SetDestination(_paladin.Player.transform.position);
+
+            if(_paladin.Agent.remainingDistance <= _paladin.Agent.stoppingDistance)
+            {
+                _paladin.State.ChangeState(EnemyState.Attack);
+                yield break;
+            }
+
+            yield return null;
+
+            AnimationMoveMent();
+
+            timer += Time.deltaTime;    
+        }
+
+        ReturnWayPoint();
+    }
+
+    private void ReturnWayPoint()
+    {
+        GameObject wayPoints = _paladin.transform.parent.gameObject;
+
+        foreach (Transform trans in wayPoints.transform)
+        {
+            _wayPointList.Add(trans);
+        }
+
+        _paladin.Order++;
+
+        if (_paladin.Order >= _wayPointList.Count)
+            _paladin.Order = 0;
+
+        _paladin.Agent.speed = _returnSpeed;
+
+        _paladin.StartCoroutine(ReturnDestination(_wayPointList[_paladin.Order]));
+    }
+
+    private IEnumerator ReturnDestination(Transform targetTransform)
+    {
+        _paladin.Agent.stoppingDistance = 0;
+
+        _paladin.Agent.SetDestination(targetTransform.position);
+
+        while (isReturn)
+        {
+            if (_paladin.Agent.remainingDistance < 0.1f)
+                break;
+
+            AnimationMoveMent();
+
+            yield return null;
+        }
+
+        _paladin.State.ChangeState(EnemyState.Move);
     }
 }
 

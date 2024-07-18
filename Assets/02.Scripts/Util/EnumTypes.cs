@@ -24,6 +24,7 @@ namespace EnumTypes
     {
         PlayerDead,
         OnAttackEffect,
+        Clear
     }
 
     public enum YoYoEvents

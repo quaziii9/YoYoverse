@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class OnEffect : MonoBehaviour
 {
@@ -13,16 +14,14 @@ public class OnEffect : MonoBehaviour
 
     [Header("HitEffect")]
     [SerializeField] private GameObject _hitEffect;
-
-    private BoxCollider _hitCollider;
+    
+    private HashSet<GameObject> _hitTarget;
     private float _power;
-    private float _offTime = 0.5f;
-    private bool canHit = true;
 
     private void Awake()
     {
-        EventManager<PlayerEvents>.StartListening<int>(PlayerEvents.OnAttackEffect, OnHitCollider);
-        _hitCollider = GetComponent<BoxCollider>();
+        EventManager<PlayerEvents>.StartListening<int>(PlayerEvents.OnAttackEffect, OnHit);
+        _hitTarget = new HashSet<GameObject>();
     }
 
     private void Start()
@@ -38,80 +37,79 @@ public class OnEffect : MonoBehaviour
         _power = power;
     }
 
-    public void TriggerEvent(int key)
+    public void AttackEvent(int key)
     {
         EventManager<PlayerEvents>.TriggerEvent<int>(PlayerEvents.OnAttackEffect, key);
     }
 
-    private void OnHitCollider(int key)
+    private void OnHit(int key)
     {
-        if(_key == key)
+        if (_key == key)
         {
-            _hitCollider.enabled = true;
-
-            Invoke(nameof(OffHitCollider), _offTime);
+            Hit(key);
         }
     }
 
-    private void OffHitCollider()
-    {
-        _hitCollider.enabled = false;
-    }
-
-    private void ReturnHitEffect(GameObject hitEffect)
-    {
-        if (hitEffect == null)
-            return;
-
-        ObjectPool.Instance.EnqueueObject(hitEffect);
-    }
-
     //오버랩 스피어를 발생시켜서 충돌을 검사하는 메소드. (충돌이 4번씩 판정되서 일단 보류시킴.)
-    private void Hit(Collider other) 
+    private void Hit(int key) 
     {
-        Collider[] colliders = Physics.OverlapSphere(other.transform.position, 0.1f);
+        ClearHashSet();
+
+        Vector3 boxSize = BoxSize(key);
+
+        Vector3 boxPosition = transform.position + transform.forward;
+
+        Collider[] colliders = Physics.OverlapBox(boxPosition, boxSize / 2, transform.rotation, LayerMask.GetMask("Enemy"));
 
         foreach(Collider target in colliders)
         {
-            if(target.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+            if (!_hitTarget.Contains(target.gameObject))
             {
                 IDamage hit = target.GetComponent<IDamage>();
 
                 if (hit != null)
                 {
-                    GameObject hitEffect = ObjectPool.Instance.DequeueObject(_hitEffect);
-
-                    hitEffect.transform.position = other.transform.position;
-
-                    ReturnHitEffect(hitEffect);
-
                     hit.TakeDamage(_power);
+
+                    _hitTarget.Add(target.gameObject);
                 }
             }
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnDrawGizmos()
     {
-        //Hit(other);
-        if (other.gameObject.layer == LayerMask.NameToLayer("Enemy") && canHit)
-        {
-            canHit = false;
+        Vector3 boxSize = BoxSize(1);
+        Vector3 boxPosition = transform.position + transform.forward;
 
-            IDamage hit = other.gameObject.GetComponent<IDamage>();
-
-            if (hit != null)
-            {
-                GameObject hitEffect = ObjectPool.Instance.DequeueObject(_hitEffect);
-
-                hitEffect.transform.position = other.transform.position;
-
-                ReturnHitEffect(hitEffect);
-
-                hit.TakeDamage(_power);
-
-                canHit = true;
-            }
-        }
+        Gizmos.color = Color.red; // Set the color of the gizmo
+        Gizmos.matrix = Matrix4x4.TRS(boxPosition, transform.rotation, boxSize);
+        Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
     }
+
+    private Vector3 BoxSize(int key)
+    {
+        Vector3 boxSize = Vector3.zero;
+
+        switch (key)
+        {
+            case 1:
+                boxSize = new Vector3(3.54f, 0.18f, 1.79f);
+                break;
+            case 2:
+                boxSize = new Vector3(3.54f, 0.18f, 1.79f);
+                break;
+            case 3:
+                boxSize = new Vector3(4.0f, 0.6f, 4.6f);
+                break;
+        }
+
+        return boxSize;
+    }
+
+    private void ClearHashSet()
+    {
+        _hitTarget.Clear();
+    }
+
 }
