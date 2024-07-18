@@ -61,13 +61,13 @@ public class EnemyIdleState : IState
             elapsedTime += Time.deltaTime;
             float t = elapsedTime / returnDuration;
 
-            enemyAI.transform.position = Vector3.Lerp(startPosition, enemyAI.initialPosition, t);
+            //enemyAI.transform.position = Vector3.Lerp(startPosition, enemyAI.initialPosition, t);
             enemyAI.transform.rotation = Quaternion.Slerp(startRotation, enemyAI.initialRotation, t);
 
             yield return null;
         }
 
-        enemyAI.transform.position = enemyAI.initialPosition;
+       // enemyAI.transform.position = enemyAI.initialPosition;
         enemyAI.transform.rotation = enemyAI.initialRotation;
 
         isReturning = false;
@@ -122,7 +122,7 @@ public class EnemyPatrolState : IState
 
     public void Enter()
     {
-        enemyAI.enemyMoveAgent.patrolling = true;
+       // enemyAI.enemyMoveAgent.patrolling = true;
        // enemyAI.animator.SetBool(enemyAI.hashMove, true);
     }
 
@@ -133,7 +133,7 @@ public class EnemyPatrolState : IState
 
     public void Exit()
     {
-        enemyAI.enemyMoveAgent.patrolling = false;
+       // enemyAI.enemyMoveAgent.patrolling = false;
         //enemyAI.animator.SetBool(enemyAI.hashMove, false);
     }
 }
@@ -154,7 +154,7 @@ public class EnemyTraceState : IState
 
     public void ExecuteOnUpdate()
     {
-        enemyAI.enemyMoveAgent.SetDestination(enemyAI.playerTr.position);
+        //enemyAI.enemyMoveAgent.SetDestination(enemyAI.playerTr.position);
 
         //if (Vector3.Distance(enemyAI.playerTr.position, enemyAI.enemyTr.position) <= enemyAI.attackDist)
         //{
@@ -237,6 +237,34 @@ public class EnemyAttackState : IState
     }
 }
 
+public class EnemyAssassinationDieState : IState
+{
+    private EnemyAI enemyAI;
+
+    public EnemyAssassinationDieState(EnemyAI enemyAI)
+    {
+        this.enemyAI = enemyAI;
+    }
+
+    [System.Obsolete]
+    public void Enter()
+    {
+        enemyAI.isDie = true;
+       // enemyAI.enemyMoveAgent.agent.Stop();
+
+        enemyAI.animator.SetBool(enemyAI.HashAssassinationDie, true);
+    }
+
+    public void ExecuteOnUpdate()
+    {
+    }
+
+    public void Exit()
+    {
+    }
+
+}
+
 public class EnemyDieState : IState
 {
     private EnemyAI enemyAI;
@@ -250,18 +278,16 @@ public class EnemyDieState : IState
     public void Enter()
     {
         enemyAI.isDie = true;
-        enemyAI.enemyMoveAgent.agent.Stop();
+       // enemyAI.enemyMoveAgent.agent.Stop();
 
         enemyAI.animator.SetBool(enemyAI.HashDie, true);
     }
 
     public void ExecuteOnUpdate()
     {
-        // 사망 상태 업데이트 코드
     }
 
     public void Exit()
     {
-        // 사망 상태 종료 코드
     }
 }

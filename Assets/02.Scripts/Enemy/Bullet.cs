@@ -3,6 +3,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public GameObject shooter; // 총알을 발사한 객체
+    public float DestroyBulletTime;
 
     private void OnEnable()
     {
@@ -38,7 +39,7 @@ public class Bullet : MonoBehaviour
 
     IEnumerator DisableBullet()
     {
-        yield return new WaitForSecondsRealtime(2f);
+        yield return new WaitForSecondsRealtime(DestroyBulletTime);
         gameObject.SetActive(false);
     }
 }

@@ -14,7 +14,8 @@ public class EnemyFire : MonoBehaviour
 
     [FoldoutGroup("Bullet")]public GameObject bullet;
     [FoldoutGroup("Bullet")]public float detectionRange = 10.0f;
-    
+    [FoldoutGroup("Bullet")] public float bulletSpeed = 50f;
+
     private Animator _animator;
     private Transform _playerTr;
     private EnemyAI _enemyAI;
@@ -71,7 +72,7 @@ public class EnemyFire : MonoBehaviour
         Rigidbody bulletRb = bulletInstance.GetComponent<Rigidbody>();
         if (bulletRb != null)
         {
-            bulletRb.velocity = direction * 50; // 직접 계산된 방향을 사용
+            bulletRb.velocity = direction * bulletSpeed; // 직접 계산된 방향을 사용
         }
     }
 
