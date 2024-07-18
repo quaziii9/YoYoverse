@@ -11,10 +11,12 @@ public class GameManager : Singleton<GameManager>
     
     private bool _selectedDisk;
     private bool _selectedWire;
+    
 
     public GameObject Player { get; private set; }
     public bool IsEquipReady { get; private set; }
     public bool IsSkillReady { get; private set; }
+    
 
     protected override void Awake()
     {
@@ -122,6 +124,7 @@ public class GameManager : Singleton<GameManager>
         
         EnemyManager.Instance.ResetEnemies(); // 적 위치 초기화 및 재생성
         
+        UIManager.Instance.DisableInGameUI();  // InGame UI 비활성화
         UIManager.Instance.EnableEquipUI();  // Equip UI 활성화
     }
 }

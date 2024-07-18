@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using EnumTypes;
+using EventLibrary;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -64,6 +65,8 @@ public class Paladin : MonoBehaviour, IDamage
         _detectCollider = GetComponent<SphereCollider>();
         _weapon = transform.GetComponentInChildren<PaladinWeapon>();    
         _agent.speed = _moveSpeed;
+
+        EventManager<EnemyEvents>.StartListening(EnemyEvents.AllStop, StopPaladin);
     }
 
     private void InitializeState()
@@ -96,6 +99,13 @@ public class Paladin : MonoBehaviour, IDamage
         {
             StartCoroutine(Die());
         }
+    }
+
+    public void StopPaladin()
+    {
+        StopAllCoroutines();
+
+
     }
 
     //애니메이션 이벤트

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering;
 public class Bullet : MonoBehaviour
 {
     public GameObject shooter; // 총알을 발사한 객체

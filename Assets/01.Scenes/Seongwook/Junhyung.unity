@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18383236, g: 0.22909321, b: 0.30381262, a: 1}
+  m_IndirectSpecularColor: {r: 0.18383285, g: 0.22909373, b: 0.30381355, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -486,7 +486,7 @@ GameObject:
   m_Component:
   - component: {fileID: 681428195}
   m_Layer: 0
-  m_Name: ==========================
+  m_Name: ==================================
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -792,7 +792,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1198461026}
   m_Layer: 0
-  m_Name: ========================== (2)
+  m_Name: ==================================
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1061,7 +1061,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1545716415}
   m_Layer: 0
-  m_Name: ========================== (1)
+  m_Name: ==================================
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6233,6 +6233,7 @@ GameObject:
   - component: {fileID: 206694860984809429}
   - component: {fileID: 3469448507154209}
   - component: {fileID: 3267282852830837}
+  - component: {fileID: 206694860984809430}
   m_Layer: 11
   m_Name: Sword Slash 1
   m_TagString: Untagged
@@ -6255,6 +6256,20 @@ Transform:
   m_Father: {fileID: 7551202841325057641}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 30}
+--- !u!114 &206694860984809430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 200630658712080457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 544c561b45af1ef42af6de535f84f56a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _key: 1
+  _hitEffect: {fileID: 1291666842958850998, guid: 3222d0490c2abc842a7ae7532fa3133b, type: 3}
 --- !u!4 &216283851941839520
 Transform:
   m_ObjectHideFlags: 0
@@ -13879,6 +13894,7 @@ GameObject:
   - component: {fileID: 3540371257815668458}
   - component: {fileID: 3741472425377196196}
   - component: {fileID: 3741121404726187052}
+  - component: {fileID: 3741472425377196197}
   m_Layer: 11
   m_Name: Sword Slash 3
   m_TagString: Untagged
@@ -18982,6 +18998,20 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!114 &3741472425377196197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3542840775079811112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 544c561b45af1ef42af6de535f84f56a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _key: 3
+  _hitEffect: {fileID: 1291666842958850998, guid: 3222d0490c2abc842a7ae7532fa3133b, type: 3}
 --- !u!199 &3741716854234812026
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -33751,6 +33781,7 @@ GameObject:
   - component: {fileID: 6907389541757094724}
   - component: {fileID: 1773782709209321213}
   - component: {fileID: 1261327310042303080}
+  - component: {fileID: 6907389541757094725}
   m_Layer: 11
   m_Name: Sword Slash 2
   m_TagString: Untagged
@@ -34348,6 +34379,20 @@ Transform:
   m_Father: {fileID: 7551202841325057641}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -30}
+--- !u!114 &6907389541757094725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5020058923596081014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 544c561b45af1ef42af6de535f84f56a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _key: 2
+  _hitEffect: {fileID: 1291666842958850998, guid: 3222d0490c2abc842a7ae7532fa3133b, type: 3}
 --- !u!1 &6922969379285489732
 GameObject:
   m_ObjectHideFlags: 0

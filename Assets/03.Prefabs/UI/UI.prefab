@@ -3585,6 +3585,7 @@ MonoBehaviour:
   skillDescriptionsPanel: {fileID: 7169795560478222902}
   skillDecisionButton: {fileID: 7169795559669551593}
   skillDecisionButtonAlpha: {fileID: 7169795560788012356}
+  inGameUI: {fileID: 7169795561190263251}
   deathUI: {fileID: 7169795560662378629}
 --- !u!1 &7169795560329037057
 GameObject:
