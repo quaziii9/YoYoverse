@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using EnumTypes;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.AI;
 
 public interface IState
 {
@@ -67,7 +65,7 @@ public class EnemyIdleState : IState
             yield return null;
         }
 
-       // enemyAI.transform.position = enemyAI.initialPosition;
+        // enemyAI.transform.position = enemyAI.initialPosition;
         enemyAI.transform.rotation = enemyAI.initialRotation;
 
         isReturning = false;
@@ -111,67 +109,6 @@ public class EnemyIdleState : IState
     }
 }
 
-public class EnemyPatrolState : IState
-{
-    private EnemyAI enemyAI;
-
-    public EnemyPatrolState(EnemyAI enemyAI)
-    {
-        this.enemyAI = enemyAI;
-    }
-
-    public void Enter()
-    {
-       // enemyAI.enemyMoveAgent.patrolling = true;
-       // enemyAI.animator.SetBool(enemyAI.hashMove, true);
-    }
-
-    public void ExecuteOnUpdate()
-    {
-        // 상태 업데이트 코드
-    }
-
-    public void Exit()
-    {
-       // enemyAI.enemyMoveAgent.patrolling = false;
-        //enemyAI.animator.SetBool(enemyAI.hashMove, false);
-    }
-}
-
-public class EnemyTraceState : IState
-{
-    private EnemyAI enemyAI;
-
-    public EnemyTraceState(EnemyAI enemyAI)
-    {
-        this.enemyAI = enemyAI;
-    }
-
-    public void Enter()
-    {
-       // enemyAI.animator.SetBool(enemyAI.hashMove, true);
-    }
-
-    public void ExecuteOnUpdate()
-    {
-        //enemyAI.enemyMoveAgent.SetDestination(enemyAI.playerTr.position);
-
-        //if (Vector3.Distance(enemyAI.playerTr.position, enemyAI.enemyTr.position) <= enemyAI.attackDist)
-        //{
-        //    // 플레이어와의 사이에 장애물이 없으면 공격 상태로 전환
-        //    if (!Physics.Linecast(enemyAI.firePos.position, enemyAI.playerTr.position, out RaycastHit hit))
-        //    {
-        //        enemyAI.ChangeState(EnemyState.ATTACK);
-        //    }
-        //}
-    }
-
-    public void Exit()
-    {
-        //enemyAI.animator.SetBool(enemyAI.hashMove, false);
-    }
-}
-
 
 public class EnemyAttackState : IState
 {
@@ -179,63 +116,145 @@ public class EnemyAttackState : IState
     private Transform _enemyTr;
     private Transform _playerTr;
     private EnemyFire _enemyFire;
-    private float rotationSpeed = 10; // 회전 속도
-    private Coroutine smoothRotationCoroutine;
-    private bool hasFiredInitialShot = false; // 초기 발사 여부를 추적하는 변수
 
-    public EnemyAttackState(EnemyAI enemyAI)
+    // 초기 회전 관련 변수
+    private float initialRotationSpeed;
+    private float initialFireDelay;
+
+    // 지속적인 공격 관련 변수
+    private float continuousRotationSpeed;
+    private float continuousFireDelay;
+
+    private bool isAimingAtPlayer = true;
+    private float aimThreshold = 5f;
+    private Coroutine fireCoroutine;
+
+    public EnemyAttackState(EnemyAI enemyAI, float initialRotationSpeed, float initialFireDelay,
+                            float continuousRotationSpeed, float continuousFireDelay)
     {
         this.enemyAI = enemyAI;
         _enemyTr = enemyAI.transform;
         _playerTr = enemyAI.playerTr;
         _enemyFire = enemyAI.enemyFire;
+
+        this.initialRotationSpeed = initialRotationSpeed;
+        this.initialFireDelay = initialFireDelay;
+        this.continuousRotationSpeed = continuousRotationSpeed;
+        this.continuousFireDelay = continuousFireDelay;
     }
 
     public void Enter()
     {
-        // 부드러운 초기 회전 시작 및 지속적인 회전 코루틴 실행
-        smoothRotationCoroutine = enemyAI.StartCoroutine(SmoothRotation());
-        _enemyFire.inPlayer = true;
+        isAimingAtPlayer = true;
+        fireCoroutine = enemyAI.StartCoroutine(FireRoutine());
     }
 
     public void ExecuteOnUpdate()
     {
-        // 부드러운 회전을 지속적으로 수행
-        if (smoothRotationCoroutine == null)
+        if (isAimingAtPlayer)
         {
-            smoothRotationCoroutine = enemyAI.StartCoroutine(SmoothRotation());
+            AimAtPlayer(initialRotationSpeed);
+        }
+        else
+        {
+            TrackPlayer(continuousRotationSpeed);
         }
     }
 
     public void Exit()
     {
-        if (smoothRotationCoroutine != null)
+        if (fireCoroutine != null)
         {
-            enemyAI.StopCoroutine(smoothRotationCoroutine);
-            smoothRotationCoroutine = null;
+            enemyAI.StopCoroutine(fireCoroutine);
         }
     }
 
-    private IEnumerator SmoothRotation()
+    private void AimAtPlayer(float rotationSpeed)
     {
-        while (_enemyFire.inPlayer == true)
+        Vector3 direction = (_playerTr.position - _enemyTr.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        _enemyTr.rotation = Quaternion.Slerp(_enemyTr.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+        if (Quaternion.Angle(_enemyTr.rotation, targetRotation) < aimThreshold)
         {
-            Vector3 direction = (_playerTr.position - _enemyTr.position).normalized;
-            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            isAimingAtPlayer = false;
+        }
+    }
 
-            _enemyTr.rotation = Quaternion.Slerp(_enemyTr.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    private void TrackPlayer(float rotationSpeed)
+    {
+        Vector3 direction = (_playerTr.position - _enemyTr.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        _enemyTr.rotation = Quaternion.Slerp(_enemyTr.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
 
-            // 초기 발사
-            if (!hasFiredInitialShot && Quaternion.Angle(_enemyTr.rotation, targetRotation) < 5f)
-            {
-                _enemyFire.StartCoroutine(_enemyFire.FireAfterRotation());
-                hasFiredInitialShot = true;
-            }
-
+    private IEnumerator FireRoutine()
+    {
+        // 초기 조준 및 발사
+        while (isAimingAtPlayer)
+        {
             yield return null;
+        }
+        yield return new WaitForSeconds(initialFireDelay);
+        _enemyFire.Fire();
+
+        // 지속적인 발사
+        while (true)
+        {
+            yield return new WaitUntil(() => !_enemyFire.isFireAnimIng);
+            yield return new WaitForSeconds(continuousFireDelay);
+            if (enemyAI.EnemyCurstate == EnemyState.Attack)
+            {
+                _enemyFire.Fire();
+            }
+            else
+            {
+                yield break;
+            }
         }
     }
 }
+
+public class EnemyTraceState : IState
+{
+    private EnemyAI enemyAI;
+    private Transform enemyTr;
+    private Transform playerTr;
+    private float rotationSpeed = 5f; // 회전 속도
+
+    public EnemyTraceState(EnemyAI enemyAI)
+    {
+        this.enemyAI = enemyAI;
+        this.enemyTr = enemyAI.transform;
+        this.playerTr = enemyAI.playerTr;
+    }
+
+    public void Enter()
+    {
+        enemyAI.currentTraceTimer = 0f;
+    }
+
+    public void ExecuteOnUpdate()
+    {
+        // 플레이어 방향으로 회전
+        Vector3 direction = (playerTr.position - enemyTr.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        enemyTr.rotation = Quaternion.Slerp(enemyTr.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+        // 시간 측정
+        enemyAI.currentTraceTimer += Time.deltaTime;
+        if (enemyAI.currentTraceTimer >= enemyAI.maxTraceTime)
+        {
+            enemyAI.ChangeState(EnemyState.Idle);
+        }
+    }
+
+    public void Exit()
+    {
+        enemyAI.currentTraceTimer = 0f;
+    }
+}
+
 
 public class EnemyAssassinationDieState : IState
 {
@@ -250,8 +269,7 @@ public class EnemyAssassinationDieState : IState
     public void Enter()
     {
         enemyAI.isDie = true;
-       // enemyAI.enemyMoveAgent.agent.Stop();
-
+        enemyAI.enemyHealth.BeAssassinateDamage();
         enemyAI.animator.SetBool(enemyAI.HashAssassinationDie, true);
     }
 
@@ -261,6 +279,7 @@ public class EnemyAssassinationDieState : IState
 
     public void Exit()
     {
+        enemyAI.animator.SetBool(enemyAI.HashAssassinationDie, false);
     }
 
 }
@@ -278,7 +297,7 @@ public class EnemyDieState : IState
     public void Enter()
     {
         enemyAI.isDie = true;
-       // enemyAI.enemyMoveAgent.agent.Stop();
+        // enemyAI.enemyMoveAgent.agent.Stop();
 
         enemyAI.animator.SetBool(enemyAI.HashDie, true);
     }
@@ -291,3 +310,4 @@ public class EnemyDieState : IState
     {
     }
 }
+

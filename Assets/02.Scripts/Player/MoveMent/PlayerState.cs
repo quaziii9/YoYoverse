@@ -41,6 +41,7 @@ public class IdleState : PlayerState
     {
         ChangeMove();
         ChangeAttack();
+        ChangeSkillDefense();
     }
 
     public override void StateExit()
@@ -55,7 +56,7 @@ public class IdleState : PlayerState
         {
             _player.MouseRay = _player.MainCamera.ScreenPointToRay(Input.mousePosition);
 
-            _player.State.ChangeState(State.Move);
+            _player.PlayerStateMachine.ChangeState(State.Move);
         }
     }
 
@@ -64,7 +65,15 @@ public class IdleState : PlayerState
         if (Input.GetMouseButtonDown(0))
         {
             AttackRotation();
-            _player.State.ChangeState(State.ComboAttack1);
+            _player.PlayerStateMachine.ChangeState(State.ComboAttack1);
+        }
+    }
+
+    private void ChangeSkillDefense()
+    {
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            _player.PlayerStateMachine.ChangeState(State.SkillDefense);
         }
     }
 }
@@ -85,6 +94,7 @@ public class MoveState : PlayerState
     public override void StateUpdate()
     {
         ClickMove();
+        ChnageSkillDefense();
     }
 
     //상태 종료.
@@ -106,7 +116,7 @@ public class MoveState : PlayerState
         {
             ActiveTargetObject(false);
 
-            _player.State.ChangeState(State.Idle);
+            _player.PlayerStateMachine.ChangeState(State.Idle);
         }
 
         AnimationMoveMent();
@@ -153,7 +163,15 @@ public class MoveState : PlayerState
 
             _player.Anim.SetFloat("Move", 0);
 
-            _player.State.ChangeState(State.ComboAttack1);
+            _player.PlayerStateMachine.ChangeState(State.ComboAttack1);
+        }
+    }
+
+    private void ChnageSkillDefense()
+    {
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            _player.PlayerStateMachine.ChangeState(State.SkillDefense);
         }
     }
 }

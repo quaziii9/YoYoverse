@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace EnumTypes
 {
-    public enum EnemyState { Idle, Patrol, Move, Trace, Attack, Die }
+    public enum EnemyState { Idle, Patrol, Move, Trace, Attack, Die , AssassinationDie }
     
     public enum EnemyType { Melee, Sniper }
 
@@ -56,6 +56,8 @@ namespace EnumTypes
     {
         ChangeEnemyStateAttack,
         AllStop,
+        PlayerDetected,
+        PlayerLost
     }
 
     public enum DataEvents

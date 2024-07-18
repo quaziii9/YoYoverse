@@ -8,13 +8,13 @@ public class EnemyFire : MonoBehaviour
     [PropertySpace(0f, 5f)] public Transform firePos; // 총구 포지션
     
     [FoldoutGroup("State")] public bool isFireAnimIng = false; // 현재 발사 중인지 확인하는 변수
-    [FoldoutGroup("State")] public bool inPlayer; // 현재 플레이어가 시야각내에 들어왔는지 확인하는 변수
     
-    private bool _pendingIdleState = false;
+    //private bool _pendingIdleState = false;
 
-    [FoldoutGroup("Bullet")]public GameObject bullet;
-    [FoldoutGroup("Bullet")]public float detectionRange = 10.0f;
-    [FoldoutGroup("Bullet")] public float bulletSpeed = 50f;
+    [FoldoutGroup("Bullet")] public GameObject bullet;
+    [FoldoutGroup("Bullet")] public float bulletRange = 10.0f;  // 사정거리
+    [FoldoutGroup("Bullet")] public float bulletSpeed = 50f;      // 총알 속도
+    [FoldoutGroup("Bullet")] public float bulletLifetime = 5f;    // 총알의 수명
 
     private Animator _animator;
     private Transform _playerTr;
@@ -34,7 +34,7 @@ public class EnemyFire : MonoBehaviour
 
         SphereCollider rangeCollider = gameObject.AddComponent<SphereCollider>();
         rangeCollider.isTrigger = true;
-        rangeCollider.radius = detectionRange;
+        rangeCollider.radius = bulletRange;
 
         _playerTr = GameObject.FindGameObjectWithTag("Player").transform;
     }
@@ -60,19 +60,19 @@ public class EnemyFire : MonoBehaviour
         Vector3 targetPosition = _playerTr.position + new Vector3(0, 2f, 0);
         Vector3 direction = (targetPosition - firePos.position).normalized;
         GameObject bulletInstance = ObjectPool.Instance.DequeueObject(bullet);
+        bulletInstance.SetActive(true);  // 추가된 라인
         bulletInstance.transform.position = firePos.position;
         bulletInstance.transform.rotation = Quaternion.LookRotation(direction);
-
         Bullet bulletScript = bulletInstance.GetComponent<Bullet>();
         if (bulletScript != null)
         {
             bulletScript.SetShooter(this.gameObject);
+            bulletScript.SetBulletLifeTime(bulletLifetime);
         }
-
         Rigidbody bulletRb = bulletInstance.GetComponent<Rigidbody>();
         if (bulletRb != null)
         {
-            bulletRb.velocity = direction * bulletSpeed; // 직접 계산된 방향을 사용
+            bulletRb.velocity = direction * bulletSpeed;
         }
     }
 
@@ -80,12 +80,7 @@ public class EnemyFire : MonoBehaviour
     {
         isFireAnimIng = false;
 
-        if (_pendingIdleState)
-        {
-            _enemyAI.ChangeState(EnemyState.Idle);
-            _pendingIdleState = false;
-        }
-        else if (_enemyAI.EnemyCurstate == EnemyState.Attack && inPlayer == true)
+        if (_enemyAI.EnemyCurstate == EnemyState.Attack)
         {
             _enemyAI.StartCoroutine(WaitAndFire());
         }
@@ -97,31 +92,10 @@ public class EnemyFire : MonoBehaviour
         Fire();
     }
 
-    public void StopFiring()
-    {
-        if (isFireAnimIng)
-        {
-            _pendingIdleState = true;
-        }
-        else
-        {
-            if(_enemyAI.EnemyCurstate == EnemyState.Attack) _enemyAI.ChangeState(EnemyState.Idle);
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            StopFiring();
-            inPlayer = false;
-        }
-    }
-
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
+        Gizmos.DrawWireSphere(transform.position, bulletRange);
         if (firePos != null && _playerTr != null)
         {
             Vector3 targetPosition = _playerTr.position + new Vector3(0, 2f, 0);

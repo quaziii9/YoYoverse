@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18383236, g: 0.22909321, b: 0.30381262, a: 1}
+  m_IndirectSpecularColor: {r: 0.18383253, g: 0.22909333, b: 0.303813, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -844,6 +844,25 @@ Transform:
   m_Father: {fileID: 211975667}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1091089899 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1119637156979333307, guid: 4da9077f515ac5e46a82a87c0e0ff048, type: 3}
+  m_PrefabInstance: {fileID: 1202752890}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1091089908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1091089899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 563b6ed9ac923ba4d83fb925d866783f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyHealth: 0
+  currentEnemyHealth: 0
 --- !u!1001 &1131867486
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -961,9 +980,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1119637156979333310, guid: 4da9077f515ac5e46a82a87c0e0ff048, type: 3}
-      propertyPath: detectionRange
-      value: 20
+    - target: {fileID: 2326509106197534377, guid: 4da9077f515ac5e46a82a87c0e0ff048, type: 3}
+      propertyPath: m_TagString
+      value: EnemyBack
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4da9077f515ac5e46a82a87c0e0ff048, type: 3}
@@ -1364,6 +1383,10 @@ PrefabInstance:
       propertyPath: clickTransform
       value: 
       objectReference: {fileID: 1131867487}
+    - target: {fileID: 857493267096633753, guid: bb35255340445c045ab353cd5887261b, type: 3}
+      propertyPath: _health
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 871290265673096792, guid: bb35255340445c045ab353cd5887261b, type: 3}
       propertyPath: m_Layer
       value: 11
@@ -1507,6 +1530,14 @@ PrefabInstance:
     - target: {fileID: 5195334807754001380, guid: bb35255340445c045ab353cd5887261b, type: 3}
       propertyPath: m_Layer
       value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 5226712203364774768, guid: bb35255340445c045ab353cd5887261b, type: 3}
+      propertyPath: m_Size.x
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5226712203364774768, guid: bb35255340445c045ab353cd5887261b, type: 3}
+      propertyPath: m_Size.z
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5361544925766324541, guid: bb35255340445c045ab353cd5887261b, type: 3}
       propertyPath: m_Layer

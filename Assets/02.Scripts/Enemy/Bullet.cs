@@ -3,32 +3,42 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public GameObject shooter; // 총알을 발사한 객체
-    public float DestroyBulletTime;
+    private float DestroyBulletTime = 1f;
+    private float _power = 1;
 
     private void OnEnable()
     {
+        StopAllCoroutines();
         StartCoroutine(DisableBullet());
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == shooter)
+        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            // 발사한 적 자신과의 충돌은 무시
-            return;
+
+            IDamage hit = other.gameObject.GetComponent<IDamage>();
+            Player player = other.gameObject.GetComponent<Player>();
+            PlayerStateMachine playerStateMachine = player.PlayerStateMachine;
+
+            if (hit != null && playerStateMachine._currentState !=
+                                playerStateMachine._stateDictionary[State.SkillDefense])
+            { 
+                hit.TakeDamage(_power);
+                gameObject.SetActive(false);
+                Debug.Log("hit");
+            }
         }
-
-        if (other.CompareTag("Player"))
-            Debug.Log("enter player");
-        else
-            Debug.Log(other.name);
-
-       // ProjectileDisable(transform.position);
     }
 
     public void SetShooter(GameObject shooterObject)
     {
         shooter = shooterObject;
+    }
+
+    public void SetBulletLifeTime(float destroybulletTime)
+    {
+        DestroyBulletTime = destroybulletTime;
     }
 
     void ProjectileDisable(Vector3 hitPosition)

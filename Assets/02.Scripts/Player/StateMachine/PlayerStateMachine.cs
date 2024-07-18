@@ -17,8 +17,8 @@ public enum State
 
 public class PlayerStateMachine : MonoBehaviour
 {
-    private Dictionary<State, BaseState> _stateDictionary = new Dictionary<State, BaseState>();
-    private BaseState _currentState;
+    public Dictionary<State, BaseState> _stateDictionary = new Dictionary<State, BaseState>();
+    public BaseState _currentState;
 
     private void Start()
     {

@@ -45,12 +45,12 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Property
-    public NavMeshAgent Agent { get { return _agent; } }    
+    public NavMeshAgent Agent { get { return _agent; } }
     public Animator Anim { get { return _animator; } }
-    public PlayerStateMachine State { get { return _state; } }
+    public PlayerStateMachine PlayerStateMachine { get { return _state; } }
     public Transform ClickObject { get { return clickTransform; } }
-    public Camera MainCamera { get {  return _mainCamera; } }
-    public Rigidbody RigidBody { get { return _rigidBody; } }   
+    public Camera MainCamera { get { return _mainCamera; } }
+    public Rigidbody RigidBody { get { return _rigidBody; } }
     public LayerMask Mask { get { return _layerMask; } }
     public Ray MouseRay { get { return _mouseRay; } set { _mouseRay = value; } }
     public bool IsNext { get { return isNext; } set { isNext = value; } }
@@ -62,6 +62,7 @@ public class Player : MonoBehaviour
     public readonly int IsComboAttack3 = Animator.StringToHash("IsComboAttack3");
 
     public readonly int IsSkillAssassination = Animator.StringToHash("IsSkillAssassination");
+    public readonly int IsSkillDefense = Animator.StringToHash("IsSkillDefense");
     #endregion
 
     private void Awake()
@@ -95,10 +96,12 @@ public class Player : MonoBehaviour
     {
         _state = gameObject.AddComponent<PlayerStateMachine>();
         _state.AddState(global::State.Idle, new IdleState(this));
-        _state.AddState(global::State.Move , new MoveState(this));  
+        _state.AddState(global::State.Move, new MoveState(this));
         _state.AddState(global::State.ComboAttack1, new FirstAttackState(this));
         _state.AddState(global::State.ComboAttack2, new SecondAttackState(this));
-        _state.AddState(global::State.ComboAttack3, new ThirdAttackState(this));  
+        _state.AddState(global::State.ComboAttack3, new ThirdAttackState(this));
+        _state.AddState(global::State.SkillDefense, new DefenseState(this));
+        _state.AddState(global::State.SkillAssassination, new AssassinationState(this));
     }
 
     //애니메이션 이벤트
@@ -135,9 +138,16 @@ public class Player : MonoBehaviour
     // 적의 backcollider에 닿았을시 _assinationTargetEnemy에 해당 적 할당
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("EnemyBack"))
+        if (other.CompareTag("EnemyBack"))
         {
             _assinationTargetEnemy = other.GetComponentInParent<EnemyAI>();
+        }
+
+        // 디펜스중 적 무기 맞으면 idlestate로 
+       if ((PlayerStateMachine._currentState == PlayerStateMachine._stateDictionary[State.SkillDefense]) &&
+          (other.CompareTag("EnemyWeapon") || other.CompareTag("Bullet")))
+        {
+            PlayerStateMachine.ChangeState(State.Idle);
         }
     }
 
@@ -158,5 +168,10 @@ public class Player : MonoBehaviour
             _assinationTargetEnemy.BeAssassinate();
             _assinationTargetEnemy = null;
         }
+    }
+
+    private void AssassinationAnimationEnd()
+    {
+        PlayerStateMachine.ChangeState(State.Idle);
     }
 }
