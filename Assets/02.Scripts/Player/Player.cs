@@ -42,6 +42,7 @@ public class Player : MonoBehaviour
     private float _defense;
     private float _moveSpeed;
     private bool isNext;
+    private bool isDead = false;
     #endregion
 
     #region Property
@@ -54,12 +55,27 @@ public class Player : MonoBehaviour
     public LayerMask Mask { get { return _layerMask; } }
     public Ray MouseRay { get { return _mouseRay; } set { _mouseRay = value; } }
     public bool IsNext { get { return isNext; } set { isNext = value; } }
+    public bool IsDead 
+    { 
+        get { return isDead; }
+
+        set
+        {
+            isDead = value;
+
+            if (isDead)
+            {
+                _state.ChangeState(global::State.Die);
+            }
+        }
+    }
     #endregion
 
     #region Animation 
     public readonly int IsComboAttack1 = Animator.StringToHash("IsComboAttack1");
     public readonly int IsComboAttack2 = Animator.StringToHash("IsComboAttack2");
     public readonly int IsComboAttack3 = Animator.StringToHash("IsComboAttack3");
+    public readonly int DieParam = Animator.StringToHash("Die");
 
     public readonly int IsSkillAssassination = Animator.StringToHash("IsSkillAssassination");
     public readonly int IsSkillDefense = Animator.StringToHash("IsSkillDefense");
@@ -102,6 +118,7 @@ public class Player : MonoBehaviour
         _state.AddState(global::State.ComboAttack3, new ThirdAttackState(this));
         _state.AddState(global::State.SkillDefense, new DefenseState(this));
         _state.AddState(global::State.SkillAssassination, new AssassinationState(this));
+        _state.AddState(global::State.Die, new DieState(this)); 
     }
 
     //애니메이션 이벤트

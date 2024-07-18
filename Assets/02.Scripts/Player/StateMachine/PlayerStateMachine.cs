@@ -5,6 +5,7 @@ public enum State
 {
     Idle,
     Move,
+    Die,
     ComboAttack1,
     ComboAttack2,
     ComboAttack3,

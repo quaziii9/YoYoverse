@@ -22,7 +22,7 @@ public class InGameUI : MonoBehaviour
 
     private void Start()
     {
-        hpBar.maxValue = GameManager.Instance.Player.GetComponent<PlayerHealth>().GetHealth();
+        hpBar.maxValue = GameManager.Instance.PlayerObject.GetComponent<PlayerHealth>().GetHealth();
         hpBar.value = hpBar.maxValue;
         hpBarText.text = $"{hpBar.value} / {hpBar.maxValue}";
     }
