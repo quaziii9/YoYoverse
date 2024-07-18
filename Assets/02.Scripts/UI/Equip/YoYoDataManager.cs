@@ -37,8 +37,8 @@ public class YoYoDataManager : Singleton<YoYoDataManager>
         _yoyo = DataLoader<YoYoData>.LoadDataFromJson(fileName);
 
         // 타입별로 데이터를 필터링하여 각각의 스크롤 뷰에 설정
-        List<YoYoData> diskData = _yoyo.FindAll(data => data.type == "disk");
-        List<YoYoData> wireData = _yoyo.FindAll(data => data.type == "wire");
+        List<YoYoData> diskData = _yoyo.FindAll(data => data.type == "Disk");
+        List<YoYoData> wireData = _yoyo.FindAll(data => data.type == "Wire");
 
         UpdateScrollView(diskScrollView, diskData);
         UpdateScrollView(wireScrollView, wireData);

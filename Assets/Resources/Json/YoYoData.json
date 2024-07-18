@@ -3,7 +3,7 @@
     {
       "id": 100,
       "name": "Normal Disk",
-      "type": "disk",
+      "type": "Disk",
       "attack": 1,
       "attackSpeed": 1,
       "attackRange": 1,
@@ -12,7 +12,7 @@
     {
       "id": 101,
       "name": "Iron Disk",
-      "type": "disk",
+      "type": "Disk",
       "attack": 1.2,
       "attackSpeed": 1.5,
       "attackRange": 1,
@@ -21,7 +21,7 @@
     {
       "id": 102,
       "name": "Blade Disk",
-      "type": "disk",
+      "type": "Disk",
       "attack": 1.5,
       "attackSpeed": 2,
       "attackRange": 1.2,
@@ -30,7 +30,7 @@
     {
       "id": 150,
       "name": "Normal Wire",
-      "type": "wire",
+      "type": "Wire",
       "attack": 0.7,
       "attackSpeed": 1,
       "attackRange": 1,
@@ -39,7 +39,7 @@
     {
       "id": 151,
       "name": "Thorn Wire",
-      "type": "wire",
+      "type": "Wire",
       "attack": 1.2,
       "attackSpeed": 1.2,
       "attackRange": 1,
@@ -48,7 +48,7 @@
     {
       "id": 152,
       "name": "Electric Wire",
-      "type": "wire",
+      "type": "Wire",
       "attack": 1.5,
       "attackSpeed": 0.8,
       "attackRange": 0.5,
