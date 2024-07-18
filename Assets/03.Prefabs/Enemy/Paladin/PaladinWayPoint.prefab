@@ -1997,7 +1997,7 @@ GameObject:
   - component: {fileID: 6951253950048072631}
   - component: {fileID: 6951253950048072629}
   - component: {fileID: 6951253950048072626}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Paladin
   m_TagString: Untagged
   m_Icon: {fileID: 0}

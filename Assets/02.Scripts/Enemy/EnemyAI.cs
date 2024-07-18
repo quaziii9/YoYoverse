@@ -7,35 +7,32 @@ public class EnemyAI : MonoBehaviour
 {
     public IState CurrentStateInstance { get; private set; }
     public EnemyState EnemyCurstate = EnemyState.Idle;
-    public Transform playerTr;
     public Transform enemyTr;
-    public Animator animator;
-    public EnemyMoveAgent enemyMoveAgent;
-    public EnemyFire enemyFire;
+    public Transform playerTr;
 
-    public float attackDist = 8.0f; // 공격 거리
-    public float traceDis = 15.0f; // 추적 거리
-    public float staticTraceDis = 15.0f; // 고정 추적 거리
+    public Animator animator;
+    public EnemyFire enemyFire;
+    public EnemyHealth enemyHealth;
+
     public int rotationAngle;
     public bool isDie = false;
 
     // 애니메이터 컨트롤러에 정의한 파라미터의 해시 값을 미리 추출
     public readonly int Idle = Animator.StringToHash("IsIdle");
     public readonly int HashDie = Animator.StringToHash("IsDie");
+    public readonly int HashAssassinationDie = Animator.StringToHash("IsAssassinationDie");
 
     public float modelRotationOffset = 30f; // 모델의 회전 오프셋
-
-    public Vector3 initialPosition { get; private set; }
+   // public Vector3 initialPosition { get; private set; }
     public Quaternion initialRotation { get; private set; }
 
     private void Awake()
     {
         enemyTr = GetComponent<Transform>();
         animator = GetComponent<Animator>();
-        enemyMoveAgent = GetComponent<EnemyMoveAgent>();
         enemyFire = GetComponent<EnemyFire>();
 
-        initialPosition = enemyTr.position;
+       // initialPosition = enemyTr.position;
         initialRotation = enemyTr.rotation;
     }
 
@@ -98,7 +95,13 @@ public class EnemyAI : MonoBehaviour
 
     public void ResetToInitialTransform()
     {
-        enemyTr.position = initialPosition;
+       // enemyTr.position = initialPosition;
         enemyTr.rotation = initialRotation;
     }
+
+    public void BeAssassinate()
+    {
+        enemyHealth.BeAssassinateDamage();
+    }
+
 }

@@ -23,6 +23,10 @@ public class Player : MonoBehaviour
     [Header("ThirdAttackParticle")]
     [SerializeField] private GameObject _thirdParticle;
 
+    // 암살 타겟 적할당
+    [Header("AssassinationTargetEnemey")]
+    [SerializeField] private EnemyAI _assinationTargetEnemy;
+
     #region PlayerComponent
     private NavMeshAgent _agent;
     private ParticleSystem _first, _second, _third;
@@ -58,6 +62,8 @@ public class Player : MonoBehaviour
     public readonly int IsComboAttack1 = Animator.StringToHash("IsComboAttack1");
     public readonly int IsComboAttack2 = Animator.StringToHash("IsComboAttack2");
     public readonly int IsComboAttack3 = Animator.StringToHash("IsComboAttack3");
+
+    public readonly int IsSkillAssassination = Animator.StringToHash("IsSkillAssassination");
     #endregion
 
     private void Awake()
@@ -125,5 +131,34 @@ public class Player : MonoBehaviour
         OnEffect effectComponent = _thirdParticle.GetComponent<OnEffect>();
         effectComponent.SetPower(_power);
         effectComponent.AttackEvent(3);
+    }
+
+
+    // 적의 backcollider에 닿았을시 _assinationTargetEnemy에 해당 적 할당
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("EnemyBack"))
+        {
+            _assinationTargetEnemy = other.GetComponentInParent<EnemyAI>();
+        }
+    }
+
+    // 적의 backcollider에서 나갔을시 _assinationTargetEnemy에 null 할당
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("EnemyBack"))
+        {
+            _assinationTargetEnemy = null;
+        }
+    }
+
+    // 암살 시도 시 _assinationTargetEnemy에 null 할당
+    public void TryAssassinate()
+    {
+        if (_assinationTargetEnemy != null)
+        {
+            _assinationTargetEnemy.BeAssassinate();
+            _assinationTargetEnemy = null;
+        }
     }
 }

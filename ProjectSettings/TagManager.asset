@@ -12,6 +12,7 @@ TagManager:
   - Terrain
   - Floor
   - Bullet
+  - EnemyBack
   layers:
   - Default
   - TransparentFX
@@ -25,8 +26,6 @@ TagManager:
   - ConeOfSight
   - Enemy
   - Player
-  - 
-  - 
   - 
   - 
   - 
