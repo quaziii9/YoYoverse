@@ -48,6 +48,7 @@ namespace EnumTypes
         IsEquipReady,
         IsSkillReady,
         StartGame,
+        GameOver,
     }
     
     public enum EnemyEvents
