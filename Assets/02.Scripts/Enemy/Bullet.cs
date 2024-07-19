@@ -6,6 +6,7 @@ public class Bullet : MonoBehaviour
     public GameObject shooter; // 총알을 발사한 객체
     private float DestroyBulletTime = 1f;
     private float _power = 1;
+    public GameObject bulletHitEffect; // Add this line
 
     private void OnEnable()
     {
@@ -26,7 +27,7 @@ public class Bullet : MonoBehaviour
                                 playerStateMachine._stateDictionary[State.SkillDefense])
             { 
                 hit.TakeDamage(_power);
-                gameObject.SetActive(false);
+                ProjectileDisable(other.transform.position);
                 Debug.Log("hit");
             }
         }
@@ -44,7 +45,7 @@ public class Bullet : MonoBehaviour
 
     void ProjectileDisable(Vector3 hitPosition)
     {
-        //EffectManager.Instance.HitEffectGenenate(hitPosition);
+        HitEffectGenerate(hitPosition);
         ObjectPool.Instance.EnqueueObject(gameObject);
     }
 
@@ -52,5 +53,19 @@ public class Bullet : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(DestroyBulletTime);
         gameObject.SetActive(false);
+    }
+
+    private void HitEffectGenerate(Vector3 position)
+    {
+        GameObject item = ObjectPool.Instance.DequeueObject(bulletHitEffect);
+        item.transform.position = position;
+        item.transform.rotation = Quaternion.identity;
+        StartCoroutine(EnqueueObject(item, 0.5f));
+    }
+
+    private IEnumerator EnqueueObject(GameObject item, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        ObjectPool.Instance.EnqueueObject(item);
     }
 }
