@@ -1,4 +1,3 @@
-using System.Collections;
 using EnumTypes;
 using EventLibrary;
 using UnityEngine;
@@ -25,21 +24,10 @@ public class PlayerHealth : MonoBehaviour, IDamage
 
         if(_health <= 0)
         {
-            StartCoroutine(Die());
+            EventManager<GameEvents>.TriggerEvent(GameEvents.PlayerDeath); // 플레이어 사망 이벤트 발생
         }
         
         EventManager<PlayerEvents>.TriggerEvent<float>(PlayerEvents.PlayerDamaged, damage);
-    }
-
-    private IEnumerator Die()
-    {
-        gameObject.layer = LayerMask.NameToLayer("DeadPlayer");
-        EventManager<GameEvents>.TriggerEvent(GameEvents.PlayerDeath); // 플레이어 사망 이벤트 발생
-        _animator.SetTrigger(DieParam);
-
-        yield return new WaitForSeconds(3.0f);
-
-        gameObject.SetActive(false);
     }
 
     public float GetHealth()

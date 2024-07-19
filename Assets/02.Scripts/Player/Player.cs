@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using EnumTypes;
 using EventLibrary;
@@ -48,6 +49,7 @@ public class Player : MonoBehaviour
     private float _defense;
     private float _moveSpeed;
     private bool isNext;
+    private bool isDead = false;
     #endregion
 
     #region Property
@@ -61,14 +63,30 @@ public class Player : MonoBehaviour
     public LayerMask Mask { get { return _layerMask; } }
     public Ray MouseRay { get { return _mouseRay; } set { _mouseRay = value; } }
     public bool IsNext { get { return isNext; } set { isNext = value; } }
+    
     public int DefenseSkillIndex { get; set; } // 방어 스킬 인덱스
     
+    public bool IsDead 
+    { 
+        get { return isDead; }
+
+        set
+        {
+            isDead = value;
+
+            if (isDead)
+            {
+                _state.ChangeState(global::State.Die);
+            }
+        }
+    }
     #endregion
 
     #region Animation 
     public readonly int IsComboAttack1 = Animator.StringToHash("IsComboAttack1");
     public readonly int IsComboAttack2 = Animator.StringToHash("IsComboAttack2");
     public readonly int IsComboAttack3 = Animator.StringToHash("IsComboAttack3");
+    public readonly int DieParam = Animator.StringToHash("Die");
 
     public readonly int IsSkillAssassination = Animator.StringToHash("IsSkillAssassination");
     public readonly int Defense = Animator.StringToHash("Defense");
@@ -133,6 +151,7 @@ public class Player : MonoBehaviour
         _state.AddState(global::State.ComboAttack3, new ThirdAttackState(this));
         _state.AddState(global::State.SkillDefense, new DefenseState(this));
         _state.AddState(global::State.SkillAssassination, new AssassinationState(this));
+        _state.AddState(global::State.Die, new DieState(this)); 
     }
     
     // 키 바인딩 초기화
@@ -169,8 +188,16 @@ public class Player : MonoBehaviour
     {
         _third.Play();
         OnEffect effectComponent = _thirdParticle.GetComponent<OnEffect>();
-        effectComponent.SetPower(_power);
-        effectComponent.AttackEvent(3);
+        StartCoroutine(ThirdAttackDelay(effectComponent));
+    }
+
+    //3타 딜레이
+    private IEnumerator ThirdAttackDelay(OnEffect effectComponenet)
+    {
+        yield return new WaitForSeconds(0.6f);
+
+        effectComponenet.SetPower(_power);
+        effectComponenet.AttackEvent(3);
     }
 
 

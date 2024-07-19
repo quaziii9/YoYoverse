@@ -251,6 +251,12 @@ public class UIManager : Singleton<UIManager>
     {
         EventManager<GameEvents>.TriggerEvent(GameEvents.StartGame);
         DebugLogger.Log("게임 시작!");
+
+        if (GameManager.Instance.PlayerComponent.IsDead)
+        {
+            EventManager<GameEvents>.TriggerEvent(GameEvents.Respawn);
+        }
+
     }
 
     // 장비 UI 활성화

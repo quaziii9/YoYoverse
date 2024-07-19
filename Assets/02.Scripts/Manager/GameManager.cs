@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
+    [Header("RespawnPosition")]
+    [SerializeField] private Transform _respawnTransform;
+
     private Dictionary<int, YoYoData> _assignedYoYo = new Dictionary<int, YoYoData>();
     private Dictionary<int, SkillData> _assignedSkills = new Dictionary<int, SkillData>();
     
@@ -13,7 +16,8 @@ public class GameManager : Singleton<GameManager>
     private bool _selectedWire;
     
 
-    public GameObject Player { get; private set; }
+    public GameObject PlayerObject { get; private set; }
+    public Player PlayerComponent { get; private set; }
     public bool IsEquipReady { get; private set; }
     public bool IsSkillReady { get; private set; }
     
@@ -22,12 +26,14 @@ public class GameManager : Singleton<GameManager>
     {
         base.Awake();
 
-        Player = FindObjectOfType<Player>().gameObject;
+        PlayerObject = FindObjectOfType<Player>().gameObject;
+        PlayerComponent = PlayerObject.GetComponent<Player>();
         
         EventManager<GameEvents>.StartListening(GameEvents.SelectedDisk, SelectDisk);
         EventManager<GameEvents>.StartListening(GameEvents.SelectedWire, SelectWire);
         EventManager<GameEvents>.StartListening(GameEvents.IsSkillReady, ChangeSkillReadyState);
         EventManager<GameEvents>.StartListening(GameEvents.PlayerDeath, PlayerDeath);
+        EventManager<GameEvents>.StartListening(GameEvents.Respawn, RespawnPlayer);
     }
 
     private void OnDestroy()
@@ -36,6 +42,7 @@ public class GameManager : Singleton<GameManager>
         EventManager<GameEvents>.StopListening(GameEvents.SelectedWire, SelectWire);
         EventManager<GameEvents>.StopListening(GameEvents.IsSkillReady, ChangeSkillReadyState);
         EventManager<GameEvents>.StopListening(GameEvents.PlayerDeath, PlayerDeath);
+        EventManager<GameEvents>.StopListening(GameEvents.Respawn, RespawnPlayer);
     }
 
     // 요요 할당 업데이트
@@ -113,6 +120,10 @@ public class GameManager : Singleton<GameManager>
     // 플레이어 사망 시 게임 오버 처리
     private IEnumerator GameOver()
     {
+        Player playerComponent = PlayerObject.GetComponent<Player>();
+
+        playerComponent.IsDead = true;
+
         EventManager<EnemyEvents>.TriggerEvent(EnemyEvents.AllStop); // 적 정지 이벤트 발생
         
         UIManager.Instance.ToggleDeathUI(); // Death UI 활성화
@@ -126,5 +137,23 @@ public class GameManager : Singleton<GameManager>
         
         UIManager.Instance.DisableInGameUI();  // InGame UI 비활성화
         UIManager.Instance.EnableEquipUI();  // Equip UI 활성화
+    }
+
+    private void RespawnPlayer()
+    {
+        Player playerComponent = PlayerObject.GetComponent<Player>();
+
+        if (playerComponent.IsDead)
+        {
+            playerComponent.PlayerStateMachine.ChangeState(State.Idle);
+
+            playerComponent.IsDead = false;
+
+            PlayerObject.layer = LayerMask.NameToLayer("Player");
+
+            PlayerObject.transform.position = _respawnTransform.position;
+
+            PlayerObject.SetActive(true);
+        }
     }
 }

@@ -57,7 +57,7 @@ public class OnEffect : MonoBehaviour
 
         Vector3 boxSize = BoxSize(key);
 
-        Vector3 boxPosition = transform.position + transform.forward;
+        Vector3 boxPosition = transform.position + transform.forward * 1.5f;
 
         Collider[] colliders = Physics.OverlapBox(boxPosition, boxSize / 2, transform.rotation, LayerMask.GetMask("Enemy"));
 
@@ -71,6 +71,18 @@ public class OnEffect : MonoBehaviour
                 {
                     hit.TakeDamage(_power);
 
+                    GameObject hitEffect = ObjectPool.Instance.DequeueObject(_hitEffect);
+
+                    hitEffect.transform.position = target.transform.position + new Vector3(0, 1f, 0);
+
+                    ParticleSystem hitParticle = hitEffect.GetComponent<ParticleSystem>();
+
+                    hitParticle.Play();
+
+                    ReturnParticle returnComponent = hitEffect.GetComponent<ReturnParticle>();
+
+                    returnComponent.EnqueuePaticle();
+
                     _hitTarget.Add(target.gameObject);
                 }
             }
@@ -79,10 +91,12 @@ public class OnEffect : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Vector3 boxSize = BoxSize(1);
-        Vector3 boxPosition = transform.position + transform.forward;
+        Gizmos.color = Color.red;
 
-        Gizmos.color = Color.red; // Set the color of the gizmo
+        Vector3 boxSize = BoxSize(1); // Adjust the key if needed
+        Vector3 boxPosition = transform.position + transform.forward * 1.5f;
+
+        // Draw a wireframe box
         Gizmos.matrix = Matrix4x4.TRS(boxPosition, transform.rotation, boxSize);
         Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
     }
@@ -94,10 +108,10 @@ public class OnEffect : MonoBehaviour
         switch (key)
         {
             case 1:
-                boxSize = new Vector3(3.54f, 0.18f, 1.79f);
+                boxSize = new Vector3(3.54f, 0.18f, 3f);
                 break;
             case 2:
-                boxSize = new Vector3(3.54f, 0.18f, 1.79f);
+                boxSize = new Vector3(3.54f, 0.18f, 3f);
                 break;
             case 3:
                 boxSize = new Vector3(4.0f, 0.6f, 4.6f);

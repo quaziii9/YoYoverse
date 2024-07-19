@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public abstract class PlayerState : BaseState
@@ -38,7 +39,7 @@ public class IdleState : PlayerState
     {
         _player.Agent.enabled = false;
         _player.Anim.SetFloat(Move, 0);
-        // _player.Anim.applyRootMotion = true;
+        _player.Anim.applyRootMotion = true;
     }
 
     public override void StateUpdate()
@@ -162,4 +163,32 @@ public class MoveState : PlayerState
             _player.PlayerStateMachine.ChangeState(State.ComboAttack1);
         }
     }
+}
+
+public class DieState : PlayerState
+{
+    public DieState(Player player) : base(player) { }
+
+    public override void StateEnter()
+    {
+        _player.StartCoroutine(Die());
+    }
+
+    //사망처리
+    private IEnumerator Die() 
+    {
+        _player.gameObject.layer = LayerMask.NameToLayer("DeadPlayer");
+
+        _player.Anim.SetTrigger(_player.DieParam);
+
+        yield return new WaitUntil(() => {
+            var animatorStateInfo = _player.Anim.GetCurrentAnimatorStateInfo(0);
+
+            return animatorStateInfo.IsName("Die") && animatorStateInfo.normalizedTime >= 1.0f;
+        });
+
+        _player.gameObject.SetActive(false);
+    }
+
+    
 }
