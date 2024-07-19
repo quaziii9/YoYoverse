@@ -30750,7 +30750,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.39, y: 1.56, z: 0.34}
+  m_Size: {x: 0.6, y: 1.8, z: 0.5}
   m_Center: {x: 0, y: 0.87, z: 0}
 --- !u!136 &857493267096633732
 CapsuleCollider:
@@ -30822,6 +30822,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _health: 100
+  _maxHealth: 100
 --- !u!1 &6382685095757381199
 GameObject:
   m_ObjectHideFlags: 0

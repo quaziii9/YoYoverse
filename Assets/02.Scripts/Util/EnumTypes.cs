@@ -52,7 +52,8 @@ namespace EnumTypes
         IsSkillReady,
         StartGame,
         PlayerDeath,
-        Respawn
+        Respawn,
+        GameComplete
     }
     
     public enum EnemyEvents

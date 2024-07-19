@@ -56,6 +56,9 @@ public class EnemyAI : MonoBehaviour, IDamage
        // initialPosition = enemyTr.position;
         initialRotation = enemyTr.rotation;
         currentEnemyHealth = enemyHealth;
+        
+        EventManager<PlayerEvents>.StartListening(PlayerEvents.PlayerSpawn, FindPlayer);
+        EventManager<GameEvents>.StartListening(GameEvents.PlayerDeath, PlayerDeath);
 
         if (playerTr == null)
         {
@@ -63,18 +66,10 @@ public class EnemyAI : MonoBehaviour, IDamage
         }
     }
 
-    private void OnEnable()
-    {
-        EventManager<EnemyEvents>.StartListening(EnemyEvents.PlayerDetected, OnPlayerDetected);
-        EventManager<EnemyEvents>.StartListening(EnemyEvents.PlayerLost, OnPlayerLost);
-        EventManager<PlayerEvents>.StartListening(PlayerEvents.PlayerSpawn, FindPlayer);
-    }
-
     private void OnDisable()
     {
-        EventManager<EnemyEvents>.StopListening(EnemyEvents.PlayerDetected, OnPlayerDetected);
-        EventManager<EnemyEvents>.StopListening(EnemyEvents.PlayerLost, OnPlayerLost);
         EventManager<PlayerEvents>.StartListening(PlayerEvents.PlayerSpawn, FindPlayer);
+        EventManager<GameEvents>.StopListening(GameEvents.PlayerDeath, PlayerDeath);
     }
 
     private void FindPlayer()
@@ -85,7 +80,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         }
     }
     
-    private void OnPlayerDetected()
+    public void OnPlayerDetected()
     {
         if (EnemyCurstate != EnemyState.Attack)
         {
@@ -94,7 +89,7 @@ public class EnemyAI : MonoBehaviour, IDamage
         currentTraceTimer = 0f;
     }
 
-    private void OnPlayerLost()
+    public void OnPlayerLost()
     {
         if (EnemyCurstate == EnemyState.Attack)
         {
@@ -218,6 +213,17 @@ public class EnemyAI : MonoBehaviour, IDamage
 
         yield return new WaitForSeconds(2.0f);
 
+        gameObject.SetActive(false);
+    }
+    
+    private void PlayerDeath()
+    {
+        StartCoroutine(nameof(DisableEnemy));
+    }
+    
+    private IEnumerator DisableEnemy()
+    {
+        yield return new WaitForSeconds(5f);
         gameObject.SetActive(false);
     }
 }

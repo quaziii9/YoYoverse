@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using EnumTypes;
@@ -54,11 +55,18 @@ public class Paladin : MonoBehaviour, IDamage
     {
         InitializePaladin();
         InitializeState();
+        
+        EventManager<GameEvents>.StartListening(GameEvents.PlayerDeath, PlayerDeath);
     }
 
     private void Start()
     {
         _player = GameManager.Instance.PlayerObject;
+    }
+
+    private void OnDestroy()
+    {
+        EventManager<GameEvents>.StopListening(GameEvents.PlayerDeath, PlayerDeath);
     }
 
     private void InitializePaladin()
@@ -114,6 +122,17 @@ public class Paladin : MonoBehaviour, IDamage
     {
         _weapon.SetPower(_power);
         _weapon.OnHitCollider();
+    }
+    
+    private void PlayerDeath()
+    {
+        StartCoroutine(nameof(DisableEnemy));
+    }
+    
+    private IEnumerator DisableEnemy()
+    {
+        yield return new WaitForSeconds(5f);
+        gameObject.SetActive(false);
     }
 }
 

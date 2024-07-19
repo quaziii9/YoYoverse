@@ -151,13 +151,16 @@ public class EnemyAttackState : IState
 
     public void ExecuteOnUpdate()
     {
-        if (isAimingAtPlayer)
+        if (_playerTr != null)
         {
-            AimAtPlayer(initialRotationSpeed);
-        }
-        else
-        {
-            TrackPlayer(continuousRotationSpeed);
+            if (isAimingAtPlayer)
+            {
+                AimAtPlayer(initialRotationSpeed);
+            }
+            else
+            {
+                TrackPlayer(continuousRotationSpeed);
+            }
         }
     }
 
@@ -190,6 +193,7 @@ public class EnemyAttackState : IState
 
     private IEnumerator FireRoutine()
     {
+        
         // 초기 조준 및 발사
         while (isAimingAtPlayer)
         {
@@ -236,16 +240,19 @@ public class EnemyTraceState : IState
 
     public void ExecuteOnUpdate()
     {
-        // 플레이어 방향으로 회전
-        Vector3 direction = (playerTr.position - enemyTr.position).normalized;
-        Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        enemyTr.rotation = Quaternion.Slerp(enemyTr.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
-        // 시간 측정
-        enemyAI.currentTraceTimer += Time.deltaTime;
-        if (enemyAI.currentTraceTimer >= enemyAI.maxTraceTime)
+        if (playerTr != null)
         {
-            enemyAI.ChangeState(EnemyState.Idle);
+            // 플레이어 방향으로 회전
+            Vector3 direction = (playerTr.position - enemyTr.position).normalized;
+            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            enemyTr.rotation = Quaternion.Slerp(enemyTr.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+            // 시간 측정
+            enemyAI.currentTraceTimer += Time.deltaTime;
+            if (enemyAI.currentTraceTimer >= enemyAI.maxTraceTime)
+            {
+                enemyAI.ChangeState(EnemyState.Idle);
+            }
         }
     }
 
@@ -254,9 +261,6 @@ public class EnemyTraceState : IState
         enemyAI.currentTraceTimer = 0f;
     }
 }
-
-
-
 
 public class EnemyDieState : IState
 {
