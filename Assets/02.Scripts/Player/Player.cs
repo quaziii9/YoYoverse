@@ -27,6 +27,12 @@ public class Player : MonoBehaviour
     [Header("ThirdAttackParticle")]
     [SerializeField] private GameObject _thirdParticle;
 
+    [Header("LeftYoYo")]
+    [SerializeField] private GameObject _leftYoYo;
+
+    [Header("RightYoYo")]
+    [SerializeField] private GameObject _rightYoYo;
+
     // 암살 타겟 적할당
     [Header("AssassinationTargetEnemey")]
     public EnemyAI _assinationTargetEnemy;
@@ -149,6 +155,8 @@ public class Player : MonoBehaviour
         clickTransform.gameObject.SetActive(false);
 
         _assignedSkills = GameManager.Instance.GetAllAssignedSkills(); // 플레이어에 할당된 스킬 저장
+        ActiveLeftYoYo();
+        ActiveRightYoYo();
     }
     
     // 스킬 쿨타임 할당
@@ -201,6 +209,21 @@ public class Player : MonoBehaviour
     {
         isNext = true;
     }
+
+    public void ActiveLeftYoYo()
+    {
+        bool isActive = _leftYoYo.activeSelf;
+
+        _leftYoYo.SetActive(!isActive);
+    }
+
+    public void ActiveRightYoYo()
+    {
+        bool isActive = _rightYoYo.activeSelf;
+
+        _rightYoYo.SetActive(!isActive);
+    }
+
 
     public void FirstAttackParticle()
     {

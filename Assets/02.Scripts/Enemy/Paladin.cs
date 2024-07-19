@@ -12,7 +12,6 @@ public class Paladin : MonoBehaviour, IDamage
     private NavMeshAgent _agent;
     private EnemyStateMachine _state;
     private Animator _animator;
-    private SphereCollider _detectCollider;
 
     #endregion
 
@@ -40,7 +39,6 @@ public class Paladin : MonoBehaviour, IDamage
     public NavMeshAgent Agent => _agent;
     public EnemyStateMachine State => _state;
     public Animator Anim => _animator;
-    public SphereCollider DetectCollider => _detectCollider;
     public GameObject Player { get { return _player; }  set { _player = value; } }
     public float MoveSpeed => _moveSpeed;
     public float TraceSpeed => _traceSpeed;
@@ -58,13 +56,16 @@ public class Paladin : MonoBehaviour, IDamage
         InitializeState();
     }
 
+    private void Start()
+    {
+        _player = GameManager.Instance.PlayerObject;
+    }
+
     private void InitializePaladin()
     {
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
-        _detectCollider = GetComponent<SphereCollider>();
-        _weapon = transform.GetComponentInChildren<PaladinWeapon>();
-        _state = gameObject.GetComponent<EnemyStateMachine>();
+        _weapon = transform.GetComponentInChildren<PaladinWeapon>();    
         _agent.speed = _moveSpeed;
 
         EventManager<EnemyEvents>.StartListening(EnemyEvents.AllStop, StopPaladin);
@@ -126,19 +127,6 @@ public abstract class PaladinState : EnemyBase
         _paladin = paladin;
     }
 
-    protected IEnumerator ChangeDelay(Collider other)
-    {
-        yield return new WaitForSeconds(0.25f);
-
-        if (_paladin.Player == null)
-        {
-            _paladin.Player = other.gameObject;
-        }
-        _paladin.DetectCollider.enabled = false;
-
-        _paladin.State.ChangeState(EnemyState.Trace);
-    }
-
     protected void AnimationMoveMent()
     {
         Vector3 currentVelocity = _paladin.Agent.velocity;
@@ -146,6 +134,14 @@ public abstract class PaladinState : EnemyBase
         float speed = currentVelocity.magnitude;
 
         _paladin.Anim.SetFloat(MoveParam, speed);
+    }
+
+    protected void DetectPlayer()
+    {
+        if(Vector3.Distance(_paladin.transform.position, _paladin.Player.transform.position) <= 5f)
+        {
+            _paladin.State.ChangeState(EnemyState.Trace);
+        }
     }
 }
 
@@ -155,8 +151,12 @@ public class PaladinIdle : PaladinState
 
     public override void StateEnter()
     {
-        _paladin.DetectCollider.enabled = true;
         _paladin.StartCoroutine(ChangeMove());
+    }
+
+    public override void StateUpdate()
+    {
+        DetectPlayer();
     }
 
     private IEnumerator ChangeMove()
@@ -171,14 +171,6 @@ public class PaladinIdle : PaladinState
         }
 
         _paladin.State.ChangeState(EnemyState.Move);
-    }
-
-    public override void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject.layer == LayerMask.NameToLayer("Player"))
-        {
-            _paladin.StartCoroutine(ChangeDelay(other));
-        }
     }
 }
 
@@ -200,6 +192,7 @@ public class PaladinMove : PaladinState
             _paladin.State.ChangeState(EnemyState.Idle);
         }
 
+        DetectPlayer();
         AnimationMoveMent();
     }
 
@@ -218,16 +211,6 @@ public class PaladinMove : PaladinState
             _paladin.Order = 0;
 
         _paladin.Agent.SetDestination(_wayPointList[_paladin.Order].position);
-
-        _paladin.DetectCollider.enabled = true;
-    }
-
-    public override void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
-        {
-            _paladin.StartCoroutine(ChangeDelay(other));
-        }
     }
 }
 

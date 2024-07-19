@@ -59,6 +59,11 @@ public class OnEffect : MonoBehaviour
 
         Vector3 boxPosition = transform.position + transform.forward * 1.5f;
 
+        if(key == 3)
+        {
+            boxPosition = transform.position;
+        }
+
         Collider[] colliders = Physics.OverlapBox(boxPosition, boxSize / 2, transform.rotation, LayerMask.GetMask("Enemy"));
 
         foreach(Collider target in colliders)
