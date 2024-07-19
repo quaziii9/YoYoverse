@@ -15,7 +15,6 @@ public class GameManager : Singleton<GameManager>
     private bool _selectedDisk;
     private bool _selectedWire;
     
-
     public GameObject PlayerObject { get; private set; }
     public Player PlayerComponent { get; private set; }
     public bool IsEquipReady { get; private set; }
@@ -33,6 +32,7 @@ public class GameManager : Singleton<GameManager>
         EventManager<GameEvents>.StartListening(GameEvents.SelectedWire, SelectWire);
         EventManager<GameEvents>.StartListening(GameEvents.IsSkillReady, ChangeSkillReadyState);
         EventManager<GameEvents>.StartListening(GameEvents.PlayerDeath, PlayerDeath);
+        EventManager<GameEvents>.StartListening(GameEvents.GameComplete, Complete);
         EventManager<GameEvents>.StartListening(GameEvents.Respawn, RespawnPlayer);
     }
 
@@ -42,6 +42,7 @@ public class GameManager : Singleton<GameManager>
         EventManager<GameEvents>.StopListening(GameEvents.SelectedWire, SelectWire);
         EventManager<GameEvents>.StopListening(GameEvents.IsSkillReady, ChangeSkillReadyState);
         EventManager<GameEvents>.StopListening(GameEvents.PlayerDeath, PlayerDeath);
+        EventManager<GameEvents>.StopListening(GameEvents.GameComplete, Complete);
         EventManager<GameEvents>.StopListening(GameEvents.Respawn, RespawnPlayer);
     }
 
@@ -116,6 +117,11 @@ public class GameManager : Singleton<GameManager>
     {
         StartCoroutine(nameof(GameOver));
     }
+
+    private void Complete()
+    {
+        StartCoroutine(nameof(GameComplete));
+    }
     
     // 플레이어 사망 시 게임 오버 처리
     private IEnumerator GameOver()
@@ -139,10 +145,32 @@ public class GameManager : Singleton<GameManager>
         UIManager.Instance.EnableEquipUI();  // Equip UI 활성화
     }
 
-    private void RespawnPlayer()
+    private IEnumerator GameComplete()
     {
         Player playerComponent = PlayerObject.GetComponent<Player>();
 
+        playerComponent.IsDead = true;
+
+        EventManager<EnemyEvents>.TriggerEvent(EnemyEvents.AllStop); // 적 정지 이벤트 발생
+        
+        // UIManager.Instance.ToggleDeathUI(); // Death UI 활성화
+        yield return new WaitForSeconds(5f); // 5초 후 재시작
+        // UIManager.Instance.ToggleDeathUI(); // Death UI 비활성화
+        
+        _assignedYoYo.Clear(); // 할당된 장비 초기화
+        _assignedSkills.Clear(); // 할당된 스킬 초기화
+        
+        EnemyManager.Instance.ResetEnemies(); // 적 위치 초기화 및 재생성
+        
+        UIManager.Instance.DisableInGameUI();  // InGame UI 비활성화
+        UIManager.Instance.EnableEquipUI();  // Equip UI 활성화
+    }
+
+    private void RespawnPlayer()
+    {
+        Player playerComponent = PlayerObject.GetComponent<Player>();
+        PlayerObject.GetComponent<PlayerHealth>().Heal();
+        
         if (playerComponent.IsDead)
         {
             playerComponent.PlayerStateMachine.ChangeState(State.Idle);

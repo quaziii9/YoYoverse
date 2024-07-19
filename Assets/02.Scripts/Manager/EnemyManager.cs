@@ -54,6 +54,7 @@ public class EnemyManager : Singleton<EnemyManager>
     // 적 오브젝트 초기화
     public void ResetEnemies()
     {
+        DebugLogger.Log("적 오브젝트 초기화");
         // 기존 근거리 적 오브젝트 삭제
         foreach (var enemy in _meleeEnemies)
         {
@@ -69,6 +70,6 @@ public class EnemyManager : Singleton<EnemyManager>
         _sniperEnemies.Clear();
 
         // 초기 위치에 적 오브젝트 재생성
-        SpawnEnemies();
+        // SpawnEnemies();
     }
 }

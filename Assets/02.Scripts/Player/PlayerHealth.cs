@@ -6,6 +6,7 @@ public class PlayerHealth : MonoBehaviour, IDamage
 {
     [Header("Health")]
     [SerializeField] private float _health;
+    [SerializeField] private float _maxHealth;
 
     private Animator _animator;
     private static readonly int DieParam = Animator.StringToHash("Die");
@@ -33,5 +34,15 @@ public class PlayerHealth : MonoBehaviour, IDamage
     public float GetHealth()
     {
         return _health;
+    }
+
+    public float GetMaxHealth()
+    {
+        return _maxHealth;
+    }
+
+    public void Heal()
+    {
+        _health = 100;
     }
 }

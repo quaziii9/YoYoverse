@@ -18,13 +18,12 @@ public class InGameUI : MonoBehaviour
         EventManager<GameEvents>.StartListening(GameEvents.StartGame, InitializeYoYo);
         EventManager<PlayerEvents>.StartListening<float>(PlayerEvents.PlayerDamaged, UpdateHPBar);
         EventManager<SkillEvents>.StartListening<int>(SkillEvents.UseSkill, UseSkill);
+        EventManager<GameEvents>.StartListening(GameEvents.StartGame, InitializeHpBar);
     }
 
     private void Start()
     {
-        hpBar.maxValue = GameManager.Instance.PlayerObject.GetComponent<PlayerHealth>().GetHealth();
-        hpBar.value = hpBar.maxValue;
-        hpBarText.text = $"{hpBar.value} / {hpBar.maxValue}";
+        InitializeHpBar();
     }
 
     private void OnDestroy()
@@ -33,6 +32,15 @@ public class InGameUI : MonoBehaviour
         EventManager<GameEvents>.StopListening(GameEvents.StartGame, InitializeYoYo);
         EventManager<PlayerEvents>.StopListening<float>(PlayerEvents.PlayerDamaged, UpdateHPBar);
         EventManager<SkillEvents>.StopListening<int>(SkillEvents.UseSkill, UseSkill);
+        EventManager<GameEvents>.StartListening(GameEvents.StartGame, InitializeHpBar);
+    }
+    
+    // 체력바 초기화
+    private void InitializeHpBar()
+    {
+        hpBar.maxValue = GameManager.Instance.PlayerObject.GetComponent<PlayerHealth>().GetMaxHealth();
+        hpBar.value = hpBar.maxValue;
+        hpBarText.text = $"{hpBar.value} / {hpBar.maxValue}";
     }
 
     // 스킬 슬롯 초기화

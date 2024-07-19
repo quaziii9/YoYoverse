@@ -112,16 +112,10 @@ public class Player : MonoBehaviour
 
     #endregion
 
-    private void OnDisable()
-    {
-        EventManager<SkillEvents>.StopListening(SkillEvents.SuccessQTE, KillAssasinate);
-        EventManager<SkillEvents>.StopListening(SkillEvents.FailQTE, FailAssasinate);
-    }
+
 
     private void Awake()
     {
-        EventManager<SkillEvents>.StartListening(SkillEvents.SuccessQTE, KillAssasinate);
-        EventManager<SkillEvents>.StartListening(SkillEvents.FailQTE, FailAssasinate);
         InitializePlayer();
         InitializeState();
         InitializeEffect();
@@ -129,6 +123,8 @@ public class Player : MonoBehaviour
         InitializeSkillCooldowns(); // 스킬 쿨타임 할당
         
         EventManager<GameEvents>.StartListening(GameEvents.StartGame, EnablePlayer);
+        EventManager<SkillEvents>.StartListening(SkillEvents.SuccessQTE, KillAssassinate);
+        EventManager<SkillEvents>.StartListening(SkillEvents.FailQTE, FailAssassinate);
     }
 
     // UI 조작 중 플레이어 움직이지 않게 오브젝트 비활성화
@@ -139,6 +135,8 @@ public class Player : MonoBehaviour
 
     private void OnDestroy()
     {
+        EventManager<SkillEvents>.StopListening(SkillEvents.SuccessQTE, KillAssassinate);
+        EventManager<SkillEvents>.StopListening(SkillEvents.FailQTE, FailAssassinate);
         EventManager<GameEvents>.StopListening(GameEvents.StartGame, EnablePlayer);
     }
 
@@ -359,7 +357,7 @@ public class Player : MonoBehaviour
         _assinationTargetEnemy = null;
     }
 
-    public void FailAssasinate()
+    public void FailAssassinate()
     {
         PlayerStateMachine.ChangeState(State.Idle);
         _assinationTargetEnemy.AssaniateFail();
@@ -367,9 +365,9 @@ public class Player : MonoBehaviour
         EndAssasinate();
     }
 
-    public void KillAssasinate()
-    {
-       PlayerStateMachine.ChangeState(State.SkillAssassinationKill);
+    public void KillAssassinate()
+    { 
+        PlayerStateMachine.ChangeState(State.SkillAssassinationKill);
         DebugLogger.Log(PlayerStateMachine);
         _assinationTargetEnemy.AssaniateDie();
         EndAssasinate();

@@ -29,6 +29,7 @@ public class QTE : MonoBehaviour
     // QTE 시작
     private void OnEnable()
     {
+        _slider.value = 0;
         StartCoroutine(StartQTE());
 
         // 버튼을 선택된 상태로 설정

@@ -59,11 +59,11 @@ public class EnemyVisionAndMeshScaler : MonoBehaviour
             playerDetected = currentlyDetected;
             if (playerDetected)
             {
-                EventManager<EnemyEvents>.TriggerEvent(EnemyEvents.PlayerDetected);
+                enemyAI.OnPlayerDetected();
             }
             else
             {
-                EventManager<EnemyEvents>.TriggerEvent(EnemyEvents.PlayerLost);
+                enemyAI.OnPlayerLost();
             }
         }
     }
