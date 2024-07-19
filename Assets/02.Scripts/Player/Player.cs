@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using EnumTypes;
@@ -106,7 +107,20 @@ public class Player : MonoBehaviour
         InitializeState();
         InitializeEffect();
         InitializeKeyBindings(); // 키 바인딩 초기화
-        InitializeSkillCooldowns(); // 스킬 쿨타임 할당ㄴ
+        InitializeSkillCooldowns(); // 스킬 쿨타임 할당
+        
+        EventManager<GameEvents>.StartListening(GameEvents.StartGame, EnablePlayer);
+    }
+
+    // UI 조작 중 플레이어 움직이지 않게 오브젝트 비활성화
+    private void Start()
+    {
+        gameObject.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        EventManager<GameEvents>.StopListening(GameEvents.StartGame, EnablePlayer);
     }
 
     //플레이어 초기화
@@ -160,6 +174,12 @@ public class Player : MonoBehaviour
         _keyToSlotMap[KeyCode.Q] = 0; // Q키 -> 슬롯 0
         _keyToSlotMap[KeyCode.W] = 1; // W키 -> 슬롯 1
         _keyToSlotMap[KeyCode.E] = 2; // E키 -> 슬롯 2
+    }
+
+    private void EnablePlayer()
+    {
+        gameObject.SetActive(true);
+        EventManager<PlayerEvents>.TriggerEvent(PlayerEvents.PlayerSpawn);
     }
 
     //애니메이션 이벤트

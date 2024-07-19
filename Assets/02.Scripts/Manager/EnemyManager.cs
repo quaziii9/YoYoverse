@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class EnemyManager : Singleton<EnemyManager>
 {
-    public GameObject meleeEnemyPrefab; // 근거리 적 오브젝트 프리팹
+    [PropertySpace(5f, 0f)]public GameObject meleeEnemyPrefab; // 근거리 적 오브젝트 프리팹
     public GameObject sniperEnemyLeftPrefab; // 왼쪽 회전 저격수 적 오브젝트 프리팹
-    [PropertySpace(0f, 5f)] public GameObject sniperEnemyRightPrefab; // 오른쪽 회전 저격수 적 오브젝트 프리팹
+    [PropertySpace(0f, 10f)] public GameObject sniperEnemyRightPrefab; // 오른쪽 회전 저격수 적 오브젝트 프리팹
 
     public List<Transform> meleeSpawnPoints = new List<Transform>(); // 근거리 적 스폰 포인트 리스트
     public List<Transform> leftSniperSpawnPoints = new List<Transform>(); // 왼쪽 회전 저격수 적 스폰 포인트 리스트
@@ -21,12 +21,12 @@ public class EnemyManager : Singleton<EnemyManager>
     {
         base.Awake();
         
-        EventManager<GameEvents>.StartListening(GameEvents.StartGame, SpawnEnemies);
+        EventManager<PlayerEvents>.StartListening(PlayerEvents.PlayerSpawn, SpawnEnemies);
     }
 
     private void OnDestroy()
     {
-        EventManager<GameEvents>.StopListening(GameEvents.StartGame, SpawnEnemies);
+        EventManager<PlayerEvents>.StopListening(PlayerEvents.PlayerSpawn, SpawnEnemies);
     }
 
     // 적 오브젝트 생성

@@ -67,15 +67,24 @@ public class EnemyAI : MonoBehaviour, IDamage
     {
         EventManager<EnemyEvents>.StartListening(EnemyEvents.PlayerDetected, OnPlayerDetected);
         EventManager<EnemyEvents>.StartListening(EnemyEvents.PlayerLost, OnPlayerLost);
+        EventManager<PlayerEvents>.StartListening(PlayerEvents.PlayerSpawn, FindPlayer);
     }
 
     private void OnDisable()
     {
         EventManager<EnemyEvents>.StopListening(EnemyEvents.PlayerDetected, OnPlayerDetected);
         EventManager<EnemyEvents>.StopListening(EnemyEvents.PlayerLost, OnPlayerLost);
+        EventManager<PlayerEvents>.StartListening(PlayerEvents.PlayerSpawn, FindPlayer);
     }
 
-
+    private void FindPlayer()
+    {
+        if (playerTr == null)
+        {
+            playerTr = FindObjectOfType<Player>().transform;
+        }
+    }
+    
     private void OnPlayerDetected()
     {
         if (EnemyCurstate != EnemyState.Attack)

@@ -36,7 +36,7 @@ public class InGameSkillSlot : MonoBehaviour
         {
             _cooldownTime -= Time.deltaTime;
             cooldownSlider.value = _cooldownTime; // 쿨타임이 줄어들도록 설정
-            cooldownText.text = $"{(int)cooldownSlider.value + 0.99f}"; // 쿨타임 시간 표시
+            cooldownText.text = $"{(int)(cooldownSlider.value + 0.99f)}"; // 쿨타임 시간 표시
             yield return null;
         }
         cooldownSlider.value = 0;
