@@ -567,7 +567,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1790949956010708178}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.16, y: 0, z: 2.63}
+  m_LocalPosition: {x: -0.34, y: 0, z: 7.09}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -598,7 +598,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1790949956023034997}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.49, y: 0, z: -0.46}
+  m_LocalPosition: {x: -9.73, y: 0, z: 0.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -661,7 +661,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1790949956785977865}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.15, y: 0, z: -6.98}
+  m_LocalPosition: {x: -0.16, y: 0, z: -6.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -692,7 +692,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1790949957567218134}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.29, y: 0, z: -0.15}
+  m_LocalPosition: {x: 11.58, y: 0, z: 1.56}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1627,7 +1627,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6013246396755237096}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -6.5, y: 0, z: 8.64}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1993,7 +1993,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7727051129356626188}
   - component: {fileID: 4457487052378272630}
-  - component: {fileID: 6951253950048072628}
   - component: {fileID: 6951253950048072631}
   - component: {fileID: 6951253950048072629}
   - component: {fileID: 6951253950048072626}
@@ -2043,19 +2042,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!135 &6951253950048072628
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6951253950048072630}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &6951253950048072631
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2104,7 +2090,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 743ecaa81a61bbc4f87afaee6ffba30b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 3
+  _health: 9999
   _power: 1
 --- !u!1 &7071029102891155235
 GameObject:
@@ -2802,6 +2788,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1790949956301877179}
     m_Modifications:
+    - target: {fileID: 913314717087763667, guid: 099f19da8d6d63b4f9e3d19d22499d4e, type: 3}
+      propertyPath: m_Size.z
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 5898791073133654772, guid: 099f19da8d6d63b4f9e3d19d22499d4e, type: 3}
       propertyPath: m_Name
       value: Model_Steampunk_Sword
