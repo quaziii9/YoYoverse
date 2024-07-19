@@ -219,7 +219,6 @@ public class Player : MonoBehaviour
     
     public SkillData GetAssignedSkill(int slotIndex)
     {
-        DebugLogger.Log("GetAssignedSkill");
         return _assignedSkills.ContainsKey(slotIndex) ? _assignedSkills[slotIndex] : null;
     }
     
