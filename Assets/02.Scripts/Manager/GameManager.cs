@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    [Header("RespawnPosition")]
+    [Header("Player Respawn Transform")]
     [SerializeField] private Transform _respawnTransform;
 
     private Dictionary<int, YoYoData> _assignedYoYo = new Dictionary<int, YoYoData>();

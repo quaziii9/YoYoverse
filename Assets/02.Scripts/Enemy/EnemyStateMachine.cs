@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using EnumTypes;
 using EventLibrary;
@@ -23,7 +21,7 @@ public class EnemyStateMachine : MonoBehaviour
     private void Start()
     {
         _currentState = _stateDic[EnemyState.Idle];
-
+        
         _currentState.StateEnter();
     }
 

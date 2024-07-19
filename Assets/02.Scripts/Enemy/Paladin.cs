@@ -63,7 +63,8 @@ public class Paladin : MonoBehaviour, IDamage
         _agent = GetComponent<NavMeshAgent>();
         _animator = GetComponent<Animator>();
         _detectCollider = GetComponent<SphereCollider>();
-        _weapon = transform.GetComponentInChildren<PaladinWeapon>();    
+        _weapon = transform.GetComponentInChildren<PaladinWeapon>();
+        _state = gameObject.GetComponent<EnemyStateMachine>();
         _agent.speed = _moveSpeed;
 
         EventManager<EnemyEvents>.StartListening(EnemyEvents.AllStop, StopPaladin);
@@ -71,7 +72,8 @@ public class Paladin : MonoBehaviour, IDamage
 
     private void InitializeState()
     {
-        _state = gameObject.AddComponent<EnemyStateMachine>();
+        if (_state == null) return; 
+        
         _state.AddState(EnemyState.Idle, new PaladinIdle(this));
         _state.AddState(EnemyState.Move, new PaladinMove(this));
         _state.AddState(EnemyState.Trace, new PaladinTrace(this));

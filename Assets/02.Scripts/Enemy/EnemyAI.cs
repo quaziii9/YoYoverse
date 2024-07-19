@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using EnumTypes;
 using EventLibrary;
 using UnityEngine;
@@ -58,6 +57,10 @@ public class EnemyAI : MonoBehaviour, IDamage
         initialRotation = enemyTr.rotation;
         currentEnemyHealth = enemyHealth;
 
+        if (playerTr == null)
+        {
+            playerTr = FindObjectOfType<Player>().transform;
+        }
     }
 
     private void OnEnable()
@@ -133,7 +136,7 @@ public class EnemyAI : MonoBehaviour, IDamage
             case EnemyState.AssassinationDie:
                 return new EnemyAssassinationDieState(this);
             default:
-                throw new System.ArgumentOutOfRangeException(nameof(enemyState), enemyState, null);
+                throw new ArgumentOutOfRangeException(nameof(enemyState), enemyState, null);
         }
     }
 
