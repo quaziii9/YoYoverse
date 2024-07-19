@@ -12,6 +12,7 @@ public class Bullet : MonoBehaviour
     {
         StopAllCoroutines();
         StartCoroutine(DisableBullet());
+        ObjectPool.Instance.CreatePool(bulletHitEffect);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -25,9 +26,13 @@ public class Bullet : MonoBehaviour
 
             if (hit != null && playerStateMachine._currentState !=
                                 playerStateMachine._stateDictionary[State.SkillDefense])
-            { 
+            {
+                GameObject hitParticle = ObjectPool.Instance.DequeueObject(bulletHitEffect);
+                hitParticle.transform.position = other.transform.position + new Vector3(0, 1.5f, 0);
+                ParticleSystem particleSystem = hitParticle.GetComponent<ParticleSystem>();
+                particleSystem.Play();
                 hit.TakeDamage(_power);
-                ProjectileDisable(other.transform.position);
+                ObjectPool.Instance.EnqueueObject(gameObject);
                 Debug.Log("hit");
             }
         }
@@ -43,9 +48,8 @@ public class Bullet : MonoBehaviour
         DestroyBulletTime = destroybulletTime;
     }
 
-    void ProjectileDisable(Vector3 hitPosition)
+    void ProjectileDisable()
     {
-        HitEffectGenerate(hitPosition);
         ObjectPool.Instance.EnqueueObject(gameObject);
     }
 
@@ -60,7 +64,7 @@ public class Bullet : MonoBehaviour
         GameObject item = ObjectPool.Instance.DequeueObject(bulletHitEffect);
         item.transform.position = position;
         item.transform.rotation = Quaternion.identity;
-        StartCoroutine(EnqueueObject(item, 0.5f));
+        StartCoroutine(EnqueueObject(item, 0.2f));
     }
 
     private IEnumerator EnqueueObject(GameObject item, float delay)

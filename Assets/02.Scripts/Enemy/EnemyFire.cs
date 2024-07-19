@@ -32,9 +32,9 @@ public class EnemyFire : MonoBehaviour
         _animator = GetComponent<Animator>();
         _enemyAI = GetComponent<EnemyAI>();
 
-        SphereCollider rangeCollider = gameObject.AddComponent<SphereCollider>();
-        rangeCollider.isTrigger = true;
-        rangeCollider.radius = bulletRange;
+        //SphereCollider rangeCollider = gameObject.AddComponent<SphereCollider>();
+        //rangeCollider.isTrigger = true;
+        //rangeCollider.radius = bulletRange;
 
         _playerTr = GameObject.FindGameObjectWithTag("Player").transform;
     }
