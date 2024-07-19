@@ -9,6 +9,13 @@ public class AssassinationState : PlayerState
     public override void StateEnter()
     {
         _player.Anim.SetBool(_player.IsSkillAssassination, true);
+        if (_player._assinationTargetEnemy != null)
+        {
+            Vector3 targetDirection = _player._assinationTargetEnemy.transform.position - _player.transform.position;
+            targetDirection.y = 0; // y축 회전을 무시하려면 이 줄을 사용
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            _player.transform.rotation = targetRotation;
+        }
     }
 
     public override void StateUpdate()
@@ -18,6 +25,26 @@ public class AssassinationState : PlayerState
     public override void StateExit()
     {
         _player.Anim.SetBool(_player.IsSkillAssassination, false);
+    }
+}
+
+public class AssassinationKillState : PlayerState
+{
+    public AssassinationKillState(Player player) : base(player)
+    {
+    }
+
+    public override void StateEnter()
+    {
+       _player.Anim.SetTrigger(_player.IsSkillAssassinationKill);
+    }
+
+    public override void StateUpdate()
+    {
+    }
+
+    public override void StateExit()
+    {
     }
 }
 

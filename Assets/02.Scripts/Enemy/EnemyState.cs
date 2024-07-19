@@ -292,7 +292,7 @@ public class EnemyAssassinationState : IState
 
     public void Enter()
     {
-        enemyAI.animator.SetBool(enemyAI.HashAssassinationDie, true);
+        enemyAI.animator.SetTrigger(enemyAI.HashAssassination);
 
     }
 
@@ -302,7 +302,6 @@ public class EnemyAssassinationState : IState
 
     public void Exit()
     {
-        enemyAI.animator.SetBool(enemyAI.HashAssassinationDie, false);
     }
 }
 
@@ -317,7 +316,7 @@ public class EnemyAssassinationFailState : IState
 
     public void Enter()
     {
-        enemyAI.animator.SetBool(enemyAI.HashAssassinationFail, true);
+        enemyAI.animator.SetTrigger(enemyAI.HashAssassinationFail);
 
     }
 
@@ -327,7 +326,7 @@ public class EnemyAssassinationFailState : IState
 
     public void Exit()
     {
-        enemyAI.animator.SetBool(enemyAI.HashAssassinationFail, false);
+
     }
 }
 

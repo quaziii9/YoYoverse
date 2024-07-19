@@ -26,7 +26,8 @@ namespace EnumTypes
         PlayerDamaged,
         PlayerDead,
         OnAttackEffect,
-        Clear
+        Clear,
+
     }
 
     public enum YoYoEvents
@@ -65,6 +66,8 @@ namespace EnumTypes
     public enum SkillEvents
     {
         UseSkill,
+        SuccessQTE,
+        FailQTE
     }
 
     public class EnumTypes : MonoBehaviour { }
