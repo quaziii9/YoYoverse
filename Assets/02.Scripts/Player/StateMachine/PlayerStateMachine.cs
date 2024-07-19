@@ -11,6 +11,7 @@ public enum State
     ComboAttack3,
 
     SkillAssassination,
+    SkillAssassinationKill,
     SkillMovement,
     SkillDefense,
     SkillDraft,

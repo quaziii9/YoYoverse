@@ -43,6 +43,7 @@ public class UIManager : Singleton<UIManager>
     [FoldoutGroup("Skill UI")] public GameObject skillDecisionButtonAlpha;
     
     [TabGroup("InGame UI")] public GameObject inGameUI;
+    [TabGroup("InGame UI")] public GameObject qteUI;
     [TabGroup("Death UI")] public GameObject deathUI;
 
     private float _diskAttack, _wireAttack;
@@ -277,5 +278,13 @@ public class UIManager : Singleton<UIManager>
     public void DisableInGameUI()
     {
         inGameUI.SetActive(false);
+    }
+
+    // QTE UI 토글
+    public void ToggleQTEUI()
+    {
+        bool isActive = qteUI.activeSelf;
+
+        qteUI.SetActive(!isActive);
     }
 }

@@ -4,6 +4,7 @@ using EnumTypes;
 using EventLibrary;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Player : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class Player : MonoBehaviour
 
     // 암살 타겟 적할당
     [Header("AssassinationTargetEnemey")]
-    [SerializeField] private EnemyAI _assinationTargetEnemy;
+    public EnemyAI _assinationTargetEnemy;
 
     #region PlayerComponent
     
@@ -65,6 +66,7 @@ public class Player : MonoBehaviour
     public bool IsNext { get { return isNext; } set { isNext = value; } }
     
     public int DefenseSkillIndex { get; set; } // 방어 스킬 인덱스
+    public int AssassinationSkillIndex { get; set; } // 방어 스킬 인덱스
     
     public bool IsDead 
     { 
@@ -80,6 +82,8 @@ public class Player : MonoBehaviour
             }
         }
     }
+
+    private bool _DoAssasinate { get; set; }
     #endregion
 
     #region Animation 
@@ -88,8 +92,9 @@ public class Player : MonoBehaviour
     public readonly int IsComboAttack3 = Animator.StringToHash("IsComboAttack3");
     public readonly int DieParam = Animator.StringToHash("Die");
 
-    public readonly int IsSkillAssassination = Animator.StringToHash("IsSkillAssassination");
     public readonly int Defense = Animator.StringToHash("Defense");
+    public readonly int IsSkillAssassination = Animator.StringToHash("Assassination");
+    public readonly int IsSkillAssassinationKill = Animator.StringToHash("AssassinationKill");
     #endregion
 
     #region Skill
@@ -100,8 +105,16 @@ public class Player : MonoBehaviour
 
     #endregion
 
+    private void OnDisable()
+    {
+        EventManager<SkillEvents>.StopListening(SkillEvents.SuccessQTE, KillAssasinate);
+        EventManager<SkillEvents>.StopListening(SkillEvents.FailQTE, FailAssasinate);
+    }
+
     private void Awake()
     {
+        EventManager<SkillEvents>.StartListening(SkillEvents.SuccessQTE, KillAssasinate);
+        EventManager<SkillEvents>.StartListening(SkillEvents.FailQTE, FailAssasinate);
         InitializePlayer();
         InitializeState();
         InitializeEffect();
@@ -151,6 +164,7 @@ public class Player : MonoBehaviour
         _state.AddState(global::State.ComboAttack3, new ThirdAttackState(this));
         _state.AddState(global::State.SkillDefense, new DefenseState(this));
         _state.AddState(global::State.SkillAssassination, new AssassinationState(this));
+        _state.AddState(global::State.SkillAssassinationKill, new AssassinationKillState(this));
         _state.AddState(global::State.Die, new DieState(this)); 
     }
     
@@ -219,7 +233,7 @@ public class Player : MonoBehaviour
     // 적의 backcollider에서 나갔을시 _assinationTargetEnemy에 null 할당
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("EnemyBack"))
+        if (other.CompareTag("EnemyBack") && _DoAssasinate == false)
         {
             _assinationTargetEnemy = null;
         }
@@ -271,19 +285,54 @@ public class Player : MonoBehaviour
                         DebugLogger.Log($"{skillData.name} 스킬은 아직 쿨타임 중입니다.");
                     }
                 }
+                else if (skillData != null && skillData.name == "Assassination" && _assinationTargetEnemy != null)
+                {
+                    if (!_skillCooldowns.ContainsKey(slotIndex) || Time.time >= _skillCooldowns[slotIndex])
+                    {
+                        AssassinationSkillIndex = slotIndex;
+                        PlayerStateMachine.ChangeState(State.SkillAssassination);
+                        TryAssassinate();
+                        _DoAssasinate = true;
+                        UIManager.Instance.ToggleQTEUI();
+                    }
+                    else
+                    {
+                        DebugLogger.Log($"{skillData.name} 스킬은 아직 쿨타임 중입니다.");
+                    }
+                }
             }
         }
     }
 
-    // 암살 시도 시 _assinationTargetEnemy에 null 할당
+    // 암살 시도
     public void TryAssassinate()
     {
-        if (_assinationTargetEnemy != null)
-        {
-            // 실패나 성공시 _assinationtargetenemy의 상태를 변경시켜주면 될듯 
-            _assinationTargetEnemy.Assassinate();
-        }
+        _assinationTargetEnemy.Assassinate();
     }
+
+    // 암살 시도 시 _assinationTargetEnemy에 null 할당
+    public void EndAssasinate()
+    {
+        _assinationTargetEnemy = null;
+    }
+
+    public void FailAssasinate()
+    {
+        PlayerStateMachine.ChangeState(State.Idle);
+        _assinationTargetEnemy.AssaniateFail();
+        UseSkill(AssassinationSkillIndex);
+        EndAssasinate();
+    }
+
+    public void KillAssasinate()
+    {
+       PlayerStateMachine.ChangeState(State.SkillAssassinationKill);
+        DebugLogger.Log(PlayerStateMachine);
+        _assinationTargetEnemy.AssaniateDie();
+        EndAssasinate();
+        UseSkill(AssassinationSkillIndex);
+    }
+
 
     private void AssassinationAnimationEnd()
     {

@@ -2,7 +2,10 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.EventSystems; // EventSystem을 사용하기 위해 추가
+using UnityEngine.EventSystems;
+using EventLibrary;
+using EnumTypes;
+using Unity.VisualScripting; // EventSystem을 사용하기 위해 추가
 
 public class QTE : MonoBehaviour
 {
@@ -19,6 +22,7 @@ public class QTE : MonoBehaviour
     private void Awake()
     {
         _slider = GetComponent<Slider>();
+        
         qtePanel = gameObject.transform.parent.gameObject;
     }
 
@@ -88,6 +92,9 @@ public class QTE : MonoBehaviour
     {
         Debug.Log("QTE 성공! 암살 및 쿨타임 계산."); // QTE 성공 메시지
         qtePanel.SetActive(false);
+        EventManager<SkillEvents>.TriggerEvent(SkillEvents.SuccessQTE);
+
+        //player.KillAssasinate();
         // 암살 및 쿨타임 계산 로직 추가
     }
 
@@ -96,6 +103,8 @@ public class QTE : MonoBehaviour
     {
         Debug.Log("QTE 실패! 스킬 사용 실패 및 적에게 감지됨."); // QTE 실패 메시지
         qtePanel.SetActive(false);
+        EventManager<SkillEvents>.TriggerEvent(SkillEvents.FailQTE);
+
         // 스킬 사용 실패 및 적에게 감지됨 로직 추가
     }
 }
