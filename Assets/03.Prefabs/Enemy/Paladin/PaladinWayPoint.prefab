@@ -2802,21 +2802,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1790949956301877179}
     m_Modifications:
-    - target: {fileID: 913314717087763667, guid: 099f19da8d6d63b4f9e3d19d22499d4e, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5898791073133654772, guid: 099f19da8d6d63b4f9e3d19d22499d4e, type: 3}
       propertyPath: m_Name
       value: Model_Steampunk_Sword
-      objectReference: {fileID: 0}
-    - target: {fileID: 5898791073133654772, guid: 099f19da8d6d63b4f9e3d19d22499d4e, type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 5898791073133654772, guid: 099f19da8d6d63b4f9e3d19d22499d4e, type: 3}
-      propertyPath: m_TagString
-      value: EnemyWeapon
       objectReference: {fileID: 0}
     - target: {fileID: 5898791073134145236, guid: 099f19da8d6d63b4f9e3d19d22499d4e, type: 3}
       propertyPath: m_RootOrder

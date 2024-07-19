@@ -73,11 +73,15 @@ public class OnEffect : MonoBehaviour
 
                     GameObject hitEffect = ObjectPool.Instance.DequeueObject(_hitEffect);
 
-                    hitEffect.transform.position = target.transform.position;
+                    hitEffect.transform.position = target.transform.position + new Vector3(0, 1f, 0);
 
                     ParticleSystem hitParticle = hitEffect.GetComponent<ParticleSystem>();
 
                     hitParticle.Play();
+
+                    ReturnParticle returnComponent = hitEffect.GetComponent<ReturnParticle>();
+
+                    returnComponent.EnqueuePaticle();
 
                     _hitTarget.Add(target.gameObject);
                 }

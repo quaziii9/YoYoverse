@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -147,8 +149,16 @@ public class Player : MonoBehaviour
     {
         _third.Play();
         OnEffect effectComponent = _thirdParticle.GetComponent<OnEffect>();
-        effectComponent.SetPower(_power);
-        effectComponent.AttackEvent(3);
+        StartCoroutine(ThirdAttackDelay(effectComponent));
+    }
+
+    //3타 딜레이
+    private IEnumerator ThirdAttackDelay(OnEffect effectComponenet)
+    {
+        yield return new WaitForSeconds(0.6f);
+
+        effectComponenet.SetPower(_power);
+        effectComponenet.AttackEvent(3);
     }
 
 
