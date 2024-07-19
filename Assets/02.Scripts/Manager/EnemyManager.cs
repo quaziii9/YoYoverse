@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using EnumTypes;
+using EventLibrary;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -15,10 +17,16 @@ public class EnemyManager : Singleton<EnemyManager>
     private List<GameObject> _meleeEnemies = new List<GameObject>(); // 근거리 적 오브젝트 리스트
     private List<GameObject> _sniperEnemies = new List<GameObject>(); // 저격수 적 오브젝트 리스트
 
-    // 초기 적 오브젝트 생성
-    private void Start()
+    protected override void Awake()
     {
-        SpawnEnemies();
+        base.Awake();
+        
+        EventManager<GameEvents>.StartListening(GameEvents.StartGame, SpawnEnemies);
+    }
+
+    private void OnDestroy()
+    {
+        EventManager<GameEvents>.StopListening(GameEvents.StartGame, SpawnEnemies);
     }
 
     // 적 오브젝트 생성
