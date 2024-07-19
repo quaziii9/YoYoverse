@@ -253,8 +253,8 @@ public class Player : MonoBehaviour
     {
         if (_assinationTargetEnemy != null)
         {
-            _assinationTargetEnemy.BeAssassinate();
-            _assinationTargetEnemy = null;
+            // 실패나 성공시 _assinationtargetenemy의 상태를 변경시켜주면 될듯 
+            _assinationTargetEnemy.Assassinate();
         }
     }
 
