@@ -8,16 +8,16 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: PolygonBattleRoyale_FX_Emmision
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_ValidKeywords:
+  m_Shader: {fileID: 4800000, guid: 17b7437242a5644458897406142a1502, type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords:
   - _EMISSION
-  m_InvalidKeywords: []
+  - _ZWRITE_ON
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
+  m_CustomRenderQueue: 3500
+  stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -90,6 +90,7 @@ Material:
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _EmissionIntensity: 1
     - _EmissionScaleUI: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
@@ -101,6 +102,7 @@ Material:
     - _Parallax: 0.02
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _RenderQueue: 3000
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -108,6 +110,7 @@ Material:
     - _Surface: 0
     - _UVSec: 0
     - _WorkflowMode: 1
+    - _ZTest: 4
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
