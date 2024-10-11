@@ -40,13 +40,13 @@ public class EnemyManager : Singleton<EnemyManager>
 
         foreach (var spawnPoint in leftSniperSpawnPoints)
         {
-            GameObject enemy = Instantiate(sniperEnemyLeftPrefab, spawnPoint.position, Quaternion.identity);
+            GameObject enemy = Instantiate(sniperEnemyLeftPrefab, spawnPoint.position, Quaternion.Euler(new Vector3 (0,180,0)));
             _sniperEnemies.Add(enemy);
         }
         
         foreach (var spawnPoint in rightSniperSpawnPoints)
         {
-            GameObject enemy = Instantiate(sniperEnemyRightPrefab, spawnPoint.position, Quaternion.identity);
+            GameObject enemy = Instantiate(sniperEnemyRightPrefab, spawnPoint.position, Quaternion.Euler(new Vector3(0, 180, 0)));
             _sniperEnemies.Add(enemy);
         }
     }

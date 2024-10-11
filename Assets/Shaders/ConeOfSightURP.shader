@@ -3,14 +3,22 @@ Shader "GPUMan/ConeOfSightURP" {
         _NonVisibleColor("Non Visible Color", Color) = (0, 0, 0, 1)
         _ViewAngle("Sight Angle", Range(0.01, 90)) = 45
         _Scale("Scale", Vector) = (1, 1, 1, 1)
+        _StencilRef ("Stencil Reference Value", Int) = 1
     }
 
     Subshader {
         Tags {
-            "Queue" = "Overlay"
+            "Queue" = "Transparent+100"
             "RenderType" = "Transparent"
             "RenderPipeline" = "UniversalRenderPipeline"
         }
+
+        Stencil {
+            Ref [_StencilRef]
+            Comp NotEqual
+            Pass Keep
+        }
+
         Pass {
             Name "Unlit"
             Blend SrcAlpha OneMinusSrcAlpha
@@ -63,7 +71,7 @@ Shader "GPUMan/ConeOfSightURP" {
             }
 
             float getRadiusAlpha(float distFromCenter) {
-                return max((0.5 - distFromCenter) * 10000, 0); // _CircleStrength °íÁ¤°ª 10000
+                return max((0.5 - distFromCenter) * 10000, 0); // _CircleStrength ê³ ì •ê°’ 10000
             }
 
             float getAngleAlpha(float2 pos) {
@@ -72,7 +80,7 @@ Shader "GPUMan/ConeOfSightURP" {
                 float fwdDotPos = max(dot(float2(0, 1), npos), 0);
                 float angle = acos(fwdDotPos);
                 float angleF = angle / sightAngleRadians;
-                return max(1.0 - pow(abs(angleF), 1.0), 0); // _AngleStrength °íÁ¤°ª 1
+                return max(1.0 - pow(abs(angleF), 1.0), 0); // _AngleStrength ê³ ì •ê°’ 1
             }
 
             float getObstacleAlpha(float4 worldPos) {
@@ -109,7 +117,7 @@ Shader "GPUMan/ConeOfSightURP" {
                 float alpha = getRadiusAlpha(distFromCenter) * getAngleAlpha(pos2D);
 
                 // Cone stripes
-                float intervals = 0; // _ViewIntervals °íÁ¤°ª 0
+                float intervals = 0; // _ViewIntervals ê³ ì •ê°’ 0
                 alpha *= step(0, intervals);
 
                 half4 col = obstacleAlpha > 0 ? half4(1, 0, 0, 1) : _NonVisibleColor; // Set color to red
